@@ -67,6 +67,8 @@ service cloud.firestore {
           request.resource.data.amount > 0 && 
           request.resource.data.balanceAfter >= 0;
         allow update, delete: if false;
+        
+        
       }
       
       // ==========================================
