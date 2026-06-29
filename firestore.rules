@@ -14,6 +14,11 @@ service cloud.firestore {
         exists(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid));
     }
 
+    // Fallback: ปิดกั้นการเข้าถึงที่ไม่ได้ระบุไว้ในเงื่อนไขอย่างชัดเจน (ป้องกันบุคคลภายนอกเข้าถึงข้อมูลทุกส่วน)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
     // กฎการเข้าถึงข้อมูลตามโครงการ Bank of School (Multi-tenant โดยใช้ appId)
     match /artifacts/{appId} {
       
@@ -27,7 +32,7 @@ service cloud.firestore {
         allow create: if isAuthenticated() && request.auth.uid == userId;
         // อนุญาตให้แก้ไขข้อมูลเฉพาะของตัวเองเท่านั้น
         allow update: if isAuthenticated() && request.auth.uid == userId;
-        // ไม่อนุญาตให้ลบบัญชีผู้ใช้โดยตรง เพื่อป้องกันข้อมูลผู้สร้างธุรกรรมสูญหาย
+        // ไม่อนุญาตให้ลบบัญชีผู้ใช้โดยตรง เพื่อป้องกันข้อมูลผู้สร้างธุรกรรมสูญหาย (No-Delete)
         allow delete: if false;
       }
       
@@ -35,26 +40,32 @@ service cloud.firestore {
       // 2. ข้อมูลโปรไฟล์นักเรียน (Students)
       // ==========================================
       match /students/{studentId} {
-        // เฉพาะคุณครูที่มีรายชื่อในระบบเท่านั้นที่จัดการนักเรียนได้
-        allow read, write: if isTeacher(appId);
+        // นโยบาย No-Delete: อนุญาตให้ครู อ่าน สร้าง และแก้ไขข้อมูลนักเรียนได้เท่านั้น (ห้ามลบเด็ดขาด)
+        allow read, create, update: if isTeacher(appId);
+        allow delete: if false;
       }
       
       // ==========================================
       // 3. บัญชีเงินฝากนักเรียน (Accounts)
       // ==========================================
       match /accounts/{accountId} {
-        // เฉพาะคุณครูเท่านั้นที่ดูยอดเงินและจัดการสถานะบัญชีได้
-        allow read, write: if isTeacher(appId);
+        allow read: if isTeacher(appId);
+        // นโยบาย No-Delete และป้องกันยอดเงินคงเหลือติดลบจากฝั่งเซิร์ฟเวอร์ (currentBalance >= 0)
+        allow create, update: if isTeacher(appId) && 
+          request.resource.data.currentBalance >= 0;
+        allow delete: if false;
       }
       
       // ==========================================
       // 4. รายการธุรกรรมการเงิน (Transactions)
       // ==========================================
       match /transactions/{transactionId} {
-        // คุณครูสามารถดูลายการธุรกรรม (Read) และบันทึกธุรกรรมใหม่ (Create) ได้
-        allow read, create: if isTeacher(appId);
-        // ห้ามแก้ไข (Update) หรือลบ (Delete) รายการธุรกรรมย้อนหลังโดยเด็ดขาด (ความปลอดภัยทางการเงินสูงสุด)
-        // หากต้องการแก้ไข ให้ใช้ระบบ Void และทำ Reversal Transaction เท่านั้น
+        // นโยบาย Append-only: คุณครูสามารถดูลายรายการธุรกรรม (Read) และบันทึกธุรกรรมใหม่ (Create) ได้เท่านั้น (ห้ามแก้ไขและห้ามลบเด็ดขาด)
+        // และป้องกันยอดเงินติดลบของรายการย้อนหลังจากฝั่งเซิร์ฟเวอร์ (balanceAfter >= 0)
+        allow read: if isTeacher(appId);
+        allow create: if isTeacher(appId) && 
+          request.resource.data.amount > 0 && 
+          request.resource.data.balanceAfter >= 0;
         allow update, delete: if false;
       }
       
@@ -62,9 +73,8 @@ service cloud.firestore {
       // 5. บันทึกประวัติการใช้งานระบบ (Audit Logs)
       // ==========================================
       match /audit_logs/{logId} {
-        // อนุญาตให้คุณครูอ่านและบันทึกประวัติการใช้งานระบบได้
+        // นโยบาย Append-only: อนุญาตให้คุณครูอ่านและบันทึกประวัติการใช้งานระบบได้เท่านั้น (ห้ามแก้ไขหรือลบเด็ดขาด)
         allow read, create: if isTeacher(appId);
-        // ห้ามทำการดัดแปลง แก้ไข หรือลบประวัติบันทึกการใช้งานโดยเด็ดขาดเพื่อความโปร่งใส
         allow update, delete: if false;
       }
       

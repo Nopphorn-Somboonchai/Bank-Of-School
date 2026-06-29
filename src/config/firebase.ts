@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, signInWithCustomToken, signInAnonymously } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 // 1. ดึงข้อมูลการกำหนดค่า Firebase (ปลอดภัยจากค่าคงที่ระบบและ Local Env)
 const getFirebaseConfig = () => {
@@ -32,6 +32,21 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 // 4. ประกาศบริการและส่งออกภายนอก
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// เชื่อมต่อ Firestore Emulator หากรันบน localhost เพื่อความปลอดภัยของข้อมูลจริง
+if (typeof window !== 'undefined' && 
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.includes('192.168'))) {
+    const dbAny = db as any;
+    if (!dbAny._emulatorConnected) {
+        try {
+            connectFirestoreEmulator(db, '127.0.0.1', 8080);
+            dbAny._emulatorConnected = true;
+            console.log("⚡ Connected to Firestore Emulator at 127.0.0.1:8080");
+        } catch (error) {
+            console.warn("⚠️ Cannot connect to Firestore Emulator:", error);
+        }
+    }
+}
 
 /**
  * ฟังก์ชันสำหรับการทำ Authentication เริ่มต้นแบบปลอดภัยสูง (สอดคล้องกับ RULE 3)

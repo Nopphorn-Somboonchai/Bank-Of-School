@@ -1,0 +1,205 @@
+[debug] [2026-06-29T08:05:14.679Z] ----------------------------------------------------------------------
+[debug] [2026-06-29T08:05:14.682Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Lenovo\AppData\Local\npm-cache\_npx\7750544ccf494d8b\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --only firestore
+[debug] [2026-06-29T08:05:14.682Z] CLI Version:   15.22.3
+[debug] [2026-06-29T08:05:14.682Z] Platform:      win32
+[debug] [2026-06-29T08:05:14.682Z] Node Version:  v24.17.0
+[debug] [2026-06-29T08:05:14.682Z] Detected Agent: antigravity
+[debug] [2026-06-29T08:05:14.683Z] Time:          Mon Jun 29 2026 15:05:14 GMT+0700 (เวลาอินโดจีน)
+[debug] [2026-06-29T08:05:14.683Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-29T08:05:14.684Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-06-29T08:05:18.532Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] Failed to authenticate, have you run firebase login?
+[warn] !  emulators: You are not currently authenticated so some features may not work correctly. Please run firebase login to authenticate the CLI. 
+[debug] [2026-06-29T08:05:19.178Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-06-29T08:05:19.178Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-06-29T08:05:21.509Z] java version "26.0.1" 2026-04-21
+Java(TM) SE Runtime Environment (build 26.0.1+8-34)
+Java HotSpot(TM) 64-Bit Server VM (build 26.0.1+8-34, mixed mode, sharing)
+
+[debug] [2026-06-29T08:05:21.526Z] Parsed Java major version: 26
+[info] i  emulators: Starting emulators: firestore {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: firestore"}}
+[info] i  emulators: Detected demo project ID "demo-no-project", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail. {"metadata":{"emulator":{"name":"hub"},"message":"Detected demo project ID \"demo-no-project\", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail."}}
+[debug] [2026-06-29T08:05:21.542Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2026-06-29T08:05:21.542Z] [firestore] Firestore Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2026-06-29T08:05:21.542Z] [firestore.websocket] websocket server for firestore only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2026-06-29T08:05:21.542Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"firestore":[{"address":"127.0.0.1","family":"IPv4","port":8080}],"firestore.websocket":[{"address":"127.0.0.1","family":"IPv4","port":9150}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2026-06-29T08:05:21.550Z] Write emulator hub locator at C:\Users\Lenovo\AppData\Local\Temp\hub-demo-no-project.json
+[info] i  firestore: downloading cloud-firestore-emulator-v1.21.0.jar... {"metadata":{"emulator":{"name":"firestore"},"message":"downloading cloud-firestore-emulator-v1.21.0.jar..."}}
+[debug] [2026-06-29T08:05:21.570Z] >>> [apiv2][query] GET https://storage.googleapis.com/firebase-preview-drop/emulator/cloud-firestore-emulator-v1.21.0.jar 
+[debug] [2026-06-29T08:05:21.972Z] <<< [apiv2][status] GET https://storage.googleapis.com/firebase-preview-drop/emulator/cloud-firestore-emulator-v1.21.0.jar 200
+[debug] [2026-06-29T08:05:21.973Z] <<< [apiv2][body] GET https://storage.googleapis.com/firebase-preview-drop/emulator/cloud-firestore-emulator-v1.21.0.jar [stream]
+[debug] [2026-06-29T08:05:31.508Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2026-06-29T08:05:31.509Z] Ignoring unsupported arg: single_project_mode_error {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: single_project_mode_error"}}
+[debug] [2026-06-29T08:05:31.509Z] Starting Firestore Emulator with command {"binary":"java","args":["-Dgoogle.cloud_firestore.debug_log_level=FINE","-Duser.language=en","-jar","C:\\Users\\Lenovo\\.cache\\firebase\\emulators\\cloud-firestore-emulator-v1.21.0.jar","--host","127.0.0.1","--port",8080,"--websocket_port",9150,"--database-edition","standard","--project_id","demo-no-project","--rules","C:\\Users\\Lenovo\\Desktop\\Bank-Of-School\\firestore.rules","--single_project_mode",true],"optionalArgs":["port","webchannel_port","host","rules","websocket_port","database-edition","functions_emulator","seed_from_export","project_id","single_project_mode"],"joinArgs":false,"shell":false,"port":8080} {"metadata":{"emulator":{"name":"firestore"},"message":"Starting Firestore Emulator with command {\"binary\":\"java\",\"args\":[\"-Dgoogle.cloud_firestore.debug_log_level=FINE\",\"-Duser.language=en\",\"-jar\",\"C:\\\\Users\\\\Lenovo\\\\.cache\\\\firebase\\\\emulators\\\\cloud-firestore-emulator-v1.21.0.jar\",\"--host\",\"127.0.0.1\",\"--port\",8080,\"--websocket_port\",9150,\"--database-edition\",\"standard\",\"--project_id\",\"demo-no-project\",\"--rules\",\"C:\\\\Users\\\\Lenovo\\\\Desktop\\\\Bank-Of-School\\\\firestore.rules\",\"--single_project_mode\",true],\"optionalArgs\":[\"port\",\"webchannel_port\",\"host\",\"rules\",\"websocket_port\",\"database-edition\",\"functions_emulator\",\"seed_from_export\",\"project_id\",\"single_project_mode\"],\"joinArgs\":false,\"shell\":false,\"port\":8080}"}}
+[info] i  firestore: Firestore Emulator logging to firestore-debug.log {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator logging to \u001b[1mfirestore-debug.log\u001b[22m"}}
+[info] +  firestore: Firestore Emulator was started in standard edition. {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator was started in standard edition."}}
+[info] +  firestore: Firestore Emulator UI websocket is running on 9150. {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator UI websocket is running on 9150."}}
+[info] i  ui: downloading ui-v1.15.0.zip... {"metadata":{"emulator":{"name":"ui"},"message":"downloading ui-v1.15.0.zip..."}}
+[debug] [2026-06-29T08:05:33.402Z] >>> [apiv2][query] GET https://storage.googleapis.com/firebase-preview-drop/emulator/ui-v1.15.0.zip 
+[debug] [2026-06-29T08:05:33.689Z] <<< [apiv2][status] GET https://storage.googleapis.com/firebase-preview-drop/emulator/ui-v1.15.0.zip 200
+[debug] [2026-06-29T08:05:33.690Z] <<< [apiv2][body] GET https://storage.googleapis.com/firebase-preview-drop/emulator/ui-v1.15.0.zip [stream]
+[debug] [2026-06-29T08:05:35.278Z] Data is 3538469
+[debug] [2026-06-29T08:05:35.279Z] [unzip] Entry: client/ (compressed_size=0 bytes, uncompressed_size=0 bytes)
+[debug] [2026-06-29T08:05:35.279Z] [unzip] Processing entry: client\
+[debug] [2026-06-29T08:05:35.279Z] [unzip] mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\
+[debug] [2026-06-29T08:05:35.280Z] [unzip] Entry: client/favicon-16x16.png (compressed_size=293 bytes, uncompressed_size=293 bytes)
+[debug] [2026-06-29T08:05:35.280Z] [unzip] Processing entry: client\favicon-16x16.png
+[debug] [2026-06-29T08:05:35.281Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client
+[debug] [2026-06-29T08:05:35.281Z] [unzip] Writing file: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\favicon-16x16.png
+[debug] [2026-06-29T08:05:35.282Z] [unzip] Entry: client/safari-pinned-tab.svg (compressed_size=1433 bytes, uncompressed_size=2611 bytes)
+[debug] [2026-06-29T08:05:35.282Z] [unzip] Processing entry: client\safari-pinned-tab.svg
+[debug] [2026-06-29T08:05:35.282Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client
+[debug] [2026-06-29T08:05:35.283Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\safari-pinned-tab.svg
+[debug] [2026-06-29T08:05:35.290Z] [unzip] Entry: client/favicon.ico (compressed_size=2933 bytes, uncompressed_size=13294 bytes)
+[debug] [2026-06-29T08:05:35.290Z] [unzip] Processing entry: client\favicon.ico
+[debug] [2026-06-29T08:05:35.290Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client
+[debug] [2026-06-29T08:05:35.295Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\favicon.ico
+[debug] [2026-06-29T08:05:35.297Z] [unzip] Entry: client/index.html (compressed_size=1364 bytes, uncompressed_size=3071 bytes)
+[debug] [2026-06-29T08:05:35.297Z] [unzip] Processing entry: client\index.html
+[debug] [2026-06-29T08:05:35.297Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client
+[debug] [2026-06-29T08:05:35.298Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\index.html
+[debug] [2026-06-29T08:05:35.299Z] [unzip] Entry: client/android-chrome-192x192.png (compressed_size=2684 bytes, uncompressed_size=2684 bytes)
+[debug] [2026-06-29T08:05:35.299Z] [unzip] Processing entry: client\android-chrome-192x192.png
+[debug] [2026-06-29T08:05:35.299Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client
+[debug] [2026-06-29T08:05:35.299Z] [unzip] Writing file: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\android-chrome-192x192.png
+[debug] [2026-06-29T08:05:35.300Z] [unzip] Entry: client/apple-touch-icon.png (compressed_size=2123 bytes, uncompressed_size=2152 bytes)
+[debug] [2026-06-29T08:05:35.300Z] [unzip] Processing entry: client\apple-touch-icon.png
+[debug] [2026-06-29T08:05:35.300Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client
+[debug] [2026-06-29T08:05:35.300Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\apple-touch-icon.png
+[debug] [2026-06-29T08:05:35.302Z] [unzip] Entry: client/android-chrome-512x512.png (compressed_size=5369 bytes, uncompressed_size=5411 bytes)
+[debug] [2026-06-29T08:05:35.303Z] [unzip] Processing entry: client\android-chrome-512x512.png
+[debug] [2026-06-29T08:05:35.303Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client
+[debug] [2026-06-29T08:05:35.303Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\android-chrome-512x512.png
+[debug] [2026-06-29T08:05:35.304Z] [unzip] Entry: client/manifest.json (compressed_size=245 bytes, uncompressed_size=551 bytes)
+[debug] [2026-06-29T08:05:35.305Z] [unzip] Processing entry: client\manifest.json
+[debug] [2026-06-29T08:05:35.305Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client
+[debug] [2026-06-29T08:05:35.305Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\manifest.json
+[debug] [2026-06-29T08:05:35.306Z] [unzip] Entry: client/robots.txt (compressed_size=26 bytes, uncompressed_size=26 bytes)
+[debug] [2026-06-29T08:05:35.306Z] [unzip] Processing entry: client\robots.txt
+[debug] [2026-06-29T08:05:35.306Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client
+[debug] [2026-06-29T08:05:35.307Z] [unzip] Writing file: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\robots.txt
+[debug] [2026-06-29T08:05:35.308Z] [unzip] Entry: client/mstile-150x150.png (compressed_size=2034 bytes, uncompressed_size=2034 bytes)
+[debug] [2026-06-29T08:05:35.308Z] [unzip] Processing entry: client\mstile-150x150.png
+[debug] [2026-06-29T08:05:35.308Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client
+[debug] [2026-06-29T08:05:35.309Z] [unzip] Writing file: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\mstile-150x150.png
+[debug] [2026-06-29T08:05:35.309Z] [unzip] Entry: client/assets/ (compressed_size=0 bytes, uncompressed_size=0 bytes)
+[debug] [2026-06-29T08:05:35.310Z] [unzip] Processing entry: client\assets\
+[debug] [2026-06-29T08:05:35.310Z] [unzip] mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\
+[debug] [2026-06-29T08:05:35.310Z] [unzip] Entry: client/assets/index-BX-A56oj.js (compressed_size=582089 bytes, uncompressed_size=2092775 bytes)
+[debug] [2026-06-29T08:05:35.310Z] [unzip] Processing entry: client\assets\index-BX-A56oj.js
+[debug] [2026-06-29T08:05:35.310Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets
+[debug] [2026-06-29T08:05:35.310Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\index-BX-A56oj.js
+[debug] [2026-06-29T08:05:35.321Z] [unzip] Entry: client/assets/index-CjB9C900.css (compressed_size=35979 bytes, uncompressed_size=298654 bytes)
+[debug] [2026-06-29T08:05:35.321Z] [unzip] Processing entry: client\assets\index-CjB9C900.css
+[debug] [2026-06-29T08:05:35.321Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets
+[debug] [2026-06-29T08:05:35.322Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\index-CjB9C900.css
+[debug] [2026-06-29T08:05:35.323Z] [unzip] Entry: client/assets/index-BX-A56oj.js.map (compressed_size=2362482 bytes, uncompressed_size=10036679 bytes)
+[debug] [2026-06-29T08:05:35.323Z] [unzip] Processing entry: client\assets\index-BX-A56oj.js.map
+[debug] [2026-06-29T08:05:35.323Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets
+[debug] [2026-06-29T08:05:35.324Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\index-BX-A56oj.js.map
+[debug] [2026-06-29T08:05:35.375Z] [unzip] Entry: client/assets/extensions/ (compressed_size=0 bytes, uncompressed_size=0 bytes)
+[debug] [2026-06-29T08:05:35.375Z] [unzip] Processing entry: client\assets\extensions\
+[debug] [2026-06-29T08:05:35.375Z] [unzip] mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\extensions\
+[debug] [2026-06-29T08:05:35.375Z] [unzip] Entry: client/assets/extensions/default-extension.png (compressed_size=1646 bytes, uncompressed_size=1657 bytes)
+[debug] [2026-06-29T08:05:35.375Z] [unzip] Processing entry: client\assets\extensions\default-extension.png
+[debug] [2026-06-29T08:05:35.375Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\extensions
+[debug] [2026-06-29T08:05:35.376Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\extensions\default-extension.png
+[debug] [2026-06-29T08:05:35.377Z] [unzip] Entry: client/assets/img/ (compressed_size=0 bytes, uncompressed_size=0 bytes)
+[debug] [2026-06-29T08:05:35.377Z] [unzip] Processing entry: client\assets\img\
+[debug] [2026-06-29T08:05:35.377Z] [unzip] mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\img\
+[debug] [2026-06-29T08:05:35.377Z] [unzip] Entry: client/assets/img/database.png (compressed_size=29449 bytes, uncompressed_size=29988 bytes)
+[debug] [2026-06-29T08:05:35.377Z] [unzip] Processing entry: client\assets\img\database.png
+[debug] [2026-06-29T08:05:35.377Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\img
+[debug] [2026-06-29T08:05:35.377Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\img\database.png
+[debug] [2026-06-29T08:05:35.378Z] [unzip] Entry: client/assets/provider-icons/ (compressed_size=0 bytes, uncompressed_size=0 bytes)
+[debug] [2026-06-29T08:05:35.378Z] [unzip] Processing entry: client\assets\provider-icons\
+[debug] [2026-06-29T08:05:35.378Z] [unzip] mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\
+[debug] [2026-06-29T08:05:35.379Z] [unzip] Entry: client/assets/provider-icons/auth_service_saml.svg (compressed_size=575 bytes, uncompressed_size=1226 bytes)
+[debug] [2026-06-29T08:05:35.379Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_saml.svg
+[debug] [2026-06-29T08:05:35.379Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.379Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_saml.svg
+[debug] [2026-06-29T08:05:35.380Z] [unzip] Entry: client/assets/provider-icons/auth_service_phone.svg (compressed_size=261 bytes, uncompressed_size=414 bytes)
+[debug] [2026-06-29T08:05:35.380Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_phone.svg
+[debug] [2026-06-29T08:05:35.380Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.380Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_phone.svg
+[debug] [2026-06-29T08:05:35.381Z] [unzip] Entry: client/assets/provider-icons/auth_service_facebook.svg (compressed_size=289 bytes, uncompressed_size=457 bytes)
+[debug] [2026-06-29T08:05:35.381Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_facebook.svg
+[debug] [2026-06-29T08:05:35.381Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.381Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_facebook.svg
+[debug] [2026-06-29T08:05:35.382Z] [unzip] Entry: client/assets/provider-icons/auth_service_game_center.svg (compressed_size=991 bytes, uncompressed_size=3921 bytes)
+[debug] [2026-06-29T08:05:35.382Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_game_center.svg
+[debug] [2026-06-29T08:05:35.382Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.382Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_game_center.svg
+[debug] [2026-06-29T08:05:35.383Z] [unzip] Entry: client/assets/provider-icons/auth_service_apple.svg (compressed_size=230 bytes, uncompressed_size=334 bytes)
+[debug] [2026-06-29T08:05:35.383Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_apple.svg
+[debug] [2026-06-29T08:05:35.383Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.383Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_apple.svg
+[debug] [2026-06-29T08:05:35.384Z] [unzip] Entry: client/assets/provider-icons/auth_service_github.svg (compressed_size=466 bytes, uncompressed_size=838 bytes)
+[debug] [2026-06-29T08:05:35.384Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_github.svg
+[debug] [2026-06-29T08:05:35.384Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.384Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_github.svg
+[debug] [2026-06-29T08:05:35.385Z] [unzip] Entry: client/assets/provider-icons/auth_service_mslive.svg (compressed_size=203 bytes, uncompressed_size=378 bytes)
+[debug] [2026-06-29T08:05:35.385Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_mslive.svg
+[debug] [2026-06-29T08:05:35.385Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.386Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_mslive.svg
+[debug] [2026-06-29T08:05:35.387Z] [unzip] Entry: client/assets/provider-icons/auth_service_yahoo.svg (compressed_size=577 bytes, uncompressed_size=1182 bytes)
+[debug] [2026-06-29T08:05:35.387Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_yahoo.svg
+[debug] [2026-06-29T08:05:35.387Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.387Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_yahoo.svg
+[debug] [2026-06-29T08:05:35.388Z] [unzip] Entry: client/assets/provider-icons/auth_service_twitter.svg (compressed_size=444 bytes, uncompressed_size=751 bytes)
+[debug] [2026-06-29T08:05:35.388Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_twitter.svg
+[debug] [2026-06-29T08:05:35.388Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.388Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_twitter.svg
+[debug] [2026-06-29T08:05:35.389Z] [unzip] Entry: client/assets/provider-icons/auth_service_play_games.svg (compressed_size=565 bytes, uncompressed_size=1173 bytes)
+[debug] [2026-06-29T08:05:35.389Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_play_games.svg
+[debug] [2026-06-29T08:05:35.389Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.389Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_play_games.svg
+[debug] [2026-06-29T08:05:35.390Z] [unzip] Entry: client/assets/provider-icons/auth_service_email.svg (compressed_size=228 bytes, uncompressed_size=326 bytes)
+[debug] [2026-06-29T08:05:35.390Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_email.svg
+[debug] [2026-06-29T08:05:35.390Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.390Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_email.svg
+[debug] [2026-06-29T08:05:35.391Z] [unzip] Entry: client/assets/provider-icons/auth_service_google.svg (compressed_size=409 bytes, uncompressed_size=720 bytes)
+[debug] [2026-06-29T08:05:35.391Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_google.svg
+[debug] [2026-06-29T08:05:35.391Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.391Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_google.svg
+[debug] [2026-06-29T08:05:35.392Z] [unzip] Entry: client/assets/provider-icons/auth_service_oidc.svg (compressed_size=414 bytes, uncompressed_size=858 bytes)
+[debug] [2026-06-29T08:05:35.392Z] [unzip] Processing entry: client\assets\provider-icons\auth_service_oidc.svg
+[debug] [2026-06-29T08:05:35.392Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons
+[debug] [2026-06-29T08:05:35.392Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\assets\provider-icons\auth_service_oidc.svg
+[debug] [2026-06-29T08:05:35.393Z] [unzip] Entry: client/browserconfig.xml (compressed_size=491 bytes, uncompressed_size=822 bytes)
+[debug] [2026-06-29T08:05:35.393Z] [unzip] Processing entry: client\browserconfig.xml
+[debug] [2026-06-29T08:05:35.393Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client
+[debug] [2026-06-29T08:05:35.393Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\browserconfig.xml
+[debug] [2026-06-29T08:05:35.394Z] [unzip] Entry: client/favicon-32x32.png (compressed_size=475 bytes, uncompressed_size=475 bytes)
+[debug] [2026-06-29T08:05:35.394Z] [unzip] Processing entry: client\favicon-32x32.png
+[debug] [2026-06-29T08:05:35.394Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client
+[debug] [2026-06-29T08:05:35.394Z] [unzip] Writing file: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\client\favicon-32x32.png
+[debug] [2026-06-29T08:05:35.394Z] [unzip] Entry: server/ (compressed_size=0 bytes, uncompressed_size=0 bytes)
+[debug] [2026-06-29T08:05:35.394Z] [unzip] Processing entry: server\
+[debug] [2026-06-29T08:05:35.395Z] [unzip] mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\server\
+[debug] [2026-06-29T08:05:35.395Z] [unzip] Entry: server/server.mjs.map (compressed_size=217845 bytes, uncompressed_size=944978 bytes)
+[debug] [2026-06-29T08:05:35.395Z] [unzip] Processing entry: server\server.mjs.map
+[debug] [2026-06-29T08:05:35.395Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\server
+[debug] [2026-06-29T08:05:35.395Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\server\server.mjs.map
+[debug] [2026-06-29T08:05:35.399Z] [unzip] Entry: server/server.mjs (compressed_size=276407 bytes, uncompressed_size=933701 bytes)
+[debug] [2026-06-29T08:05:35.399Z] [unzip] Processing entry: server\server.mjs
+[debug] [2026-06-29T08:05:35.399Z] [unzip] else mkdir: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\server
+[debug] [2026-06-29T08:05:35.399Z] [unzip] deflating: C:\Users\Lenovo\.cache\firebase\emulators\ui-v1.15.0\server\server.mjs
+[debug] [2026-06-29T08:05:35.410Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: . If you are not running the Firebase SQL Connect VSCode extension, this is expected and not an issue.
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌───────────┬────────────────┬─────────────────────────────────┐
+│ Emulator  │ Host:Port      │ View in Emulator UI             │
+├───────────┼────────────────┼─────────────────────────────────┤
+│ Firestore │ 127.0.0.1:8080 │ http://127.0.0.1:4000/firestore │
+└───────────┴────────────────┴─────────────────────────────────┘
+  Emulator Hub host: 127.0.0.1 port: 4400
+  Other reserved ports: 4500, 9150
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
