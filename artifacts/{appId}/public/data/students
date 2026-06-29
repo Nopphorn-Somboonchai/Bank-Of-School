@@ -1,0 +1,10 @@
+{
+  "studentId": "STD69001",           // รหัสอ้างอิงในระบบธนาคาร (Primary Key)
+  "studentNumber": "10245",          // รหัสประจำตัวนักเรียน
+  "fullName": "เด็กชายสมชาย ใจดี",    // ชื่อ-นามสกุล
+  "classRoom": "ม.1/2",              // ชั้นเรียน
+  "status": "Active",                // Active, Inactive, Graduated, Transferred
+  "createdAt": "2026-06-28T08:00:00Z",
+  "updatedAt": "2026-06-28T08:00:00Z",
+  "deletedAt": null
+}

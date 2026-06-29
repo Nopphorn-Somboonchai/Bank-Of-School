@@ -1,0 +1,96 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. ฟังก์ชันตรวจสอบการเข้าสู่ระบบทั่วไป (Authentication Check)
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // 2. ฟังก์ชันตรวจสอบสิทธิ์ความเป็นครู (Teacher Role Check)
+    // เช็คว่ามีเอกสารข้อมูลครูอยู่ในระบบภายใต้ appId (โรงเรียน) นั้น ๆ หรือไม่
+    function isTeacher(appId) {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid));
+    }
+
+    // กฎการเข้าถึงข้อมูลตามโครงการ Bank of School (Multi-tenant โดยใช้ appId)
+    match /artifacts/{appId} {
+      
+      // ==========================================
+      // 1. ข้อมูลคุณครู / เจ้าหน้าที่ระบบ (Users)
+      // ==========================================
+      match /users/{userId} {
+        // อนุญาตให้อ่านข้อมูลครูคนอื่นในโรงเรียนเดียวกันได้ หรืออ่านข้อมูลตัวเอง
+        allow read: if isAuthenticated() && (request.auth.uid == userId || isTeacher(appId));
+        // อนุญาตให้คุณครูสร้างข้อมูลตัวเองได้ตอนสมัครใช้งานครั้งแรก
+        allow create: if isAuthenticated() && request.auth.uid == userId;
+        // อนุญาตให้แก้ไขข้อมูลเฉพาะของตัวเองเท่านั้น
+        allow update: if isAuthenticated() && request.auth.uid == userId;
+        // ไม่อนุญาตให้ลบบัญชีผู้ใช้โดยตรง เพื่อป้องกันข้อมูลผู้สร้างธุรกรรมสูญหาย
+        allow delete: if false;
+      }
+      
+      // ==========================================
+      // 2. ข้อมูลโปรไฟล์นักเรียน (Students)
+      // ==========================================
+      match /students/{studentId} {
+        // เฉพาะคุณครูที่มีรายชื่อในระบบเท่านั้นที่จัดการนักเรียนได้
+        allow read, write: if isTeacher(appId);
+      }
+      
+      // ==========================================
+      // 3. บัญชีเงินฝากนักเรียน (Accounts)
+      // ==========================================
+      match /accounts/{accountId} {
+        // เฉพาะคุณครูเท่านั้นที่ดูยอดเงินและจัดการสถานะบัญชีได้
+        allow read, write: if isTeacher(appId);
+      }
+      
+      // ==========================================
+      // 4. รายการธุรกรรมการเงิน (Transactions)
+      // ==========================================
+      match /transactions/{transactionId} {
+        // คุณครูสามารถดูลายการธุรกรรม (Read) และบันทึกธุรกรรมใหม่ (Create) ได้
+        allow read, create: if isTeacher(appId);
+        // ห้ามแก้ไข (Update) หรือลบ (Delete) รายการธุรกรรมย้อนหลังโดยเด็ดขาด (ความปลอดภัยทางการเงินสูงสุด)
+        // หากต้องการแก้ไข ให้ใช้ระบบ Void และทำ Reversal Transaction เท่านั้น
+        allow update, delete: if false;
+      }
+      
+      // ==========================================
+      // 5. บันทึกประวัติการใช้งานระบบ (Audit Logs)
+      // ==========================================
+      match /audit_logs/{logId} {
+        // อนุญาตให้คุณครูอ่านและบันทึกประวัติการใช้งานระบบได้
+        allow read, create: if isTeacher(appId);
+        // ห้ามทำการดัดแปลง แก้ไข หรือลบประวัติบันทึกการใช้งานโดยเด็ดขาดเพื่อความโปร่งใส
+        allow update, delete: if false;
+      }
+      
+      // ==========================================
+      // 6. การตั้งค่าระบบ (Settings)
+      // ==========================================
+      match /settings/{settingId} {
+        // คุณครูสามารถอ่านและแก้ไขการตั้งค่าระบบได้
+        allow read, write: if isTeacher(appId);
+      }
+      
+      // ==========================================
+      // 7. รายงานผลสรุปการเงิน (Reports)
+      // ==========================================
+      match /reports/{reportId} {
+        // คุณครูเท่านั้นที่สามารถเข้าถึงรายงานได้
+        allow read, write: if isTeacher(appId);
+      }
+      
+      // ==========================================
+      // 8. ตัวนับรหัสรันนิ่งอ้างอิงธุรกรรม (Counter)
+      // ==========================================
+      match /counter/{counterId} {
+        // คุณครูเท่านั้นที่ดึงและเพิ่มยอดตัวนับได้
+        allow read, write: if isTeacher(appId);
+      }
+    }
+  }
+}

@@ -1,0 +1,359 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  ArrowDownToLine, Search, Shield, User, Wallet, 
+  CheckCircle, AlertCircle, X, ChevronLeft, CreditCard,
+  FileText, History
+} from 'lucide-react';
+
+// ==========================================
+// MOCK DATA (ข้อมูลจำลอง)
+// ==========================================
+const mockStudent = {
+  studentId: "STD69001",
+  studentNumber: "10245",
+  fullName: "เด็กชายสมชาย ใจดี",
+  classRoom: "ม.1/2",
+  status: "Active",
+  account: {
+    accountId: "ACC69001",
+    accountNumber: "0126280001",
+    currentBalance: 1550.00
+  }
+};
+
+const mockTeacherSession = {
+  fullName: "คุณครูสมรักษ์ ใจดี",
+  userId: "TEACHER_001"
+};
+
+// ==========================================
+// MAIN COMPONENT
+// ==========================================
+export default function DepositModule() {
+  const [student, setStudent] = useState(mockStudent);
+  const [amount, setAmount] = useState('');
+  const [remark, setRemark] = useState('');
+  
+  // UI States
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [successReceipt, setSuccessReceipt] = useState(null);
+  const [toasts, setToasts] = useState([]);
+
+  // --- Toast Manager ---
+  const showToast = (message, type = 'success') => {
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    }, 4000);
+  };
+
+  // --- Handlers ---
+  const handleAmountChange = (e) => {
+    // รับเฉพาะตัวเลขและจุดทศนิยม 1 จุด
+    const val = e.target.value.replace(/[^0-9.]/g, '');
+    const parts = val.split('.');
+    if (parts.length > 2) return; // ไม่อนุญาตให้มีจุดมากกว่า 1 จุด
+    setAmount(val);
+  };
+
+  const handlePreSubmit = (e) => {
+    e.preventDefault();
+    const depositAmount = parseFloat(amount);
+    
+    if (isNaN(depositAmount) || depositAmount <= 0) {
+      showToast('กรุณาระบุจำนวนเงินให้ถูกต้อง (มากกว่า 0)', 'error');
+      return;
+    }
+    
+    // เปิดหน้าต่างยืนยัน
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmDeposit = async () => {
+    setIsProcessing(true);
+    const depositAmount = parseFloat(amount);
+    const balanceBefore = student.account.currentBalance;
+    const balanceAfter = balanceBefore + depositAmount;
+
+    try {
+      // จำลองการส่งข้อมูลไป Firestore Transaction (Latency)
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // จำลองสร้างเลขอ้างอิงแบบ Running Number
+      const refNo = `DEP2026${Math.floor(100000 + Math.random() * 900000)}`;
+      
+      const transactionData = {
+        refNo,
+        amount: depositAmount,
+        balanceBefore,
+        balanceAfter,
+        time: new Date().toLocaleString('th-TH'),
+        remark: remark || '-'
+      };
+
+      // อัปเดต State จำลองว่าฐานข้อมูลถูกแก้ไขแล้ว
+      setStudent(prev => ({
+        ...prev,
+        account: {
+          ...prev.account,
+          currentBalance: balanceAfter
+        }
+      }));
+
+      setSuccessReceipt(transactionData);
+      showToast(`ทำรายการฝากเงินจำนวน ฿${depositAmount.toLocaleString()} สำเร็จ`);
+      setIsConfirmOpen(false);
+      setAmount('');
+      setRemark('');
+
+    } catch (error) {
+      showToast('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์', 'error');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const resetForm = () => {
+    setSuccessReceipt(null);
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 font-sans text-slate-100 selection:bg-emerald-500 selection:text-white flex flex-col">
+      
+      {/* --- TOP NAVBAR --- */}
+      <header className="h-16 flex items-center justify-between px-6 bg-slate-900 border-b border-slate-800 shrink-0">
+        <div className="flex items-center gap-4">
+          <button className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium">
+            <ChevronLeft className="w-5 h-5" /> กลับ
+          </button>
+          <div className="h-6 w-px bg-slate-700"></div>
+          <h1 className="text-lg font-bold flex items-center gap-2">
+            <Shield className="w-5 h-5 text-emerald-400" /> Bank of School
+          </h1>
+        </div>
+        <div className="text-right hidden sm:block">
+          <p className="text-sm font-semibold text-white leading-none">{mockTeacherSession.fullName}</p>
+        </div>
+      </header>
+
+      {/* --- MAIN CONTENT --- */}
+      <main className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-3xl mx-auto space-y-6">
+          
+          <div className="flex items-center gap-3 mb-8 border-b border-slate-800 pb-4">
+            <div className="bg-emerald-500/20 p-3 rounded-2xl border border-emerald-500/30">
+              <ArrowDownToLine className="w-6 h-6 text-emerald-400" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-white">ระบบฝากเงินออมทรัพย์</h2>
+              <p className="text-sm text-slate-400">บันทึกรายการฝากเงินเข้าบัญชีของนักเรียน</p>
+            </div>
+          </div>
+
+          {!successReceipt ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Left Column: Student Info */}
+              <div className="space-y-6">
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">ข้อมูลผู้ฝากเงิน</h3>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-14 h-14 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700">
+                      <User className="w-6 h-6 text-slate-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-lg">{student.fullName}</h4>
+                      <p className="text-sm text-slate-400 flex items-center gap-1">
+                        <CreditCard className="w-4 h-4"/> รหัส: {student.studentNumber} | ห้อง {student.classRoom}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 flex justify-between items-center">
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">ยอดเงินคงเหลือปัจจุบัน</p>
+                      <p className="text-xl font-bold text-slate-200">
+                        ฿{student.account.currentBalance.toLocaleString('th-TH', {minimumFractionDigits: 2})}
+                      </p>
+                    </div>
+                    <Wallet className="w-8 h-8 text-slate-700" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Deposit Form */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-bl-full pointer-events-none"></div>
+                
+                <form onSubmit={handlePreSubmit} className="relative z-10 space-y-5">
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-300 block">จำนวนเงินที่ต้องการฝาก (บาท)</label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-emerald-400 font-bold text-lg">฿</span>
+                      <input 
+                        type="text" 
+                        value={amount}
+                        onChange={handleAmountChange}
+                        placeholder="0.00"
+                        className="w-full bg-slate-950 border border-slate-700 rounded-xl py-4 pl-10 pr-4 text-2xl font-black text-emerald-400 placeholder-slate-700 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-right tracking-wider"
+                        autoComplete="off"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-300 block">หมายเหตุ (Optional)</label>
+                    <input 
+                      type="text" 
+                      value={remark}
+                      onChange={(e) => setRemark(e.target.value)}
+                      placeholder="เช่น ฝากเงินรายสัปดาห์, เงินเหลือจากค่าขนม"
+                      className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div className="pt-4">
+                    <button 
+                      type="submit"
+                      disabled={!amount || parseFloat(amount) <= 0}
+                      className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                    >
+                      ตรวจสอบข้อมูลการฝาก <ArrowDownToLine className="w-5 h-5" />
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          ) : (
+            
+            /* --- SUCCESS RECEIPT VIEW --- */
+            <div className="max-w-md mx-auto bg-slate-900 border border-emerald-500/30 rounded-3xl p-8 shadow-2xl relative overflow-hidden animate-slideIn">
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
+              
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-500/50">
+                  <CheckCircle className="w-8 h-8 text-emerald-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-white">ทำรายการสำเร็จ</h3>
+                <p className="text-sm text-slate-400 mt-1">{successReceipt.time}</p>
+              </div>
+
+              <div className="bg-slate-950 rounded-xl p-5 space-y-4 mb-6 border border-slate-800">
+                <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                  <span className="text-slate-500 text-sm">เลขอ้างอิง (Ref)</span>
+                  <span className="text-white font-mono text-sm">{successReceipt.refNo}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                  <span className="text-slate-500 text-sm">ชื่อบัญชี</span>
+                  <span className="text-white font-medium text-sm text-right">{student.fullName}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 text-sm">จำนวนเงินฝาก</span>
+                  <span className="text-emerald-400 font-black text-lg">
+                    +฿{successReceipt.amount.toLocaleString('th-TH', {minimumFractionDigits: 2})}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mb-8 px-2">
+                <span className="text-slate-400 text-sm">ยอดเงินคงเหลือล่าสุด</span>
+                <span className="text-white font-bold text-xl">
+                  ฿{successReceipt.balanceAfter.toLocaleString('th-TH', {minimumFractionDigits: 2})}
+                </span>
+              </div>
+
+              <div className="flex gap-3">
+                <button className="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 rounded-xl transition-colors border border-slate-700 text-sm flex justify-center items-center gap-2">
+                  <FileText className="w-4 h-4"/> พิมพ์สลิป
+                </button>
+                <button onClick={resetForm} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-colors shadow-lg shadow-emerald-900/20 text-sm">
+                  ทำรายการใหม่
+                </button>
+              </div>
+            </div>
+          )}
+
+        </div>
+      </main>
+
+      {/* --- CONFIRMATION MODAL (CRITICAL STEP) --- */}
+      {isConfirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-slideIn">
+            <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/30">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <Shield className="w-5 h-5 text-emerald-400"/>
+                ยืนยันความถูกต้อง
+              </h3>
+              {!isProcessing && (
+                <button onClick={() => setIsConfirmOpen(false)} className="text-slate-400 hover:text-white p-1">
+                  <X className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+            
+            <div className="p-6">
+              <div className="text-center mb-6">
+                <p className="text-slate-400 text-sm">คุณกำลังจะทำการฝากเงินให้บัญชีของ</p>
+                <p className="text-white font-bold text-lg mt-1">{student.fullName}</p>
+              </div>
+
+              {/* Balance Calculation Box */}
+              <div className="bg-slate-950 rounded-xl p-4 space-y-3 font-mono text-sm border border-slate-800 mb-6">
+                <div className="flex justify-between text-slate-400">
+                  <span>ยอดเงินเดิม (Balance Before)</span>
+                  <span>฿{student.account.currentBalance.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                </div>
+                <div className="flex justify-between text-emerald-400 font-bold text-base border-b border-slate-800 pb-3">
+                  <span>+ ยอดฝาก (Deposit Amount)</span>
+                  <span>฿{parseFloat(amount).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                </div>
+                <div className="flex justify-between text-white font-bold pt-1">
+                  <span>= ยอดสุทธิ (Balance After)</span>
+                  <span>฿{(student.account.currentBalance + parseFloat(amount)).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-8">
+                <button 
+                  onClick={() => setIsConfirmOpen(false)} 
+                  disabled={isProcessing}
+                  className="flex-1 py-3 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800 border border-slate-700 transition-colors disabled:opacity-50"
+                >
+                  ยกเลิกแก้ไข
+                </button>
+                <button 
+                  onClick={handleConfirmDeposit} 
+                  disabled={isProcessing}
+                  className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center gap-2 disabled:opacity-80 disabled:cursor-not-allowed"
+                >
+                  {isProcessing ? (
+                    <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> บันทึกข้อมูล...</>
+                  ) : (
+                    'ยืนยันการฝากเงิน'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- TOAST NOTIFICATIONS --- */}
+      <div className="fixed bottom-5 right-5 flex flex-col gap-2 z-[60] max-w-sm w-full pointer-events-none">
+        {toasts.map((toast) => (
+          <div key={toast.id} className={`p-4 rounded-xl shadow-lg flex items-center gap-3 border transition-all duration-300 pointer-events-auto animate-slideIn ${
+            toast.type === 'error' ? 'bg-rose-950/90 border-rose-500/40 text-rose-200' : 'bg-emerald-950/90 border-emerald-500/40 text-emerald-200'
+          }`}>
+            {toast.type === 'error' ? <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" /> : <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />}
+            <span className="text-xs font-semibold">{toast.message}</span>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  );
+}

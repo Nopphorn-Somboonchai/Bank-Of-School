@@ -1,0 +1,9 @@
+{
+  "accountId": "ACC69001",           // ID เอกสาร (ตรงกับ Student ID เพื่อความเร็ว)
+  "studentId": "STD69001",           // รหัสอ้างอิงไปหานักเรียน
+  "accountNumber": "0126280001",     // เลขที่บัญชี 10 หลัก
+  "currentBalance": 1550.00,         // ยอดเงินคงเหลือล่าสุด (อัปเดตผ่าน Backend เท่านั้น)
+  "status": "Active",                // Active, Suspended
+  "createdAt": "2026-06-28T08:00:00Z",
+  "lastTransactionAt": "2026-06-28T15:20:00Z"
+}

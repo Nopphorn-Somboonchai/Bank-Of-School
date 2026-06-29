@@ -1,0 +1,14 @@
+{
+    "transactionId": "TX_Auto_ID_456",
+    "referenceNumber": "WDL2026000045",
+    "studentId": "STD69001",
+    "accountId": "ACC69001",
+    "transactionType": "Withdrawal",
+    "amount": 200.00,
+    "balanceBefore": 2050.00,
+    "balanceAfter": 1850.00,
+    "createdAt": "2026-06-29T10:15:00Z",
+    "createdBy": "TEACHER_USER_ID",
+    "remark": "ซื้ออุปกรณ์การเรียน",
+    "status": "Completed"
+}

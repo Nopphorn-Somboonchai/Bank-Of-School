@@ -1,0 +1,9 @@
+{
+  "userId": "TEACHER_69001",
+  "email": "teacher.somrak@school.ac.th",
+  "fullName": "คุณครูสมรักษ์ ใจดี",
+  "role": "Teacher", // Teacher, Admin
+  "classAssignment": "ม.1/2", // ครูประจำชั้นห้องที่ได้รับมอบหมาย
+  "status": "Active", // Active, Suspended
+  "createdAt": "2026-06-28T08:00:00Z"
+}
