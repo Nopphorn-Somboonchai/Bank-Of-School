@@ -1,0 +1,128 @@
+import React, { useState } from 'react';
+import { Mail, Lock, EyeOff, Eye, Shield, AlertCircle, LogIn } from 'lucide-react';
+
+const mockTeacherSession = {
+  userId: "TEACHER_69001",
+  email: "teacher.somrak@school.ac.th",
+  fullName: "คุณครูสมรักษ์ ใจดี",
+  role: "ครูผู้ดูแลระบบ (Teacher)",
+  classAssignment: "ชั้นมัธยมศึกษาปีที่ 1/2",
+  schoolName: "โรงเรียนสาธิตวิทยาคาร",
+  academicYear: "2569"
+};
+
+interface LoginViewProps {
+  onLogin: (session: any) => void;
+  showToast: (message: string, type?: string) => void;
+}
+
+export default function LoginView({ onLogin, showToast }: LoginViewProps) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg('');
+    if (!email || !password) {
+      setErrorMsg('กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน');
+      showToast('กรอกข้อมูลไม่ครบถ้วน', 'error');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1200)); // Simulate API
+      if (email.includes('@') && password === '123456') {
+        onLogin({ ...mockTeacherSession, email, loginTime: new Date().toLocaleString('th-TH') });
+      } else {
+        throw new Error('อีเมลผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง (รหัสผ่านจำลอง: 123456)');
+      }
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
+      setErrorMsg(errMsg);
+      showToast(errMsg, 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col justify-between relative overflow-hidden">
+      {/* Background Glow */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/10 blur-[120px] pointer-events-none" />
+
+      {/* Header */}
+      <header className="w-full mx-auto px-6 py-4 flex justify-between items-center border-b border-slate-800 z-10">
+        <div className="flex items-center gap-3">
+          <div className="bg-emerald-600/20 text-emerald-400 p-2 rounded-xl border border-emerald-500/30">
+            <Shield className="w-6 h-6 animate-pulse" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-white flex items-center gap-2">
+              Bank of School <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">MVP</span>
+            </h1>
+          </div>
+        </div>
+      </header>
+
+      {/* Login Box */}
+      <main className="flex-grow flex items-center justify-center p-6 z-10">
+        <div className="w-full max-w-md bg-slate-800/80 backdrop-blur-lg rounded-2xl border border-slate-700/60 shadow-2xl p-8">
+          <div className="text-center mb-8">
+            <span className="inline-block text-4xl mb-3">🏦</span>
+            <h2 className="text-2xl font-extrabold text-white">เข้าสู่ระบบจัดการบัญชี</h2>
+            <p className="text-sm text-slate-400 mt-1">เฉพาะคุณครูผู้ดูแลระบบที่ได้รับอนุญาต</p>
+          </div>
+
+          {errorMsg && (
+            <div className="mb-6 p-4 bg-rose-900/30 border border-rose-500/30 rounded-xl text-sm text-rose-300 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-400 mt-0.5" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-slate-300 uppercase block">อีเมลคุณครู</label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500"><Mail className="w-5 h-5" /></span>
+                <input
+                  type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@school.ac.th" disabled={isLoading}
+                  className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <label className="text-xs font-semibold text-slate-300 uppercase block">รหัสผ่านบัญชี</label>
+                <span className="text-xs text-emerald-400/80">*จำลอง: 123456</span>
+              </div>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500"><Lock className="w-5 h-5" /></span>
+                <input
+                  type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" disabled={isLoading}
+                  className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-12 text-white placeholder-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm"
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} disabled={isLoading} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white">
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" disabled={isLoading} className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50">
+              {isLoading ? <span>กำลังตรวจสอบสิทธิ์...</span> : <><LogIn className="w-5 h-5" /><span>เข้าสู่ระบบอย่างปลอดภัย</span></>}
+            </button>
+          </form>
+        </div>
+      </main>
+
+      <footer className="w-full text-center py-4 text-xs text-slate-500 border-t border-slate-800 z-10 bg-slate-900">
+        <p>© 2569 Bank of School. สงวนลิขสิทธิ์เฉพาะสถาบันการศึกษา</p>
+      </footer>
+    </div>
+  );
+}
