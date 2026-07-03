@@ -67,7 +67,7 @@ interface LogEntry {
   type: 'info' | 'system' | 'success' | 'error';
 }
 
-export default function SystemTestingPage() {
+export default function SystemTestingPage({ embedded = false }: { embedded?: boolean }) {
   const [suites, setSuites] = useState<TestSuite[]>(initialTestSuites);
   const [isRunning, setIsRunning] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -469,7 +469,7 @@ export default function SystemTestingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 font-sans text-slate-100 flex flex-col relative">
+    <div className={`${embedded ? 'w-full h-full bg-slate-950/10' : 'min-h-screen bg-slate-950'} font-sans text-slate-100 flex flex-col relative`}>
       
       {/* Dynamic Print CSS Injection */}
       <style dangerouslySetInnerHTML={{__html: `
@@ -496,21 +496,23 @@ export default function SystemTestingPage() {
       `}} />
 
       {/* Screen Interface (Hidden during printing) */}
-      <div className="flex-1 flex flex-col no-print">
+      <div className="flex-1 flex flex-col no-print overflow-hidden">
         {/* Header */}
-        <header className="h-16 flex items-center justify-between px-6 bg-slate-900 border-b border-slate-800 shrink-0">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-indigo-400 font-bold text-lg">
-              <Activity className="w-5 h-5 animate-pulse" />
-              <span>Pre-flight Checklist & QA Auditing</span>
+        {!embedded && (
+          <header className="h-16 flex items-center justify-between px-6 bg-slate-900 border-b border-slate-800 shrink-0">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-indigo-400 font-bold text-lg">
+                <Activity className="w-5 h-5 animate-pulse" />
+                <span>Pre-flight Checklist & QA Auditing</span>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-400 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 flex items-center gap-2">
-              <Server className="w-3 h-3" /> Environment: Local (Emulator)
-            </span>
-          </div>
-        </header>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-slate-400 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 flex items-center gap-2">
+                <Server className="w-3 h-3" /> Environment: Local (Emulator)
+              </span>
+            </div>
+          </header>
+        )}
 
         {/* Main Content */}
         <main className="flex-1 overflow-hidden flex flex-col md:flex-row">

@@ -8,8 +8,11 @@ A production-ready, secure, and auditable student savings web application design
 ## 🛠️ Project Overview
 
 ### 👥 Roles & Actor Model
-* **👩‍🏫 Teacher (Bank Officer / Accountant):** Manages all student accounts, performs deposits, withdrawals, settings adjustments, and views reports. Has full system access.
-* **🎓 Student (Customer):** The end customer. Students **cannot** log into the system; their accounts are entirely managed by the teachers.
+* **ระบบมีผู้ใช้งานฝั่งเจ้าหน้าที่ 3 ระดับ ลำดับความสำคัญและการเข้าถึงสิทธิ์อย่างเคร่งครัดดังนี้:**
+  1. **Super admin (ผู้ดูแลสูงสุด):** มีสิทธิ์สูงสุดในการควบคุมระบบทั้งหมด สามารถจัดการสิทธิ์และสร้างบัญชีผู้ใช้งานได้ทุกระดับ (Super admin / admin / user), ตรวจสอบและจัดการ Audit Logs ได้ทุกประเภท, แก้ไขการตั้งค่าระบบส่วนกลาง (Global Settings) และข้อมูลทางการเงินทั้งหมด
+  2. **admin (ครูผู้ดูแลระบบ):** มีสิทธิ์จัดการสิทธิ์และบัญชีผู้ใช้ในระดับครู (user) ลงไปได้, จัดการข้อมูลนักเรียนและบัญชีเงินฝาก, ตรวจสอบ Audit Logs, และแก้ไขการตั้งค่าทั่วไปของระบบ
+  3. **user (ครูผู้ใช้):** มีสิทธิ์ทำรายการฝาก-ถอนเงินให้นักเรียน, เรียกดู Statement, และเข้าดูรายงานทั่วไปได้เท่านั้น **ไม่มีสิทธิ์** เข้าถึงหรือทำรายการในหน้าควบคุมระบบ (Admin Control Panel) หรือกำหนดสิทธิ์การใช้งานของผู้ใช้งานอื่น
+* **🎓 Student (Customer):** นักเรียนเป็นเพียงผู้รับบริการ (ลูกค้า) **ไม่สามารถ** เข้าสู่ระบบได้ บัญชีทั้งหมดของนักเรียนจะได้รับการจัดการโดยผู้ใช้งานระบบฝั่งเจ้าหน้าที่ (Super admin, admin, user)
 
 ### 💻 Technology Stack
 | Layer | Technologies |
@@ -173,12 +176,12 @@ Create a `settings` collection to store configurable values:
 
 | IN SCOPE (Version 1) | OUT OF SCOPE (Version 2+) |
 | :--- | :--- |
-| ✓ Authentication & Teacher Management | ✗ Interest Calculation |
+| ✓ Authentication & 3-Tier Staff Management | ✗ Interest Calculation |
 | ✓ Student Management & Savings Account | ✗ Parent Notification (LINE / SMS) |
 | ✓ Deposit & Withdrawal | ✗ Multiple Branches |
 | ✓ Bank Statement & Passbook | ✗ Approval Workflow |
-| ✓ Dashboard, Reports & Advanced Search | ✗ Multi-level Roles |
-| ✓ Audit Log & Firebase Security Rules | ✗ Advanced Accounting |
+| ✓ Dashboard, Reports & Advanced Search | ✗ Advanced Accounting |
+| ✓ Audit Log, Firebase Security Rules & Multi-level Roles (Super Admin, Admin, User) | |
 
 *Note: The database and architecture must remain extensible so future versions can add these capabilities without breaking existing data.*
 
@@ -214,7 +217,7 @@ graph TD
     P10 --> P11[Phase 11: Dashboard]
     P11 --> P12[Phase 12: Reports]
     P12 --> P13[Phase 13: Audit Log]
-    P13 --> P14[Phase 14: Security Rules]
+    P13 --> P14[Phase 14: Security Rules & Admin Panel]
     P14 --> P15[Phase 15: Testing]
     P15 --> P16[Phase 16: Deployment]
 ```
@@ -226,6 +229,41 @@ For each phase, the design must cover:
 4. **Database & API:** Document schemas and Cloud Function routes.
 5. **Security & Validation:** Firestore rules and server-side checks.
 6. **Edge Cases & Testing Checklist:** Unit and integration testing criteria.
+
+### 📋 Phase Deliverables & Scope Details
+
+Below is the list of key implementation scopes and corresponding files for each phase:
+
+* **Phase 1 to 4:** Planning, architecture, database design, and Firebase configuration.
+* **Phase 5 (Authentication):** User login/logout and session management.
+* **Phase 6 (Student Module):** Student profiles creation, editing, active/inactive/deleted status management.
+* **Phase 7 (Savings Account):** Account ledger initiation and balance linking.
+* **Phase 8 (Deposit Module):** Deposit transaction interface, idempotency keys, and Firestore transactions.
+* **Phase 9 (Withdrawal Module):** Withdrawal interface, balance limits validation, and atomic writes.
+* **Phase 10 (Statement Module):** Account statements generation, ledger views, passbook view.
+* **Phase 11 (Dashboard):** Main dashboard stats, top depositors list, and metrics visualization.
+* **Phase 12 (Reports):** Daily reports, closing metrics, and classroom summaries.
+* **Phase 13 (Audit Log):** Audit tracking for database modifications, teacher action logs.
+* **Phase 14 (Security Rules, Multi-level Roles & Admin Control Panel):**
+  * **Goal:** Implement system-wide database security access rules, enforce the 3-tier user hierarchy, and provide the core administrative control panel.
+  * **3-Tier User Hierarchy Constraints (ลำดับสิทธิ์การใช้งานอย่างเคร่งครัด):**
+    1. **Super admin (ผู้ดูแลสูงสุด):**
+       - มีสิทธิ์เข้าถึงทุกหน้าจอและฟังก์ชันของระบบ รวมถึงหน้าจอควบคุมระบบส่วนกลาง (Global Settings)
+       - สามารถสร้าง แก้ไข ระงับสิทธิ์ และกำหนดบทบาทผู้ใช้งานในระบบได้ทุกระดับ (Super admin / admin / user)
+       - ตรวจสอบประวัติการใช้งานและ Audit Logs ทั้งหมด
+    2. **admin (ครูผู้ดูแลระบบ):**
+       - สามารถเข้าถึงหน้าจอตั้งค่าทั่วไปได้
+       - จัดการบทบาทและเปิดบัญชีผู้ใช้ได้เฉพาะในระดับครู (user) เท่านั้น
+       - จัดการข้อมูลนักเรียน, บัญชีเงินฝาก, และการตรวจสอบความถูกต้องทางการเงินเบื้องต้น
+       - ดูประวัติ Audit Logs ได้
+    3. **user (ครูผู้ใช้):**
+       - จัดการธุรกรรมทางการเงินพื้นฐาน (ฝากเงิน, ถอนเงิน) 
+       - เข้าดูข้อมูลนักเรียนเบื้องต้น ออกรายงานธุรกรรม และพิมพ์ Statement/Passbook
+       - **ห้ามเข้าถึง** หน้าจอ Admin Control Panel หรือส่วนการตั้งค่าความปลอดภัยและสิทธิ์การใช้งานโดยเด็ดขาด
+  * **UI Component:** [admin_control_panel_ui.tsx](file:///h:/05-Physics/Bank-Of-School/app/admin_control_panel_ui.tsx) - Centralized system settings (academic year, school info, financial limits) and Staff/Teacher account permission management based on Super admin and admin constraints.
+  * **Security Rules:** [firestore.rules](file:///h:/05-Physics/Bank-Of-School/firestore.rules) - Firebase security constraints for collections (`users`, `students`, `accounts`, `transactions`, `settings`, `audit_logs`) enforcing role-based permissions (Super Admin vs Admin vs User).
+* **Phase 15 (Testing):** Verification checklist, E2E testing, error flow validation.
+* **Phase 16 (Deployment):** Cloud deployment, production environment setup, and release.
 
 > [!IMPORTANT]
 > **At the end of every phase, wait for approval before proceeding to the next phase.**

@@ -295,10 +295,6 @@ export default function App() {
             <WithdrawMainContent showToast={showToast} userSession={userSession} />
           ) : activeTab === 'reports' ? (
             <ReportsMainContent showToast={showToast} userSession={userSession} />
-          ) : activeTab === 'logs' ? (
-            <LogsMainContent showToast={showToast} userSession={userSession} />
-          ) : activeTab === 'testing' ? (
-            <SystemTestingPage />
           ) : activeTab === 'settings' ? (
             <SettingsMainContent showToast={showToast} userSession={userSession} />
           ) : (
@@ -472,8 +468,6 @@ function DashboardLayout({ children, userSession, onLogout, activeTab, setActive
           <NavItem icon={ArrowDownToLine} label="ฝากเงิน (Deposit)" active={activeTab === 'deposit'} onClick={() => setActiveTab('deposit')} />
           <NavItem icon={ArrowUpFromLine} label="ถอนเงิน (Withdrawal)" active={activeTab === 'withdrawal'} onClick={() => setActiveTab('withdrawal')} />
           <NavItem icon={FileText} label="รายงาน (Reports)" active={activeTab === 'reports'} onClick={() => setActiveTab('reports')} />
-          <NavItem icon={Clock} label="ประวัติระบบ (System Logs)" active={activeTab === 'logs'} onClick={() => setActiveTab('logs')} />
-          <NavItem icon={Activity} label="ทดสอบระบบ (Test Runner)" active={activeTab === 'testing'} onClick={() => setActiveTab('testing')} />
         </div>
 
         <div className="p-4 border-t border-slate-800 space-y-2">
@@ -2586,9 +2580,10 @@ function DatePicker({
 interface LogsMainContentProps {
   showToast: (message: string, type?: string) => void;
   userSession: any;
+  embedded?: boolean;
 }
 
-function LogsMainContent({ showToast, userSession }: LogsMainContentProps) {
+function LogsMainContent({ showToast, userSession, embedded = false }: LogsMainContentProps) {
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [teachers, setTeachers] = useState<any[]>([]);
   const [teachersMap, setTeachersMap] = useState<Record<string, string>>({});
@@ -2732,17 +2727,19 @@ function LogsMainContent({ showToast, userSession }: LogsMainContentProps) {
   return (
     <div className="space-y-6">
       {/* Title & Description */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-black text-white flex items-center gap-2">
-            <Clock className="w-7 h-7 text-emerald-400" />
-            <span>บันทึกประวัติกิจกรรมระบบ (System Logs)</span>
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            แสดงประวัติการเปลี่ยนแปลงข้อมูล การเข้าใช้งานระบบ และพฤติกรรมต่างๆ ของผู้ใช้เพื่อความปลอดภัยและความโปร่งใสสูงสุด
-          </p>
+      {!embedded && (
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-black text-white flex items-center gap-2">
+              <Clock className="w-7 h-7 text-emerald-400" />
+              <span>บันทึกประวัติกิจกรรมระบบ (System Logs)</span>
+            </h2>
+            <p className="text-xs text-slate-400 mt-1">
+              แสดงประวัติการเปลี่ยนแปลงข้อมูล การเข้าใช้งานระบบ และพฤติกรรมต่างๆ ของผู้ใช้เพื่อความปลอดภัยและความโปร่งใสสูงสุด
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Filter panel */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
@@ -5522,7 +5519,7 @@ function WithdrawMainContent({ showToast, userSession }: WithdrawMainContentProp
 // SYSTEM SETTINGS & STAFF MANAGEMENT COMPONENT
 // ==========================================
 function SettingsMainContent({ showToast, userSession }: { showToast: (message: string, type?: string) => void; userSession: any }) {
-  const [activeTab, setActiveTab] = useState<'settings' | 'staff'>('settings');
+  const [activeTab, setActiveTab] = useState<'settings' | 'staff' | 'logs' | 'testing'>('settings');
   const [settings, setSettings] = useState({
     schoolName: "โรงเรียนสาธิตวิทยาคาร",
     academicYear: "2569",
@@ -5839,7 +5836,7 @@ function SettingsMainContent({ showToast, userSession }: { showToast: (message: 
         </div>
         
         {/* Tabs switcher */}
-        <div className="flex bg-slate-900 rounded-xl p-1 border border-slate-800 shadow-inner animate-fadeIn">
+        <div className="flex bg-slate-900 rounded-xl p-1 border border-slate-800 shadow-inner animate-fadeIn flex-wrap gap-1">
           <button 
             type="button"
             onClick={() => setActiveTab('settings')}
@@ -5853,6 +5850,20 @@ function SettingsMainContent({ showToast, userSession }: { showToast: (message: 
             className={`px-5 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'staff' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
           >
             <Users className="w-4 h-4" /> เจ้าหน้าที่ (Staff)
+          </button>
+          <button 
+            type="button"
+            onClick={() => setActiveTab('logs')}
+            className={`px-5 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'logs' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+          >
+            <Clock className="w-4 h-4" /> ประวัติระบบ (System Logs)
+          </button>
+          <button 
+            type="button"
+            onClick={() => setActiveTab('testing')}
+            className={`px-5 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === 'testing' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+          >
+            <Activity className="w-4 h-4" /> ทดสอบระบบ (Test Runner)
           </button>
         </div>
       </div>
@@ -5952,7 +5963,7 @@ function SettingsMainContent({ showToast, userSession }: { showToast: (message: 
             </div>
           </form>
         </div>
-      ) : (
+      ) : activeTab === 'staff' ? (
         /* TAB 2: STAFF LIST */
         <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden animate-fadeIn">
           <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50 flex-wrap gap-4">
@@ -6054,7 +6065,17 @@ function SettingsMainContent({ showToast, userSession }: { showToast: (message: 
             </table>
           </div>
         </div>
-      )}
+      ) : activeTab === 'logs' ? (
+        /* TAB 3: SYSTEM LOGS */
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl p-6 overflow-hidden animate-fadeIn">
+          <LogsMainContent showToast={showToast} userSession={userSession} embedded={true} />
+        </div>
+      ) : activeTab === 'testing' ? (
+        /* TAB 4: TEST RUNNER */
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden animate-fadeIn flex flex-col h-[700px]">
+          <SystemTestingPage embedded={true} />
+        </div>
+      ) : null}
 
       {/* Modal - Add Staff */}
       {showAddModal && (
