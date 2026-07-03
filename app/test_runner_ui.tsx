@@ -5,10 +5,43 @@ import {
   Activity, RefreshCw, Check, Printer, Award, FileText, Lock
 } from 'lucide-react';
 import { db, auth, initializeAppAuth, getAppId } from '@/src/config/firebase';
+import { initializeApp, getApps } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import { 
   doc, getDoc, setDoc, updateDoc, deleteDoc, 
-  runTransaction
+  runTransaction, getFirestore, connectFirestoreEmulator
 } from 'firebase/firestore';
+
+// Initialize secondary Firebase App instance for isolated unauthenticated/security testing
+const getTestFirebaseInstance = () => {
+  const firebaseConfig = {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  };
+
+  const testApp = getApps().find(a => a.name === 'TestRunnerApp') || initializeApp(firebaseConfig, 'TestRunnerApp');
+  const testAuth = getAuth(testApp);
+  const testDb = getFirestore(testApp);
+
+  const useEmulator = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true';
+  const testDbAny = testDb as any;
+  if (useEmulator && !testDbAny._emulatorConnected && typeof window !== 'undefined' && 
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.includes('192.168'))) {
+      const host = window.location.hostname === 'localhost' ? '127.0.0.1' : window.location.hostname;
+      try {
+        connectFirestoreEmulator(testDb, host, 8080);
+        testDbAny._emulatorConnected = true;
+      } catch (err) {
+        console.warn("TestRunnerApp emulator connection warning:", err);
+      }
+  }
+
+  return { testAuth, testDb };
+};
 
 // ==========================================
 // TEST SUITES DEFINITIONS
@@ -134,9 +167,10 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
     updateTestStatus("suite-sec", "s1", "running");
     addLog(" s1: ตรวจสอบการบล็อกการเชื่อมต่อที่ไม่ระบุตัวตน (Unauthenticated Access)...", "info");
     try {
+      const { testAuth, testDb } = getTestFirebaseInstance();
       // 1. Sign out to test unauthenticated
-      await auth.signOut();
-      const testDocRef = doc(db, 'artifacts', appId, 'students', 'test-sec-unauth');
+      await testAuth.signOut();
+      const testDocRef = doc(testDb, 'artifacts', appId, 'students', 'test-sec-unauth');
       await getDoc(testDocRef);
       
       // If no exception, it is vulnerable!
@@ -149,14 +183,6 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
       } else {
         addLog(`❌ ข้อผิดพลาด: ตรวจพบบั๊กแปลกปลอม (${err.message})`, "error");
         updateTestStatus("suite-sec", "s1", "failed");
-      }
-    } finally {
-      // Re-authenticate
-      try {
-        await initializeAppAuth();
-        addLog("🔑 คืนค่าระบบ: ล็อกอินเข้าระบบแบบปลอดภัยสำเร็จ", "info");
-      } catch (authErr: any) {
-        addLog(`⚠️ แจ้งเตือน: ไม่สามารถยืนยันสิทธิ์เดิมได้ (${authErr.message})`, "error");
       }
     }
     completedCount++;

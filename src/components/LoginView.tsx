@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
 import { Mail, Lock, EyeOff, Eye, Shield, AlertCircle, LogIn } from 'lucide-react';
-
-const mockTeacherSession = {
-  userId: "TEACHER_69001",
-  email: "teacher.somrak@school.ac.th",
-  fullName: "คุณครูสมรักษ์ ใจดี",
-  role: "ครูผู้ดูแลระบบ (Teacher)",
-  classAssignment: "ชั้นมัธยมศึกษาปีที่ 1/2",
-  schoolName: "โรงเรียนสาธิตวิทยาคาร",
-  academicYear: "2569"
-};
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '@/src/config/firebase';
+import { getPublicDoc } from '@/src/utils/dbPaths';
+import { getDoc, setDoc } from 'firebase/firestore';
 
 interface LoginViewProps {
   onLogin: (session: any) => void;
@@ -33,14 +27,61 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
     }
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1200)); // Simulate API
-      if (email.includes('@') && password === '123456') {
-        onLogin({ ...mockTeacherSession, email, loginTime: new Date().toLocaleString('th-TH') });
+      let sessionData;
+      
+      // Try real Firebase Auth
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      const userDocRef = getPublicDoc('users', user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      
+      if (userDocSnap.exists()) {
+        const data = userDocSnap.data();
+        sessionData = {
+          userId: user.uid,
+          email: user.email || data.email,
+          fullName: data.fullName || "คุณครูผู้ดูแลระบบ",
+          role: data.role || "ครูผู้ดูแลระบบ (Teacher)",
+          classAssignment: data.classAssignment || "ชั้นมัธยมศึกษาปีที่ 1/2",
+          schoolName: "โรงเรียนสาธิตวิทยาคาร",
+          academicYear: "2569",
+          loginTime: new Date().toLocaleString('th-TH')
+        };
       } else {
-        throw new Error('อีเมลผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง (รหัสผ่านจำลอง: 123456)');
+        // If Firestore document doesn't exist, auto-register it
+        const newTeacherDoc = {
+          userId: user.uid,
+          email: user.email || email,
+          fullName: "คุณครูผู้ดูแลระบบ",
+          role: "Teacher",
+          classAssignment: "ชั้นมัธยมศึกษาปีที่ 1/2",
+          status: "Active",
+          createdAt: new Date().toISOString()
+        };
+        await setDoc(userDocRef, newTeacherDoc);
+        sessionData = {
+          userId: user.uid,
+          email: newTeacherDoc.email,
+          fullName: newTeacherDoc.fullName,
+          role: "ครูผู้ดูแลระบบ (Teacher)",
+          classAssignment: newTeacherDoc.classAssignment,
+          schoolName: "โรงเรียนสาธิตวิทยาคาร",
+          academicYear: "2569",
+          loginTime: new Date().toLocaleString('th-TH')
+        };
       }
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
+      
+      onLogin(sessionData);
+    } catch (err: any) {
+      console.error("Login verification failed:", err);
+      const errMsg = err.code === 'auth/invalid-credential' 
+        ? 'อีเมลผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง'
+        : err.code === 'auth/user-not-found'
+        ? 'ไม่พบผู้ใช้นี้ในระบบ'
+        : err.code === 'auth/wrong-password'
+        ? 'รหัสผ่านไม่ถูกต้อง'
+        : err.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
       setErrorMsg(errMsg);
       showToast(errMsg, 'error');
     } finally {
@@ -99,7 +140,6 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <label className="text-xs font-semibold text-slate-300 uppercase block">รหัสผ่านบัญชี</label>
-                <span className="text-xs text-emerald-400/80">*จำลอง: 123456</span>
               </div>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500"><Lock className="w-5 h-5" /></span>

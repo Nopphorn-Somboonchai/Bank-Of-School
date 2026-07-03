@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, AlertCircle, CheckCircle } from 'lucide-react';
-import { db, initializeAppAuth, getAppId } from '@/src/config/firebase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth, db, getAppId } from '@/src/config/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import { BankDataProvider } from '@/src/context/BankDataContext';
 import { writeAuditLog } from '@/src/utils/bankUtils';
 
@@ -17,16 +18,6 @@ import WithdrawMainContent from '@/src/components/WithdrawMainContent';
 import ReportsMainContent from '@/src/components/ReportsMainContent';
 import SettingsMainContent from '@/src/components/SettingsMainContent';
 
-const mockTeacherSession = {
-  userId: "TEACHER_69001",
-  email: "teacher.somrak@school.ac.th",
-  fullName: "คุณครูสมรักษ์ ใจดี",
-  role: "ครูผู้ดูแลระบบ (Teacher)",
-  classAssignment: "ชั้นมัธยมศึกษาปีที่ 1/2",
-  schoolName: "โรงเรียนสาธิตวิทยาคาร",
-  academicYear: "2569"
-};
-
 export default function App() {
   const [userSession, setUserSession] = useState<any>(null);
   const [toasts, setToasts] = useState<any[]>([]);
@@ -34,40 +25,45 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(true);
   const [firebaseUid, setFirebaseUid] = useState<string | null>(null);
 
-  // --- Firebase Auth & Teacher Registration ---
+  // --- Firebase Auth State Listener & Session Restoration ---
   useEffect(() => {
-    const initAuth = async () => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
-        const uid = await initializeAppAuth();
-        setFirebaseUid(uid);
-
-        // Auto-register this UID as a teacher document to pass security rules
-        const appId = getAppId();
-        const userDocRef = doc(db, 'artifacts', appId, 'users', uid);
-        const userDocSnap = await getDoc(userDocRef);
-
-        if (!userDocSnap.exists()) {
-          await setDoc(userDocRef, {
-            userId: uid,
-            email: mockTeacherSession.email,
-            fullName: mockTeacherSession.fullName,
-            role: "Teacher",
-            classAssignment: mockTeacherSession.classAssignment,
-            status: "Active",
-            createdAt: new Date().toISOString()
-          });
-          console.log("Teacher auto-registered in Firestore for UID:", uid);
+        if (user) {
+          setFirebaseUid(user.uid);
+          
+          // Load existing session details from Firestore
+          const appId = getAppId();
+          const userDocRef = doc(db, 'artifacts', appId, 'users', user.uid);
+          const userDocSnap = await getDoc(userDocRef);
+          
+          if (userDocSnap.exists()) {
+            const data = userDocSnap.data();
+            setUserSession({
+              userId: user.uid,
+              email: user.email || data.email,
+              fullName: data.fullName || "คุณครูผู้ดูแลระบบ",
+              role: data.role || "ครูผู้ดูแลระบบ (Teacher)",
+              classAssignment: data.classAssignment || "ชั้นมัธยมศึกษาปีที่ 1/2",
+              schoolName: "โรงเรียนสาธิตวิทยาคาร",
+              academicYear: "2569",
+              loginTime: new Date().toLocaleString('th-TH')
+            });
+          } else {
+            setUserSession(null);
+          }
         } else {
-          console.log("Teacher already registered in Firestore for UID:", uid);
+          setFirebaseUid(null);
+          setUserSession(null);
         }
       } catch (error) {
-        console.error("Firebase Auth or Registration failed:", error);
-        showToast("เกิดข้อผิดพลาดในการเชื่อมต่อระบบความปลอดภัยฐานข้อมูล", "error");
+        console.error("Firebase Auth initialization failed:", error);
       } finally {
         setAuthLoading(false);
       }
-    };
-    initAuth();
+    });
+
+    return () => unsubscribe();
   }, []);
 
   // --- Toast Manager ---
@@ -122,7 +118,7 @@ export default function App() {
         <BankDataProvider userSession={userSession} showToast={showToast}>
           <DashboardLayout 
             userSession={userSession} 
-            onLogout={() => {
+            onLogout={async () => {
               if (userSession) {
                 writeAuditLog(
                   'Logout',
@@ -132,6 +128,11 @@ export default function App() {
                   `คุณครู ${userSession.fullName} ออกจากระบบ`,
                   userSession.userId
                 );
+              }
+              try {
+                await signOut(auth);
+              } catch (err) {
+                console.error("Failed to sign out from Firebase:", err);
               }
               setUserSession(null);
               showToast('ออกจากระบบเรียบร้อยแล้ว', 'success');

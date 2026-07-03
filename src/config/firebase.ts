@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, signInWithCustomToken, signInAnonymously } from 'firebase/auth';
-import { getFirestore, connectFirestoreEmulator, doc, getDoc, setDoc } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 // 1. ดึงข้อมูลการกำหนดค่า Firebase (ปลอดภัยจากค่าคงที่ระบบและ Local Env)
 const getFirebaseConfig = () => {
@@ -69,30 +69,6 @@ export const initializeAppAuth = async (): Promise<string> => {
             // ลงชื่อเข้าใช้งานแบบนิรนาม (Anonymous) เพื่อให้ผ่านเงื่อนไขการระบุตัวตนเบื้องต้น
             const userCredential = await signInAnonymously(auth);
             uid = userCredential.user.uid;
-        }
-
-        // ลงทะเบียน UID ของผู้ใช้ให้เป็นบทบาทคุณครู (Teacher) โดยอัตโนมัติ เพื่อให้ผ่านเงื่อนไขระบบความปลอดภัย (Security Rules)
-        try {
-            const appId = getAppId();
-            const userDocRef = doc(db, 'artifacts', appId, 'users', uid);
-            const userDocSnap = await getDoc(userDocRef);
-
-            if (!userDocSnap.exists()) {
-                await setDoc(userDocRef, {
-                    userId: uid,
-                    email: "teacher.somrak@school.ac.th",
-                    fullName: "คุณครูสมรักษ์ ใจดี",
-                    role: "Teacher",
-                    classAssignment: "ชั้นมัธยมศึกษาปีที่ 1/2",
-                    status: "Active",
-                    createdAt: new Date().toISOString()
-                });
-                console.log("Teacher auto-registered in Firestore for UID:", uid);
-            } else {
-                console.log("Teacher already registered in Firestore for UID:", uid);
-            }
-        } catch (dbErr) {
-            console.error("Failed to auto-register teacher in initializeAppAuth:", dbErr);
         }
 
         return uid;
