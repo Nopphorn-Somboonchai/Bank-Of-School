@@ -5,6 +5,55 @@ import {
   ChevronLeft, Building, Database, Key, Server
 } from 'lucide-react';
 
+interface Staff {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  lastLogin: string;
+}
+
+const initialSettings = {
+  schoolName: "โรงเรียนสาธิตวิทยาคาร",
+  academicYear: "2569",
+  currencySymbol: "฿",
+  minDeposit: 10,
+  minWithdrawal: 20,
+};
+
+const mockAdminSession = {
+  fullName: "คุณครูผู้ดูแลระบบสูงสุด",
+  role: "Super Admin",
+};
+
+const mockStaffList: Staff[] = [
+  {
+    id: "STAFF_1",
+    name: "คุณครูสมศักดิ์ รักเรียน",
+    email: "somsak@school.mail",
+    role: "Admin",
+    status: "Active",
+    lastLogin: "2026-07-07 10:30",
+  },
+  {
+    id: "STAFF_2",
+    name: "คุณครูวิภา ใจดี",
+    email: "wipa@school.mail",
+    role: "Teacher",
+    status: "Active",
+    lastLogin: "2026-07-06 14:15",
+  },
+  {
+    id: "STAFF_3",
+    name: "คุณครูสมชาย เรียนดี",
+    email: "somchai@school.mail",
+    role: "Teacher",
+    status: "Suspended",
+    lastLogin: "2026-07-01 09:00",
+  }
+];
+
 // ==========================================
 // MAIN COMPONENT
 // ==========================================
@@ -195,7 +244,7 @@ export default function AdminManagementModule() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/50">
-                    {mockStaffList.map((staff) => (
+                    {mockStaffList.map((staff: Staff) => (
                       <tr key={staff.id} className="hover:bg-slate-800/30 transition-colors">
                         <td className="px-6 py-4 font-medium text-white">{staff.name}</td>
                         <td className="px-6 py-4 text-slate-400">{staff.email}</td>
