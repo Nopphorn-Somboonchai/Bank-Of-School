@@ -149,25 +149,13 @@ export default function App() {
               setAuthLoading(false);
               return;
             }
-            // Get dynamic school name
-            let schoolName = "โรงเรียนสาธิตวิทยาคาร";
-            try {
-              const configDocRef = doc(db, 'artifacts', appId, 'settings', 'system_config');
-              const configDocSnap = await getDoc(configDocRef);
-              if (configDocSnap.exists()) {
-                schoolName = configDocSnap.data().schoolName || "โรงเรียนสาธิตวิทยาคาร";
-              }
-            } catch (err) {
-              console.error("Failed to load schoolName on init:", err);
-            }
-
             setUserSession({
               userId: user.uid,
               email: user.email || data.email,
               fullName: data.fullName || "คุณครูผู้ดูแลระบบ",
               role: data.role || "ครูผู้ดูแลระบบ (Teacher)",
               classAssignment: data.classAssignment || "ชั้นมัธยมศึกษาปีที่ 1/2",
-              schoolName: schoolName,
+              schoolName: "โรงเรียนสาธิตวิทยาคาร",
               academicYear: "2569",
               loginTime: new Date().toLocaleString('th-TH')
             });
@@ -188,6 +176,34 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+  // Listen for global settings changes (e.g. schoolName, academicYear) to keep session updated reactively
+  useEffect(() => {
+    if (!userSession?.userId) return;
+
+    const appId = getAppId();
+    const configDocRef = doc(db, 'artifacts', appId, 'settings', 'system_config');
+    const unsubscribe = onSnapshot(configDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setUserSession((prev: any) => {
+          if (!prev) return null;
+          if (prev.schoolName === data.schoolName && prev.academicYear === data.academicYear) {
+            return prev;
+          }
+          return {
+            ...prev,
+            schoolName: data.schoolName || "โรงเรียนสาธิตวิทยาคาร",
+            academicYear: data.academicYear || "2569"
+          };
+        });
+      }
+    }, (error) => {
+      console.error("Error subscribing to system settings in app page:", error);
+    });
+
+    return () => unsubscribe();
+  }, [userSession?.userId]);
+
   // Redirect non-admin users from settings tab to dashboard
   useEffect(() => {
     if (userSession && activeTab === 'settings') {
@@ -197,26 +213,6 @@ export default function App() {
       }
     }
   }, [activeTab, userSession]);
-
-  // Listen to system settings to keep schoolName in userSession updated dynamically
-  useEffect(() => {
-    if (!userSession) return;
-    const appId = getAppId();
-    const configDocRef = doc(db, 'artifacts', appId, 'settings', 'system_config');
-    const unsubscribe = onSnapshot(configDocRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        if (data.schoolName) {
-          setUserSession((prev: any) => {
-            if (!prev) return null;
-            if (prev.schoolName === data.schoolName) return prev;
-            return { ...prev, schoolName: data.schoolName };
-          });
-        }
-      }
-    });
-    return () => unsubscribe();
-  }, [userSession?.userId]);
 
   // --- Toast Manager ---
   const showToast = useCallback((message: string, type: string = 'success') => {
