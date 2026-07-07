@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Mail, Lock, EyeOff, Eye, Shield, AlertCircle, LogIn } from 'lucide-react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '@/src/config/firebase';
-import { getPublicDoc } from '@/src/utils/dbPaths';
-import { getDoc, setDoc } from 'firebase/firestore';
+import { getPublicDoc, getPublicCollection } from '@/src/utils/dbPaths';
+import { getDoc, setDoc, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 
 interface LoginViewProps {
   onLogin: (session: any) => void;
@@ -49,22 +49,46 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
           loginTime: new Date().toLocaleString('th-TH')
         };
       } else {
-        // If Firestore document doesn't exist, auto-register it
+        // If Firestore document doesn't exist, search for a placeholder created by Admin (by email)
+        const usersCol = getPublicCollection('users');
+        const q = query(usersCol, where('email', '==', user.email || email));
+        const querySnapshot = await getDocs(q);
+        
+        let placeholderData: any = null;
+        let placeholderDocRef: any = null;
+        
+        querySnapshot.forEach((docSnap) => {
+          if (docSnap.id.startsWith('STAFF_')) {
+            placeholderData = docSnap.data();
+            placeholderDocRef = docSnap.ref;
+          }
+        });
+
         const newTeacherDoc = {
           userId: user.uid,
           email: user.email || email,
-          fullName: "คุณครูผู้ดูแลระบบ",
-          role: "Teacher",
-          classAssignment: "ชั้นมัธยมศึกษาปีที่ 1/2",
-          status: "Active",
+          fullName: placeholderData?.fullName || "คุณครูผู้ดูแลระบบ",
+          role: placeholderData?.role || "Teacher",
+          classAssignment: placeholderData?.classAssignment || "ชั้นมัธยมศึกษาปีที่ 1/2",
+          status: placeholderData?.status || "Active",
           createdAt: new Date().toISOString()
         };
         await setDoc(userDocRef, newTeacherDoc);
+
+        // Delete temporary placeholder document if it exists
+        if (placeholderDocRef) {
+          try {
+            await deleteDoc(placeholderDocRef);
+          } catch (delErr) {
+            console.error("Failed to delete temporary staff placeholder:", delErr);
+          }
+        }
+
         sessionData = {
           userId: user.uid,
           email: newTeacherDoc.email,
           fullName: newTeacherDoc.fullName,
-          role: "ครูผู้ดูแลระบบ (Teacher)",
+          role: newTeacherDoc.role || "ครูผู้ดูแลระบบ (Teacher)",
           classAssignment: newTeacherDoc.classAssignment,
           schoolName: "โรงเรียนสาธิตวิทยาคาร",
           academicYear: "2569",

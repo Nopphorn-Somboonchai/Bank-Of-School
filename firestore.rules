@@ -14,6 +14,16 @@ service cloud.firestore {
         exists(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid));
     }
 
+    // 3. ฟังก์ชันตรวจสอบสิทธิ์ผู้ดูแลระบบ (Admin Check)
+    function isAdmin(appId) {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid)) &&
+        (
+          get(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid)).data.role == 'Admin' ||
+          get(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid)).data.role == 'Super Admin'
+        );
+    }
+
     // Fallback: ปิดกั้นการเข้าถึงที่ไม่ได้ระบุไว้ในเงื่อนไขอย่างชัดเจน (ป้องกันบุคคลภายนอกเข้าถึงข้อมูลทุกส่วน)
     match /{document=**} {
       allow read, write: if false;
@@ -28,12 +38,12 @@ service cloud.firestore {
       match /users/{userId} {
         // อนุญาตให้อ่านข้อมูลครูคนอื่นในโรงเรียนเดียวกันได้ หรืออ่านข้อมูลตัวเอง
         allow read: if isAuthenticated() && (request.auth.uid == userId || isTeacher(appId));
-        // อนุญาตให้คุณครูสร้างข้อมูลตัวเองได้ตอนสมัครใช้งานครั้งแรก
-        allow create: if isAuthenticated() && request.auth.uid == userId;
-        // อนุญาตให้แก้ไขข้อมูลเฉพาะของตัวเองเท่านั้น
-        allow update: if isAuthenticated() && request.auth.uid == userId;
-        // ไม่อนุญาตให้ลบบัญชีผู้ใช้โดยตรง เพื่อป้องกันข้อมูลผู้สร้างธุรกรรมสูญหาย (No-Delete)
-        allow delete: if false;
+        // อนุญาตให้คุณครูสร้างข้อมูลตัวเองได้ตอนสมัครใช้งานครั้งแรก หรือโดย Admin
+        allow create: if isAuthenticated() && (request.auth.uid == userId || isAdmin(appId));
+        // อนุญาตให้แก้ไขข้อมูลเฉพาะของตัวเอง หรือโดย Admin
+        allow update: if isAuthenticated() && (request.auth.uid == userId || isAdmin(appId));
+        // อนุญาตให้ลบข้อมูลโดย Admin หรือลบ temporary placeholder ของตนเอง (ที่มีอีเมลตรงกัน)
+        allow delete: if isAuthenticated() && (isAdmin(appId) || resource.data.email == request.auth.token.email);
       }
       
       // ==========================================
@@ -83,9 +93,19 @@ service cloud.firestore {
       // ==========================================
       // 6. การตั้งค่าระบบ (Settings)
       // ==========================================
-      match /settings/{settingId} {
-        // คุณครูสามารถอ่านและแก้ไขการตั้งค่าระบบได้
+      match /settings/system_config {
+        // เฉพาะผู้ดูแลระบบเท่านั้นที่สามารถอ่านและแก้ไขการตั้งค่าระบบได้
+        allow read, write: if isAdmin(appId);
+      }
+      
+      match /settings/dashboard_summary {
+        // คุณครูสามารถอ่านและแก้ไขข้อมูลสรุปแดชบอร์ดได้
         allow read, write: if isTeacher(appId);
+      }
+
+      match /settings/{settingId} {
+        // กฎทั่วไปสำหรับการตั้งค่าอื่นๆ (ถ้ามี)
+        allow read, write: if isAdmin(appId);
       }
       
       // ==========================================

@@ -71,9 +71,11 @@ export default function DashboardLayout({
           <NavItem icon={FileText} label="รายงาน (Reports)" active={activeTab === 'reports'} onClick={() => setActiveTab('reports')} />
         </div>
 
-        <div className="p-4 border-t border-slate-800 space-y-2">
-          <NavItem icon={Settings} label="การตั้งค่า (Settings)" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
-        </div>
+        {(userSession?.role === 'Admin' || userSession?.role === 'Super Admin' || userSession?.role?.includes('Admin') || userSession?.role?.includes('Super Admin')) && (
+          <div className="p-4 border-t border-slate-800 space-y-2">
+            <NavItem icon={Settings} label="การตั้งค่า (Settings)" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
+          </div>
+        )}
       </aside>
 
       {/* Main Content Area */}

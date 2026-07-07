@@ -623,10 +623,11 @@ export default function SettingsMainContent({ showToast, userSession }: Settings
                   <select 
                     value={formRole}
                     onChange={e => setFormRole(e.target.value)}
-                    className="w-full bg-slate-955 border border-slate-705 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-955 border border-slate-705 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500 cursor-pointer"
+                    style={{ colorScheme: 'dark' }}
                   >
-                    <option value="Teacher">Teacher (คุณครู)</option>
-                    <option value="Admin">Admin (ผู้ดูแลระบบ)</option>
+                    <option value="Teacher" className="bg-slate-900 text-white">Teacher (คุณครู)</option>
+                    <option value="Admin" className="bg-slate-900 text-white">Admin (ผู้ดูแลระบบ)</option>
                   </select>
                 </div>
 
@@ -635,10 +636,11 @@ export default function SettingsMainContent({ showToast, userSession }: Settings
                   <select 
                     value={formStatus}
                     onChange={e => setFormStatus(e.target.value)}
-                    className="w-full bg-slate-955 border border-slate-705 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-955 border border-slate-705 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500 cursor-pointer"
+                    style={{ colorScheme: 'dark' }}
                   >
-                    <option value="Active">Active (พร้อมใช้งาน)</option>
-                    <option value="Suspended">Suspended (ระงับการใช้งาน)</option>
+                    <option value="Active" className="bg-slate-900 text-white">Active (พร้อมใช้งาน)</option>
+                    <option value="Suspended" className="bg-slate-900 text-white">Suspended (ระงับการใช้งาน)</option>
                   </select>
                 </div>
               </div>
@@ -720,10 +722,11 @@ export default function SettingsMainContent({ showToast, userSession }: Settings
                   <select 
                     value={formRole}
                     onChange={e => setFormRole(e.target.value)}
-                    className="w-full bg-slate-955 border border-slate-750 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-955 border border-slate-750 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500 cursor-pointer"
+                    style={{ colorScheme: 'dark' }}
                   >
-                    <option value="Teacher">Teacher (คุณครู)</option>
-                    <option value="Admin">Admin (ผู้ดูแลระบบ)</option>
+                    <option value="Teacher" className="bg-slate-900 text-white">Teacher (คุณครู)</option>
+                    <option value="Admin" className="bg-slate-900 text-white">Admin (ผู้ดูแลระบบ)</option>
                   </select>
                 </div>
 
@@ -732,10 +735,11 @@ export default function SettingsMainContent({ showToast, userSession }: Settings
                   <select 
                     value={formStatus}
                     onChange={e => setFormStatus(e.target.value)}
-                    className="w-full bg-slate-955 border border-slate-750 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-955 border border-slate-750 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500 cursor-pointer"
+                    style={{ colorScheme: 'dark' }}
                   >
-                    <option value="Active">Active (พร้อมใช้งาน)</option>
-                    <option value="Suspended">Suspended (ระงับการใช้งาน)</option>
+                    <option value="Active" className="bg-slate-900 text-white">Active (พร้อมใช้งาน)</option>
+                    <option value="Suspended" className="bg-slate-900 text-white">Suspended (ระงับการใช้งาน)</option>
                   </select>
                 </div>
               </div>

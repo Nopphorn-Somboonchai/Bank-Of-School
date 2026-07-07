@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { RefreshCw, AlertCircle, CheckCircle } from 'lucide-react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth, db, getAppId } from '@/src/config/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, setDoc, deleteDoc, query, where, getDocs } from 'firebase/firestore';
 import { BankDataProvider } from '@/src/context/BankDataContext';
 import { writeAuditLog } from '@/src/utils/bankUtils';
 
@@ -35,7 +35,47 @@ export default function App() {
           // Load existing session details from Firestore
           const appId = getAppId();
           const userDocRef = doc(db, 'artifacts', appId, 'users', user.uid);
-          const userDocSnap = await getDoc(userDocRef);
+          let userDocSnap = await getDoc(userDocRef);
+          
+          if (!userDocSnap.exists()) {
+            // Search for a placeholder created by Admin (by email) and migrate it
+            const usersCol = collection(db, 'artifacts', appId, 'users');
+            const q = query(usersCol, where('email', '==', user.email));
+            const querySnapshot = await getDocs(q);
+            
+            let placeholderData: any = null;
+            let placeholderDocRef: any = null;
+            
+            querySnapshot.forEach((docSnap) => {
+              if (docSnap.id.startsWith('STAFF_')) {
+                placeholderData = docSnap.data();
+                placeholderDocRef = docSnap.ref;
+              }
+            });
+            
+            if (placeholderData) {
+              const newTeacherDoc = {
+                userId: user.uid,
+                email: user.email,
+                fullName: placeholderData.fullName || "คุณครูผู้ดูแลระบบ",
+                role: placeholderData.role || "Teacher",
+                classAssignment: placeholderData.classAssignment || "ชั้นมัธยมศึกษาปีที่ 1/2",
+                status: placeholderData.status || "Active",
+                createdAt: new Date().toISOString()
+              };
+              await setDoc(userDocRef, newTeacherDoc);
+              
+              if (placeholderDocRef) {
+                try {
+                  await deleteDoc(placeholderDocRef);
+                } catch (delErr) {
+                  console.error("Failed to delete placeholder in page listener:", delErr);
+                }
+              }
+              // Reload document snapshot
+              userDocSnap = await getDoc(userDocRef);
+            }
+          }
           
           if (userDocSnap.exists()) {
             const data = userDocSnap.data();
@@ -65,6 +105,16 @@ export default function App() {
 
     return () => unsubscribe();
   }, []);
+
+  // Redirect non-admin users from settings tab to dashboard
+  useEffect(() => {
+    if (userSession && activeTab === 'settings') {
+      const isAdmin = userSession.role === 'Admin' || userSession.role === 'Super Admin' || userSession.role?.includes('Admin') || userSession.role?.includes('Super Admin');
+      if (!isAdmin) {
+        setActiveTab('dashboard');
+      }
+    }
+  }, [activeTab, userSession]);
 
   // --- Toast Manager ---
   const showToast = (message: string, type: string = 'success') => {
@@ -150,11 +200,11 @@ export default function App() {
               <WithdrawMainContent showToast={showToast} userSession={userSession} />
             ) : activeTab === 'reports' ? (
               <ReportsMainContent showToast={showToast} userSession={userSession} />
-            ) : activeTab === 'settings' ? (
+            ) : activeTab === 'settings' && (userSession?.role === 'Admin' || userSession?.role === 'Super Admin' || userSession?.role?.includes('Admin') || userSession?.role?.includes('Super Admin')) ? (
               <SettingsMainContent showToast={showToast} userSession={userSession} />
             ) : (
               <div className="text-center py-20 text-slate-500">
-                หน้านี้ยังไม่ได้เปิดใช้งาน (In Development)
+                คุณไม่มีสิทธิ์เข้าถึงหน้านี้ หรือหน้านี้ยังไม่ได้เปิดใช้งาน
               </div>
             )}
           </DashboardLayout>
