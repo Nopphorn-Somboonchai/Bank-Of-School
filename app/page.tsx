@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { RefreshCw, AlertCircle, CheckCircle } from 'lucide-react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth, db, getAppId } from '@/src/config/firebase';
@@ -24,6 +24,62 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [authLoading, setAuthLoading] = useState(true);
   const [firebaseUid, setFirebaseUid] = useState<string | null>(null);
+
+  // --- Service Worker & PWA Install Prompt Registration ---
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+
+  useEffect(() => {
+    // Register Service Worker
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      const handleLoad = () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((reg) => console.log('Service Worker registered successfully:', reg.scope))
+          .catch((err) => console.error('Service Worker registration failed:', err));
+      };
+      
+      if (document.readyState === 'complete') {
+        handleLoad();
+      } else {
+        window.addEventListener('load', handleLoad);
+        return () => window.removeEventListener('load', handleLoad);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    // Listen for PWA Install Prompt
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // Listen for appinstalled
+    const handleAppInstalled = () => {
+      showToast('ติดตั้งแอปพลิเคชันเสร็จเรียบร้อยแล้ว!', 'success');
+      setIsInstallable(false);
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallAppClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`PWA install user choice: ${outcome}`);
+    setDeferredPrompt(null);
+    setIsInstallable(false);
+  };
 
   // --- Firebase Auth State Listener & Session Restoration ---
   useEffect(() => {
@@ -54,6 +110,13 @@ export default function App() {
             });
             
             if (placeholderData) {
+              if (placeholderData.status === 'Suspended') {
+                showToast("บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ", "error");
+                setUserSession(null);
+                await auth.signOut();
+                setAuthLoading(false);
+                return;
+              }
               const newTeacherDoc = {
                 userId: user.uid,
                 email: user.email,
@@ -79,6 +142,13 @@ export default function App() {
           
           if (userDocSnap.exists()) {
             const data = userDocSnap.data();
+            if (data.status === 'Suspended') {
+              showToast("บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ", "error");
+              setUserSession(null);
+              await auth.signOut();
+              setAuthLoading(false);
+              return;
+            }
             setUserSession({
               userId: user.uid,
               email: user.email || data.email,
@@ -117,13 +187,13 @@ export default function App() {
   }, [activeTab, userSession]);
 
   // --- Toast Manager ---
-  const showToast = (message: string, type: string = 'success') => {
+  const showToast = useCallback((message: string, type: string = 'success') => {
     const id = Date.now();
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((toast) => toast.id !== id));
     }, 4000);
-  };
+  }, []);
 
   const ToastContainer = () => (
     <div className="fixed bottom-5 right-5 flex flex-col gap-2 z-50 max-w-sm w-full pointer-events-none">
@@ -189,6 +259,8 @@ export default function App() {
             }}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
+            isInstallable={isInstallable}
+            onInstallApp={handleInstallAppClick}
           >
             {activeTab === 'dashboard' ? (
               <DashboardMainContent showToast={showToast} userSession={userSession} />
@@ -201,7 +273,12 @@ export default function App() {
             ) : activeTab === 'reports' ? (
               <ReportsMainContent showToast={showToast} userSession={userSession} />
             ) : activeTab === 'settings' && (userSession?.role === 'Admin' || userSession?.role === 'Super Admin' || userSession?.role?.includes('Admin') || userSession?.role?.includes('Super Admin')) ? (
-              <SettingsMainContent showToast={showToast} userSession={userSession} />
+              <SettingsMainContent 
+                showToast={showToast} 
+                userSession={userSession} 
+                isInstallable={isInstallable}
+                onInstallApp={handleInstallAppClick}
+              />
             ) : (
               <div className="text-center py-20 text-slate-500">
                 คุณไม่มีสิทธิ์เข้าถึงหน้านี้ หรือหน้านี้ยังไม่ได้เปิดใช้งาน

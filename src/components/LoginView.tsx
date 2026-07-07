@@ -25,12 +25,18 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
       showToast('กรอกข้อมูลไม่ครบถ้วน', 'error');
       return;
     }
+
+    let formattedEmail = email.trim();
+    if (!formattedEmail.includes('@')) {
+      formattedEmail = `${formattedEmail}@school.ac.th`;
+    }
+
     setIsLoading(true);
     try {
       let sessionData;
       
       // Try real Firebase Auth
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, formattedEmail, password);
       const user = userCredential.user;
       
       const userDocRef = getPublicDoc('users', user.uid);
@@ -38,6 +44,10 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
       
       if (userDocSnap.exists()) {
         const data = userDocSnap.data();
+        if (data.status === 'Suspended') {
+          await auth.signOut();
+          throw new Error("บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ");
+        }
         sessionData = {
           userId: user.uid,
           email: user.email || data.email,
@@ -51,7 +61,7 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
       } else {
         // If Firestore document doesn't exist, search for a placeholder created by Admin (by email)
         const usersCol = getPublicCollection('users');
-        const q = query(usersCol, where('email', '==', user.email || email));
+        const q = query(usersCol, where('email', '==', user.email || formattedEmail));
         const querySnapshot = await getDocs(q);
         
         let placeholderData: any = null;
@@ -64,9 +74,14 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
           }
         });
 
+        if (placeholderData && placeholderData.status === 'Suspended') {
+          await auth.signOut();
+          throw new Error("บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ");
+        }
+
         const newTeacherDoc = {
           userId: user.uid,
-          email: user.email || email,
+          email: user.email || formattedEmail,
           fullName: placeholderData?.fullName || "คุณครูผู้ดูแลระบบ",
           role: placeholderData?.role || "Teacher",
           classAssignment: placeholderData?.classAssignment || "ชั้นมัธยมศึกษาปีที่ 1/2",
@@ -149,7 +164,7 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} noValidate className="space-y-5">
             <div className="space-y-2">
               <label className="text-xs font-semibold text-slate-300 uppercase block">อีเมลคุณครู</label>
               <div className="relative">

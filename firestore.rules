@@ -11,13 +11,15 @@ service cloud.firestore {
     // เช็คว่ามีเอกสารข้อมูลครูอยู่ในระบบภายใต้ appId (โรงเรียน) นั้น ๆ หรือไม่
     function isTeacher(appId) {
       return isAuthenticated() && 
-        exists(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid));
+        exists(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid)).data.status != 'Suspended';
     }
 
     // 3. ฟังก์ชันตรวจสอบสิทธิ์ผู้ดูแลระบบ (Admin Check)
     function isAdmin(appId) {
       return isAuthenticated() && 
         exists(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid)).data.status != 'Suspended' &&
         (
           get(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid)).data.role == 'Admin' ||
           get(/databases/$(database)/documents/artifacts/$(appId)/users/$(request.auth.uid)).data.role == 'Super Admin'
@@ -34,10 +36,13 @@ service cloud.firestore {
       
       // ==========================================
       // 1. ข้อมูลคุณครู / เจ้าหน้าที่ระบบ (Users)
-      // ==========================================
       match /users/{userId} {
-        // อนุญาตให้อ่านข้อมูลครูคนอื่นในโรงเรียนเดียวกันได้ หรืออ่านข้อมูลตัวเอง
-        allow read: if isAuthenticated() && (request.auth.uid == userId || isTeacher(appId));
+        // อนุญาตให้อ่านข้อมูลครูคนอื่นในโรงเรียนเดียวกันได้ หรืออ่านข้อมูลตัวเอง หรือเอกสารชั่วคราวที่มีอีเมลตรงกับตนเอง
+        allow read: if isAuthenticated() && (
+          request.auth.uid == userId || 
+          isTeacher(appId) || 
+          (resource != null && resource.data.email == request.auth.token.email)
+        );
         // อนุญาตให้คุณครูสร้างข้อมูลตัวเองได้ตอนสมัครใช้งานครั้งแรก หรือโดย Admin
         allow create: if isAuthenticated() && (request.auth.uid == userId || isAdmin(appId));
         // อนุญาตให้แก้ไขข้อมูลเฉพาะของตัวเอง หรือโดย Admin

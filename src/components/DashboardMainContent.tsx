@@ -19,12 +19,12 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
   // 1. Listen to Dashboard summary & Transactions
   useEffect(() => {
     const summaryDocRef = getPublicDoc('settings', 'dashboard_summary');
-    
+
     const unsubscribeSummary = onSnapshot(summaryDocRef, async (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         const todayStr = getLocalDateString();
-        
+
         // Auto-healing/Rollover when dates don't match
         if (data.currentDate !== todayStr) {
           console.log("Rollover mismatch detected in summary subscription. Recalculating...");
@@ -78,9 +78,9 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
       const missingIds = recentTransactions
         .map(tx => tx.studentId)
         .filter(id => id && !studentNames[id]);
-      
+
       if (missingIds.length === 0) return;
-      
+
       const newNames = { ...studentNames };
       await Promise.all(missingIds.map(async (id) => {
         try {
@@ -117,18 +117,18 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
     }
   };
 
-  const MetricCard = ({ 
-    title, 
-    value, 
-    icon: Icon, 
-    colorClass, 
-    trendText 
-  }: { 
-    title: string; 
-    value: string | number; 
-    icon: React.ComponentType<any>; 
-    colorClass: string; 
-    trendText: string; 
+  const MetricCard = ({
+    title,
+    value,
+    icon: Icon,
+    colorClass,
+    trendText
+  }: {
+    title: string;
+    value: string | number;
+    icon: React.ComponentType<any>;
+    colorClass: string;
+    trendText: string;
   }) => (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm animate-fadeIn">
       <div className="flex justify-between items-start">
@@ -169,11 +169,11 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
     const isToday = dateStr === todayStr;
     const deposits = isToday ? (summary?.todayDeposits || 0) : (dailyStats[dateStr]?.deposits || 0);
     const withdrawals = isToday ? (summary?.todayWithdrawals || 0) : (dailyStats[dateStr]?.withdrawals || 0);
-    
+
     const dateObj = new Date(dateStr);
     const dayLabel = dateObj.toLocaleDateString('th-TH', { weekday: 'short' });
     const dateLabel = dateObj.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
-    
+
     return {
       dateStr,
       dayLabel,
@@ -202,7 +202,7 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
           </p>
         </div>
         <div className="flex gap-2">
-          <button 
+          <button
             type="button"
             onClick={handleManualRecalculate}
             disabled={refreshing}
@@ -244,7 +244,7 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
 
       {/* Graphical Chart Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         {/* custom simulated weekly bar chart */}
         <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-[340px]">
           <div>
@@ -262,7 +262,7 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
 
               return (
                 <div key={data.dateStr} className="flex-1 flex flex-col items-center group relative">
-                  
+
                   {/* Tooltip */}
                   <div className="absolute bottom-full mb-2 bg-slate-955 border border-slate-800 rounded-xl p-2.5 shadow-2xl text-[10px] font-medium pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 w-36 -translate-x-1/2 left-1/2">
                     <p className="text-slate-350 font-bold text-center border-b border-slate-800 pb-1 mb-1.5">{data.dateLabel} {data.isToday ? '(วันนี้)' : ''}</p>
@@ -278,11 +278,11 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
 
                   {/* Vertical Bars */}
                   <div className="w-full flex items-end justify-center gap-1 sm:gap-1.5 h-36">
-                    <div 
+                    <div
                       className="w-2.5 sm:w-3.5 bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-sm hover:brightness-110 transition-all duration-500 ease-out cursor-pointer"
                       style={{ height: `${Math.max(2, depHeight)}%` }}
                     />
-                    <div 
+                    <div
                       className="w-2.5 sm:w-3.5 bg-gradient-to-t from-rose-600 to-rose-400 rounded-t-sm hover:brightness-110 transition-all duration-500 ease-out cursor-pointer"
                       style={{ height: `${Math.max(2, wdHeight)}%` }}
                     />
@@ -337,12 +337,7 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
               </div>
             </div>
           </div>
-
-          <div className="pt-4 border-t border-slate-800">
-            <p className="text-xs text-slate-500 text-center">Version MVP 1.0 (Phase 11/16)</p>
-          </div>
         </div>
-
       </div>
 
       {/* Recent Transactions Table */}
@@ -381,18 +376,16 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
                       <td className="px-5 py-3 text-slate-300 font-mono text-xs font-semibold">{tx.referenceNumber}</td>
                       <td className="px-5 py-3 font-medium text-slate-205">{studentName}</td>
                       <td className="px-5 py-3">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
-                          isVoid ? 'bg-slate-950 text-slate-500 border-slate-800' :
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${isVoid ? 'bg-slate-950 text-slate-500 border-slate-800' :
                           tx.transactionType === 'Deposit' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
-                        }`}>
+                          }`}>
                           {tx.transactionType === 'Deposit' ? <ArrowDownToLine className="w-3 h-3" /> : <ArrowUpFromLine className="w-3 h-3" />}
                           {tx.transactionType}
                         </span>
                       </td>
-                      <td className={`px-5 py-3 text-right font-bold font-mono ${
-                        isVoid ? 'text-slate-500' :
+                      <td className={`px-5 py-3 text-right font-bold font-mono ${isVoid ? 'text-slate-500' :
                         tx.transactionType === 'Deposit' ? 'text-emerald-400' : 'text-rose-400'
-                      }`}>
+                        }`}>
                         {isVoid ? '' : tx.transactionType === 'Deposit' ? '+' : '-'}฿{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
                       <td className="px-5 py-3 text-center text-slate-400 text-xs font-mono">

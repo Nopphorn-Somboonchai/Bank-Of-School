@@ -146,10 +146,20 @@ export default function AdminManagementModule() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-slate-300 block">สัญลักษณ์สกุลเงิน</label>
-                      <input 
-                        type="text" value={settings.currencySymbol} onChange={e => setSettings({...settings, currencySymbol: e.target.value})}
-                        className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-indigo-500 text-center font-bold"
-                      />
+                      <select 
+                        value={settings.currencySymbol} 
+                        onChange={e => setSettings({...settings, currencySymbol: e.target.value})}
+                        className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3.5 px-4 text-sm text-white focus:outline-none focus:border-indigo-500 text-center font-bold cursor-pointer"
+                        style={{ colorScheme: 'dark' }}
+                      >
+                        {settings.currencySymbol !== '฿' && settings.currencySymbol !== '$' && (
+                          <option value={settings.currencySymbol} className="bg-slate-900 text-white">
+                            {settings.currencySymbol}
+                          </option>
+                        )}
+                        <option value="฿" className="bg-slate-900 text-white">บาท</option>
+                        <option value="$" className="bg-slate-900 text-white">ดอลลาร์สหรัฐ</option>
+                      </select>
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-slate-300 block">ฝากขั้นต่ำ (บาท)</label>
