@@ -1,37 +1,9 @@
 import React, { useState } from 'react';
-import { 
-  ShieldCheck, Users, Settings, Save, Plus, 
-  Edit2, Trash2, CheckCircle, AlertCircle, 
+import {
+  ShieldCheck, Users, Settings, Save, Plus,
+  Edit2, Trash2, CheckCircle, AlertCircle,
   ChevronLeft, Building, Database, Key, Server
 } from 'lucide-react';
-
-// ==========================================
-// MOCK DATA (ข้อมูลจำลองสำหรับ Admin)
-// ==========================================
-const mockAdminSession = {
-  fullName: "ดร. สมเกียรติ ยอดเยี่ยม",
-  role: "ผู้อำนวยการ / ผู้ดูแลระบบ (Super Admin)",
-  email: "director@school.ac.th"
-};
-
-const initialSettings = {
-  schoolName: "โรงเรียนสาธิตวิทยาคาร",
-  academicYear: "2569",
-  currencySymbol: "฿",
-  minDeposit: 10,
-  minWithdrawal: 20,
-  transactionPrefix: {
-    deposit: "DEP",
-    withdrawal: "WDL"
-  }
-};
-
-const mockStaffList = [
-  { id: "T_001", name: "คุณครูสมรักษ์ ใจดี", email: "somrak@school.ac.th", role: "Teacher", status: "Active", lastLogin: "วันนี้ 08:30" },
-  { id: "T_002", name: "คุณครูสมศรี เรียนดี", email: "somsri@school.ac.th", role: "Teacher", status: "Active", lastLogin: "เมื่อวาน 16:45" },
-  { id: "A_001", name: "ดร. สมเกียรติ ยอดเยี่ยม", email: "director@school.ac.th", role: "Admin", status: "Active", lastLogin: "วันนี้ 10:15" },
-  { id: "T_003", name: "คุณครูมานะ อดทน", email: "mana@school.ac.th", role: "Teacher", status: "Suspended", lastLogin: "2 สัปดาห์ก่อน" },
-];
 
 // ==========================================
 // MAIN COMPONENT
@@ -62,7 +34,7 @@ export default function AdminManagementModule() {
 
   return (
     <div className="min-h-screen bg-slate-950 font-sans text-slate-100 selection:bg-indigo-500 selection:text-white flex flex-col">
-      
+
       {/* --- TOP NAVBAR --- */}
       <header className="h-16 flex items-center justify-between px-6 bg-[#0f172a] border-b border-indigo-900/50 shrink-0 shadow-lg">
         <div className="flex items-center gap-4">
@@ -82,7 +54,7 @@ export default function AdminManagementModule() {
       {/* --- MAIN CONTENT --- */}
       <main className="flex-1 overflow-y-auto p-6 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed">
         <div className="max-w-6xl mx-auto space-y-6">
-          
+
           {/* Header Area */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8 border-b border-slate-800 pb-6">
             <div>
@@ -91,16 +63,16 @@ export default function AdminManagementModule() {
               </h2>
               <p className="text-sm text-slate-400 mt-1">จัดการโครงสร้างข้อมูลโรงเรียนและกำหนดสิทธิ์เจ้าหน้าที่ธนาคาร</p>
             </div>
-            
+
             {/* Tabs */}
             <div className="flex bg-slate-900 rounded-xl p-1 border border-slate-800 shadow-inner">
-              <button 
+              <button
                 onClick={() => setActiveTab('settings')}
                 className={`px-5 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'settings' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
               >
                 <Settings className="w-4 h-4" /> ตั้งค่าระบบ (Settings)
               </button>
-              <button 
+              <button
                 onClick={() => setActiveTab('staff')}
                 className={`px-5 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'staff' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
               >
@@ -118,22 +90,22 @@ export default function AdminManagementModule() {
                 <Building className="w-5 h-5 text-indigo-400" />
                 <h3 className="font-bold text-white">ข้อมูลพื้นฐานสถาบัน (Institution Config)</h3>
               </div>
-              
+
               <form onSubmit={handleSaveSettings} className="p-6 space-y-8">
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-300 block">ชื่อสถานศึกษา (School Name)</label>
-                    <input 
-                      type="text" value={settings.schoolName} onChange={e => setSettings({...settings, schoolName: e.target.value})}
+                    <input
+                      type="text" value={settings.schoolName} onChange={e => setSettings({ ...settings, schoolName: e.target.value })}
                       className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
                       required
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-300 block">ปีการศึกษาปัจจุบัน (Academic Year)</label>
-                    <input 
-                      type="text" value={settings.academicYear} onChange={e => setSettings({...settings, academicYear: e.target.value})}
+                    <input
+                      type="text" value={settings.academicYear} onChange={e => setSettings({ ...settings, academicYear: e.target.value })}
                       className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-indigo-500"
                       required
                     />
@@ -142,13 +114,13 @@ export default function AdminManagementModule() {
                 </div>
 
                 <div className="border-t border-slate-800 pt-6">
-                  <h4 className="text-sm font-bold text-indigo-400 mb-4 flex items-center gap-2"><Database className="w-4 h-4"/> กฎเกณฑ์ทางการเงิน (Financial Rules)</h4>
+                  <h4 className="text-sm font-bold text-indigo-400 mb-4 flex items-center gap-2"><Database className="w-4 h-4" /> กฎเกณฑ์ทางการเงิน (Financial Rules)</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-slate-300 block">สัญลักษณ์สกุลเงิน</label>
-                      <select 
-                        value={settings.currencySymbol} 
-                        onChange={e => setSettings({...settings, currencySymbol: e.target.value})}
+                      <select
+                        value={settings.currencySymbol}
+                        onChange={e => setSettings({ ...settings, currencySymbol: e.target.value })}
                         className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3.5 px-4 text-sm text-white focus:outline-none focus:border-indigo-500 text-center font-bold cursor-pointer"
                         style={{ colorScheme: 'dark' }}
                       >
@@ -163,15 +135,15 @@ export default function AdminManagementModule() {
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-slate-300 block">ฝากขั้นต่ำ (บาท)</label>
-                      <input 
-                        type="number" value={settings.minDeposit} onChange={e => setSettings({...settings, minDeposit: Number(e.target.value)})}
+                      <input
+                        type="number" value={settings.minDeposit} onChange={e => setSettings({ ...settings, minDeposit: Number(e.target.value) })}
                         className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-indigo-500 text-right"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-slate-300 block">ถอนขั้นต่ำ (บาท)</label>
-                      <input 
-                        type="number" value={settings.minWithdrawal} onChange={e => setSettings({...settings, minWithdrawal: Number(e.target.value)})}
+                      <input
+                        type="number" value={settings.minWithdrawal} onChange={e => setSettings({ ...settings, minWithdrawal: Number(e.target.value) })}
                         className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-indigo-500 text-right"
                       />
                     </div>
@@ -186,7 +158,7 @@ export default function AdminManagementModule() {
                 </div>
 
                 <div className="flex justify-end pt-2">
-                  <button 
+                  <button
                     type="submit" disabled={isSaving}
                     className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg shadow-indigo-900/20 transition-all flex items-center justify-center gap-2 active:scale-95"
                   >
@@ -228,9 +200,8 @@ export default function AdminManagementModule() {
                         <td className="px-6 py-4 font-medium text-white">{staff.name}</td>
                         <td className="px-6 py-4 text-slate-400">{staff.email}</td>
                         <td className="px-6 py-4">
-                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${
-                            staff.role === 'Admin' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-slate-800 text-slate-300 border-slate-700'
-                          }`}>
+                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${staff.role === 'Admin' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-slate-800 text-slate-300 border-slate-700'
+                            }`}>
                             {staff.role === 'Admin' && <ShieldCheck className="w-3 h-3" />}
                             {staff.role}
                           </span>
@@ -247,9 +218,9 @@ export default function AdminManagementModule() {
                             <button className="p-1.5 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors" title="แก้ไขสิทธิ์">
                               <Edit2 className="w-4 h-4" />
                             </button>
-                            <button 
-                              disabled={staff.role === 'Admin'} 
-                              className={`p-1.5 rounded-lg transition-colors ${staff.role === 'Admin' ? 'text-slate-700 cursor-not-allowed' : 'text-slate-400 hover:text-rose-400 hover:bg-rose-500/10'}`} 
+                            <button
+                              disabled={staff.role === 'Admin'}
+                              className={`p-1.5 rounded-lg transition-colors ${staff.role === 'Admin' ? 'text-slate-700 cursor-not-allowed' : 'text-slate-400 hover:text-rose-400 hover:bg-rose-500/10'}`}
                               title="ระงับการเข้าถึง"
                             >
                               <Trash2 className="w-4 h-4" />

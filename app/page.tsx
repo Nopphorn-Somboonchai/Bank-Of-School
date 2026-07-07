@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { RefreshCw, AlertCircle, CheckCircle } from 'lucide-react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth, db, getAppId } from '@/src/config/firebase';
-import { doc, getDoc, collection, setDoc, deleteDoc, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, setDoc, deleteDoc, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { BankDataProvider } from '@/src/context/BankDataContext';
 import { writeAuditLog } from '@/src/utils/bankUtils';
 
@@ -149,13 +149,25 @@ export default function App() {
               setAuthLoading(false);
               return;
             }
+            // Get dynamic school name
+            let schoolName = "โรงเรียนสาธิตวิทยาคาร";
+            try {
+              const configDocRef = doc(db, 'artifacts', appId, 'settings', 'system_config');
+              const configDocSnap = await getDoc(configDocRef);
+              if (configDocSnap.exists()) {
+                schoolName = configDocSnap.data().schoolName || "โรงเรียนสาธิตวิทยาคาร";
+              }
+            } catch (err) {
+              console.error("Failed to load schoolName on init:", err);
+            }
+
             setUserSession({
               userId: user.uid,
               email: user.email || data.email,
               fullName: data.fullName || "คุณครูผู้ดูแลระบบ",
               role: data.role || "ครูผู้ดูแลระบบ (Teacher)",
               classAssignment: data.classAssignment || "ชั้นมัธยมศึกษาปีที่ 1/2",
-              schoolName: "โรงเรียนสาธิตวิทยาคาร",
+              schoolName: schoolName,
               academicYear: "2569",
               loginTime: new Date().toLocaleString('th-TH')
             });
@@ -185,6 +197,26 @@ export default function App() {
       }
     }
   }, [activeTab, userSession]);
+
+  // Listen to system settings to keep schoolName in userSession updated dynamically
+  useEffect(() => {
+    if (!userSession) return;
+    const appId = getAppId();
+    const configDocRef = doc(db, 'artifacts', appId, 'settings', 'system_config');
+    const unsubscribe = onSnapshot(configDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.schoolName) {
+          setUserSession((prev: any) => {
+            if (!prev) return null;
+            if (prev.schoolName === data.schoolName) return prev;
+            return { ...prev, schoolName: data.schoolName };
+          });
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, [userSession?.userId]);
 
   // --- Toast Manager ---
   const showToast = useCallback((message: string, type: string = 'success') => {

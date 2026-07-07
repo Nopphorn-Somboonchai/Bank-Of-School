@@ -16,11 +16,11 @@ interface DashboardLayoutProps {
   onInstallApp?: () => void;
 }
 
-export default function DashboardLayout({ 
-  children, 
-  userSession, 
-  onLogout, 
-  activeTab, 
+export default function DashboardLayout({
+  children,
+  userSession,
+  onLogout,
+  activeTab,
   setActiveTab,
   isInstallable = false,
   onInstallApp
@@ -64,24 +64,23 @@ export default function DashboardLayout({
     return 'bg-slate-800 text-slate-400 border border-slate-700';
   };
 
-  const NavItem = ({ 
-    icon: Icon, 
-    label, 
-    active = false, 
-    onClick 
-  }: { 
-    icon: React.ComponentType<any>; 
-    label: string; 
-    active?: boolean; 
-    onClick?: () => void 
+  const NavItem = ({
+    icon: Icon,
+    label,
+    active = false,
+    onClick
+  }: {
+    icon: React.ComponentType<any>;
+    label: string;
+    active?: boolean;
+    onClick?: () => void
   }) => (
-    <button 
-      onClick={onClick} 
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium cursor-pointer ${
-        active 
-          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium cursor-pointer ${active
+          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
           : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-      }`}
+        }`}
     >
       <Icon className="w-5 h-5" />
       {sidebarOpen && <span>{label}</span>}
@@ -163,7 +162,7 @@ export default function DashboardLayout({
 
           <div className="flex items-center gap-4">
             <div className="relative">
-              <button 
+              <button
                 onClick={() => {
                   setNotificationsOpen(!notificationsOpen);
                   if (!notificationsOpen) {
@@ -183,7 +182,7 @@ export default function DashboardLayout({
               {notificationsOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setNotificationsOpen(false)}></div>
-                  
+
                   <div className="absolute right-0 mt-2 w-80 max-h-[480px] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden animate-fadeIn">
                     <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
                       <h4 className="text-sm font-bold text-white flex items-center gap-2">
@@ -228,7 +227,7 @@ export default function DashboardLayout({
                     </div>
 
                     <div className="p-3 bg-slate-950 border-t border-slate-800 text-center">
-                      <button 
+                      <button
                         onClick={() => {
                           markNotificationsAsRead();
                           setNotificationsOpen(false);

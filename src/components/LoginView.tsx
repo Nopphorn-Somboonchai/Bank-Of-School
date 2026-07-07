@@ -41,6 +41,18 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
       
       const userDocRef = getPublicDoc('users', user.uid);
       const userDocSnap = await getDoc(userDocRef);
+
+      // Get dynamic school name
+      let schoolName = "โรงเรียนสาธิตวิทยาคาร";
+      try {
+        const configDocRef = getPublicDoc('settings', 'system_config');
+        const configDocSnap = await getDoc(configDocRef);
+        if (configDocSnap.exists()) {
+          schoolName = configDocSnap.data().schoolName || "โรงเรียนสาธิตวิทยาคาร";
+        }
+      } catch (err) {
+        console.error("Failed to load schoolName during login:", err);
+      }
       
       if (userDocSnap.exists()) {
         const data = userDocSnap.data();
@@ -54,7 +66,7 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
           fullName: data.fullName || "คุณครูผู้ดูแลระบบ",
           role: data.role || "ครูผู้ดูแลระบบ (Teacher)",
           classAssignment: data.classAssignment || "ชั้นมัธยมศึกษาปีที่ 1/2",
-          schoolName: "โรงเรียนสาธิตวิทยาคาร",
+          schoolName: schoolName,
           academicYear: "2569",
           loginTime: new Date().toLocaleString('th-TH')
         };
@@ -105,7 +117,7 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
           fullName: newTeacherDoc.fullName,
           role: newTeacherDoc.role || "ครูผู้ดูแลระบบ (Teacher)",
           classAssignment: newTeacherDoc.classAssignment,
-          schoolName: "โรงเรียนสาธิตวิทยาคาร",
+          schoolName: schoolName,
           academicYear: "2569",
           loginTime: new Date().toLocaleString('th-TH')
         };
