@@ -4,12 +4,12 @@ import {
   ArrowDownToLine, ArrowUpFromLine, FileText, Settings,
   Search, Bell, User, LogOut, Download, Activity, Clock, Key
 } from 'lucide-react';
-import { useBankData } from '@/src/context/BankDataContext';
+import { useAuditLogs } from '@/src/hooks/useAuditLogs';
+import { useAuthRole } from '@/src/hooks/useAuthRole';
+import { RoleGuard } from '@/src/components/RoleGuard';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  userSession: any;
-  onLogout: () => void;
   activeTab: string;
   setActiveTab: (tab: string) => void;
   isInstallable?: boolean;
@@ -18,8 +18,6 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({
   children,
-  userSession,
-  onLogout,
   activeTab,
   setActiveTab,
   isInstallable = false,
@@ -27,7 +25,8 @@ export default function DashboardLayout({
 }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const { notifications, unreadCount, markNotificationsAsRead } = useBankData();
+  const { notifications, unreadCount, markNotificationsAsRead } = useAuditLogs();
+  const { userSession, logout } = useAuthRole();
 
   const getRelativeTime = (isoString: string) => {
     const diffMs = Date.now() - new Date(isoString).getTime();
@@ -112,11 +111,11 @@ export default function DashboardLayout({
           <NavItem icon={FileText} label="รายงาน (Reports)" active={activeTab === 'reports'} onClick={() => setActiveTab('reports')} />
         </div>
 
-        {(userSession?.role === 'Admin' || userSession?.role === 'Super Admin' || userSession?.role?.includes('Admin') || userSession?.role?.includes('Super Admin')) && (
+        <RoleGuard allowedRoles={['Admin']}>
           <div className="p-4 border-t border-slate-800 space-y-2">
             <NavItem icon={Settings} label="การตั้งค่า (Settings)" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
           </div>
-        )}
+        </RoleGuard>
 
         {isInstallable && (
           <div className="p-4 border-t border-slate-800">
@@ -243,14 +242,16 @@ export default function DashboardLayout({
             </div>
             <div className="h-6 w-px bg-slate-700 mx-2"></div>
             <div className="flex items-center gap-3">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-semibold text-white leading-none mb-1">{userSession.fullName}</p>
-                <p className="text-xs text-emerald-400 leading-none">{userSession.role}</p>
-              </div>
+              {userSession && (
+                <div className="text-right hidden sm:block">
+                  <p className="text-sm font-semibold text-white leading-none mb-1">{userSession.fullName}</p>
+                  <p className="text-xs text-emerald-400 leading-none">{userSession.role}</p>
+                </div>
+              )}
               <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400">
                 <User className="w-5 h-5" />
               </div>
-              <button onClick={onLogout} className="ml-2 text-slate-500 hover:text-rose-400 transition-colors p-2 rounded-lg hover:bg-slate-800 cursor-pointer">
+              <button onClick={logout} className="ml-2 text-slate-500 hover:text-rose-400 transition-colors p-2 rounded-lg hover:bg-slate-800 cursor-pointer">
                 <LogOut className="w-5 h-5" />
               </button>
             </div>

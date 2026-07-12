@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { FileText, User, Calendar, Building, Search, RefreshCw } from 'lucide-react';
 import { Student, Account } from '@/src/types';
 import { writeAuditLog } from '@/src/utils/bankUtils';
-import { useBankData } from '@/src/context/BankDataContext';
+import { useStudents } from '@/src/hooks/useStudents';
+import { useAccounts } from '@/src/hooks/useAccounts';
 import StudentLedgerView from './StudentLedgerView';
 import DailyReportView from './DailyReportView';
 import ClassroomSummaryView from './ClassroomSummaryView';
@@ -13,7 +14,9 @@ interface ReportsMainContentProps {
 }
 
 export default function ReportsMainContent({ showToast, userSession }: ReportsMainContentProps) {
-  const { students, accounts, loading } = useBankData();
+  const { students, loading: studentsLoading } = useStudents();
+  const { accounts, loading: accountsLoading } = useAccounts();
+  const loading = studentsLoading || accountsLoading;
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   

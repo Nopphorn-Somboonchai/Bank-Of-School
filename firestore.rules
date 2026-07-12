@@ -44,9 +44,22 @@ service cloud.firestore {
           (resource != null && resource.data.email == request.auth.token.email)
         );
         // อนุญาตให้คุณครูสร้างข้อมูลตัวเองได้ตอนสมัครใช้งานครั้งแรก หรือโดย Admin
-        allow create: if isAuthenticated() && (request.auth.uid == userId || isAdmin(appId));
+        allow create: if isAuthenticated() && (
+          isAdmin(appId) || 
+          (
+            request.auth.uid == userId && 
+            request.resource.data.email == request.auth.token.email
+          )
+        );
         // อนุญาตให้แก้ไขข้อมูลเฉพาะของตัวเอง หรือโดย Admin
-        allow update: if isAuthenticated() && (request.auth.uid == userId || isAdmin(appId));
+        allow update: if isAuthenticated() && (
+          isAdmin(appId) || 
+          (
+            request.auth.uid == userId && 
+            request.resource.data.role == resource.data.role && 
+            request.resource.data.status == resource.data.status
+          )
+        );
         // อนุญาตให้ลบข้อมูลโดย Admin หรือลบ temporary placeholder ของตนเอง (ที่มีอีเมลตรงกัน)
         allow delete: if isAuthenticated() && (isAdmin(appId) || resource.data.email == request.auth.token.email);
       }
@@ -99,8 +112,9 @@ service cloud.firestore {
       // 6. การตั้งค่าระบบ (Settings)
       // ==========================================
       match /settings/system_config {
-        // เฉพาะผู้ดูแลระบบเท่านั้นที่สามารถอ่านและแก้ไขการตั้งค่าระบบได้
-        allow read, write: if isAdmin(appId);
+        // คุณครูสามารถอ่านการตั้งค่าเพื่อดูชื่อโรงเรียน/ปีการศึกษาได้ แต่เฉพาะ Admin เท่านั้นที่แก้ไขได้
+        allow read: if isTeacher(appId);
+        allow write: if isAdmin(appId);
       }
       
       match /settings/dashboard_summary {

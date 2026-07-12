@@ -5,7 +5,8 @@ import { db } from '@/src/config/firebase';
 import { getPublicCollection, getPublicDoc } from '@/src/utils/dbPaths';
 import { Student, StudentStatus, Account } from '@/src/types';
 import { writeAuditLog, recalculateDashboardSummary } from '@/src/utils/bankUtils';
-import { useBankData } from '@/src/context/BankDataContext';
+import { useStudents } from '@/src/hooks/useStudents';
+import { useAccounts } from '@/src/hooks/useAccounts';
 import StudentLedgerView from './StudentLedgerView';
 
 const TableSkeleton = () => (
@@ -24,7 +25,9 @@ interface StudentsMainContentProps {
 }
 
 export default function StudentsMainContent({ showToast, userSession }: StudentsMainContentProps) {
-  const { students, accounts, loading } = useBankData();
+  const { students, loading: studentsLoading } = useStudents();
+  const { accounts, loading: accountsLoading } = useAccounts();
+  const loading = studentsLoading || accountsLoading;
   const [searchQuery, setSearchQuery] = useState('');
   const [classFilter, setClassFilter] = useState('All');
   const [hideInactive, setHideInactive] = useState(false);

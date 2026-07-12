@@ -9,20 +9,20 @@ import { getPublicCollection, getPublicDoc } from '@/src/utils/dbPaths';
 import { writeAuditLog } from '@/src/utils/bankUtils';
 import LogsMainContent from './LogsMainContent';
 import SystemTestingPage from '@/app/test_runner_ui';
+import { useAuthRole } from '@/src/hooks/useAuthRole';
 
 interface SettingsMainContentProps {
   showToast: (message: string, type?: string) => void;
-  userSession: any;
   isInstallable?: boolean;
   onInstallApp?: () => void;
 }
 
 export default function SettingsMainContent({ 
   showToast, 
-  userSession,
   isInstallable = false,
   onInstallApp
 }: SettingsMainContentProps) {
+  const { userSession } = useAuthRole();
   const [activeTab, setActiveTab] = useState<'settings' | 'staff' | 'logs' | 'testing'>('settings');
   const [settings, setSettings] = useState({
     schoolName: "โรงเรียนสาธิตวิทยาคาร",

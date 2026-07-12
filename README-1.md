@@ -232,38 +232,165 @@ For each phase, the design must cover:
 
 ### 📋 Phase Deliverables & Scope Details
 
-Below is the list of key implementation scopes and corresponding files for each phase:
+Below is the detailed list of implementation goals, core logic constraints, and corresponding files for each development phase:
 
-* **Phase 1 to 4:** Planning, architecture, database design, and Firebase configuration.
-* **Phase 5 (Authentication):** User login/logout and session management.
-* **Phase 6 (Student Module):** Student profiles creation, editing, active/inactive/deleted status management.
-* **Phase 7 (Savings Account):** Account ledger initiation and balance linking.
-* **Phase 8 (Deposit Module):** Deposit transaction interface, idempotency keys, and Firestore transactions.
-* **Phase 9 (Withdrawal Module):** Withdrawal interface, balance limits validation, and atomic writes.
-* **Phase 10 (Statement Module):** Account statements generation, ledger views, passbook view.
-* **Phase 11 (Dashboard):** Main dashboard stats, top depositors list, and metrics visualization.
-* **Phase 12 (Reports):** Daily reports, closing metrics, and classroom summaries.
-* **Phase 13 (Audit Log):** Audit tracking for database modifications, teacher action logs.
-* **Phase 14 (Security Rules, Multi-level Roles & Admin Control Panel):**
-  * **Goal:** Implement system-wide database security access rules, enforce the 3-tier user hierarchy, and provide the core administrative control panel.
-  * **3-Tier User Hierarchy Constraints (ลำดับสิทธิ์การใช้งานอย่างเคร่งครัด):**
-    1. **Super admin (ผู้ดูแลสูงสุด):**
-       - มีสิทธิ์เข้าถึงทุกหน้าจอและฟังก์ชันของระบบ รวมถึงหน้าจอควบคุมระบบส่วนกลาง (Global Settings)
-       - สามารถสร้าง แก้ไข ระงับสิทธิ์ และกำหนดบทบาทผู้ใช้งานในระบบได้ทุกระดับ (Super admin / admin / user)
-       - ตรวจสอบประวัติการใช้งานและ Audit Logs ทั้งหมด
-    2. **admin (ครูผู้ดูแลระบบ):**
-       - สามารถเข้าถึงหน้าจอตั้งค่าทั่วไปได้
-       - จัดการบทบาทและเปิดบัญชีผู้ใช้ได้เฉพาะในระดับครู (user) เท่านั้น
-       - จัดการข้อมูลนักเรียน, บัญชีเงินฝาก, และการตรวจสอบความถูกต้องทางการเงินเบื้องต้น
-       - ดูประวัติ Audit Logs ได้
-    3. **user (ครูผู้ใช้):**
-       - จัดการธุรกรรมทางการเงินพื้นฐาน (ฝากเงิน, ถอนเงิน) 
-       - เข้าดูข้อมูลนักเรียนเบื้องต้น ออกรายงานธุรกรรม และพิมพ์ Statement/Passbook
-       - **ห้ามเข้าถึง** หน้าจอ Admin Control Panel หรือส่วนการตั้งค่าความปลอดภัยและสิทธิ์การใช้งานโดยเด็ดขาด
-  * **UI Component:** [admin_control_panel_ui.tsx](file:///h:/05-Physics/Bank-Of-School/app/admin_control_panel_ui.tsx) - Centralized system settings (academic year, school info, financial limits) and Staff/Teacher account permission management based on Super admin and admin constraints.
-  * **Security Rules:** [firestore.rules](file:///h:/05-Physics/Bank-Of-School/firestore.rules) - Firebase security constraints for collections (`users`, `students`, `accounts`, `transactions`, `settings`, `audit_logs`) enforcing role-based permissions (Super Admin vs Admin vs User).
-* **Phase 15 (Testing):** Verification checklist, E2E testing, error flow validation.
-* **Phase 16 (Deployment):** Cloud deployment, production environment setup, and release.
+---
+
+### **Phase 1 to 4: Planning, Architecture, Database Design & Firebase Configuration**
+* **Goal:** วางรากฐานสถาปัตยกรรมระบบ, การเชื่อมต่อ Firebase, การกำหนดพาธคอลเลกชันที่ปลอดภัยสูง และระบบแชร์ข้อมูลส่วนกลางเพื่อลดการดึงข้อมูลซ้ำซ้อน
+* **Key Files:**
+  * [firebase.ts](file:///h:/05-Physics/Bank-Of-School/src/config/firebase.ts) - กำหนดค่าเริ่มต้นการเชื่อมต่อ Firebase และการสลับโหมดใช้งาน Local Emulator อัตโนมัติเมื่อรันใน localhost
+  * [dbPaths.ts](file:///h:/05-Physics/Bank-Of-School/src/utils/dbPaths.ts) - ฟังก์ชันจัดทำคอลเลกชันพาธแบบ Strict Paths ป้องกันข้อมูลรั่วไหลตาม กฎเหล็กข้อที่ 1 (Public: `artifacts/{appId}/{col}`, Private: `artifacts/{appId}/users/{userId}/{col}`)
+  * [index.ts](file:///h:/05-Physics/Bank-Of-School/src/types/index.ts) - ประกาศ TypeScript Type และ Interface ทั้งหมดในระบบ (Student, Account, Transaction, AuditLog, SystemSettings)
+  * [BankDataContext.tsx](file:///h:/05-Physics/Bank-Of-School/src/context/BankDataContext.tsx) - ระบบ React Context (`useBankData`) ใช้สร้าง Listener `onSnapshot` เพียงจุดเดียวเพื่อดึงข้อมูล Students, Accounts, และ Audit Logs มาใช้ร่วมกันแบบเรียลไทม์
+  * [bankUtils.ts](file:///h:/05-Physics/Bank-Of-School/src/utils/bankUtils.ts) - ฟังก์ชันส่วนกลางสำหรับการบันทึกประวัติปูมระบบ (`writeAuditLog`), การจัดการเวลาประเทศไทย (`getLocalDateString`), และการคำนวณยอดสรุปบอร์ดความคืบหน้าแบบปรมาณู (`recalculateDashboardSummary`)
+* **Core Logic & Security Constraints:**
+  - กำหนดโครงสร้างข้อมูลตามหลัก Immutability: ข้อมูลประวัติการทำเงินห้ามลบเด็ดขาด (No Physical Deletes)
+  - ทุกพาธเข้าถึงเอกสารต้องผ่านฟังก์ชันครอบ `dbPaths.ts` เพื่อป้องกันปัญหาการเข้าถึงเอกสารข้าม App ID
+  - การแชร์ข้อมูลต้องทำงานบน Context Provider เพื่อป้องกันปัญหา Firestore Reads ล้นเกินโควตาและการสั่นไหวของ UI
+
+---
+
+### **Phase 5 (Authentication): User login/logout and session management**
+* **Goal:** ระบบควบคุมการเข้าสู่ระบบของคุณครูผู้ใช้งาน ตรวจสอบสิทธิ์ สแกนบทบาท และการควบคุมสถานะคงอยู่ของเซสชัน (Session Tracking)
+* **Key Files:**
+  * [LoginView.tsx](file:///h:/05-Physics/Bank-Of-School/src/components/LoginView.tsx) - หน้าจอกรอกข้อมูลยืนยันตัวตน (Authentication Screen) พร้อมการตรวจสอบรหัสผ่านและแสดงข้อผิดพลาดที่เข้าใจง่าย
+  * [page.tsx](file:///h:/05-Physics/Bank-Of-School/app/page.tsx) - ตรวจจับสถานะการเข้าสู่ระบบผ่าน `onAuthStateChanged` และดึงข้อมูลบทบาทจากคอลเลกชัน `users`
+* **Core Logic & Security Constraints:**
+  - บล็อกไม่ให้บัญชีผู้ใช้งานที่อยู่ในสถานะ `Suspended` (ถูกระงับสิทธิ์) เข้าสู่ระบบ
+  - มีกลไกการสืบค้นและแทนที่บัญชี Placeholder (สร้างล่วงหน้าโดยแอดมินด้วย Email) ไปเป็นบัญชีครูจริงหลังล็อกอินด้วย Firebase Auth ครั้งแรก
+  - มีระบบตรวจจับการตั้งค่าระบบส่วนกลางแบบ Reactive: เมื่อแอดมินแก้ปีการศึกษาหรือชื่อโรงเรียน ข้อมูลในเซสชันครูทุกคนจะได้รับการอัปเดตทันที
+
+---
+
+### **Phase 6 (Student Module): Student profiles creation, editing, active/inactive/deleted status management**
+* **Goal:** ระบบลงทะเบียนและจัดการประวัตินักเรียน (เพิ่มข้อมูล, แก้ไขประวัติ, ค้นหาแบบละเอียด, และการจัดการสถานะ)
+* **Key Files:**
+  * [StudentsMainContent.tsx](file:///h:/05-Physics/Bank-Of-School/src/components/StudentsMainContent.tsx) - แท็บแสดงสมุดรายชื่อนักเรียน ตารางการกรอง และ CRUD modals
+* **Core Logic & Security Constraints:**
+  - **Soft Delete Only:** นักเรียนที่มีประวัติทางการเงินแล้วจะไม่สามารถถูกลบออกจากระบบทางกายภาพได้ การลบจะเปลี่ยนค่า `deletedAt` และอัปเดตสถานะเป็น `Inactive` หรืออื่นๆ เพื่อรักษาความถูกต้องของประวัติบัญชีออมทรัพย์
+  - ห้ามทำธุรกรรมการเงินใดๆ กับนักเรียนที่มีสถานะไม่พร้อมใช้งาน (`Inactive`, `Graduated`, `Transferred`)
+  - ค้นหาข้อมูลแบบยืดหยุ่น: รองรับการกรองตามชั้นเรียน, รหัสนักเรียน, ชื่อเต็ม, และสถานะ
+
+---
+
+### **Phase 7 (Savings Account): Account ledger initiation and balance linking**
+* **Goal:** ระบบสมุดบัญชีออมทรัพย์นักเรียน เชื่อมโยงบัญชี 1:1 กับโปรไฟล์นักเรียนเพื่อติดตามยอดคงเหลือ
+* **Key Files:**
+  * [StudentLedgerView.tsx](file:///h:/05-Physics/Bank-Of-School/src/components/StudentLedgerView.tsx) - หน้าแสดงสรุปข้อมูลบัญชีและรายการเดินบัญชี (Statement / Passbook) รายบุคคล
+* **Core Logic & Security Constraints:**
+  - บัญชีเงินออมแต่ละบัญชีจะมีเลขที่เฉพาะที่สร้างตามโครงสร้างรันนิ่งและผูกเข้ากับ `studentId`
+  - ยอดเงินออมรวม (`currentBalance`) ต้องถูกคำนวณและอัปเดตจากเซิร์ฟเวอร์แบบอะตอมมิกเท่านั้น ห้ามให้แอปฝากเขียนค่าตรงๆ ไปยังฟิลด์ยอดเงินเพื่อป้องกันการดัดแปลงข้อมูล
+  - เก็บประวัติเวลาการทำธุรกรรมล่าสุด (`lastTransactionAt`) เพื่อใช้ประโยชน์ในการจัดเรียงและสแกนบัญชีที่ไม่มีความเคลื่อนไหว
+
+---
+
+### **Phase 8 (Deposit Module): Deposit transaction interface, idempotency keys, and Firestore transactions**
+* **Goal:** ระบบรับฝากเงินออมทรัพย์ ตรวจรับข้อมูล และบันทึกประวัติการฝากลงสู่บัญชีอย่างปลอดภัยและมีประสิทธิภาพ
+* **Key Files:**
+  * [DepositMainContent.tsx](file:///h:/05-Physics/Bank-Of-School/src/components/DepositMainContent.tsx) - หน้ากรอกจำนวนเงินฝาก ระบบสร้างเลขอ้างอิง และบัตรคิวพิมพ์ใบเสร็จ
+* **Core Logic & Business Rules:**
+  - **Firestore Transactions:** ยอดเงินฝากจะถูกสะสมเข้าไปใน `accounts.currentBalance` และสร้างเอกสารบันทึกใน `transactions` พร้อมกันภายในธุรกรรมชุดเดียวเพื่อความเสถียรของข้อมูลทางการเงิน
+  - **Sequential Reference Number:** เลขอ้างอิงทุกรายการ (เช่น `DEP2026000001`) จะต้องถูกดึงและบวกเพิ่มแบบประสานผ่านคอลเลกชัน `counter` เพื่อป้องกันรหัสซ้ำซ้อนขณะทำธุรกรรมพร้อมกัน
+  - บังคับการส่งค่าฝากที่เป็นตัวเลขจำนวนบวกเท่านั้น (`Amount > 0`)
+
+---
+
+### **Phase 9 (Withdrawal Module): Withdrawal interface, balance limits validation, and atomic writes**
+* **Goal:** ระบบจ่ายถอนเงินออมทรัพย์ ตรวจจับข้อผิดพลาดทางการเงิน บล็อกการทำธุรกรรมซ้ำซ้อน และประมวลผลยอดเงินคงเหลือ
+* **Key Files:**
+  * [WithdrawMainContent.tsx](file:///h:/05-Physics/Bank-Of-School/src/components/WithdrawMainContent.tsx) - หน้าควบคุมการถอนเงิน ระบบเตือนสิทธิ์ และใบเสร็จยืนยันรายการ
+* **Core Logic & Business Rules:**
+  - **Prevent Negative Balance:** บล็อกธุรกรรมถอนเงินทันทีหากยอดเงินที่ต้องการถอนมากกว่ายอดคงเหลือในบัญชีปัจจุบัน (`Withdrawal Amount > Current Balance`) ยอดบัญชีห้ามติดลบเด็ดขาด
+  - **Double Submission Lock:** ระบบปิดการกดปุ่มส่งแบบชั่วคราวทันทีหลังกดครั้งแรก พร้อมแสดง Spinner แสดงการดาวน์โหลดเพื่อป้องกันการบันทึกรายการเบิ้ลสองครั้ง
+
+---
+
+### **Phase 10 (Statement Module): Account statements generation, ledger views, passbook view**
+* **Goal:** ระบบสร้างและแสดงรายการเดินบัญชีอย่างเป็นทางการ รองรับระบบพิมพ์และคัดกรองประวัติย้อนหลัง
+* **Key Files:**
+  * [StudentLedgerView.tsx](file:///h:/05-Physics/Bank-Of-School/src/components/StudentLedgerView.tsx) - แสดงตารางสรุปรายการเรียงตามวันที่ พร้อมระบบคำนวณยอดสะสมไหลเวียน (Running Balance) ย้อนหลังได้อย่างเที่ยงตรง
+* **Core Logic & Business Rules:**
+  - การพิมพ์ Statement และหน้าสมุดบัญชีเงินฝาก (Passbook) ใช้สไตล์ CSS เฉพาะตัวที่ซ่อน Sidebar เมนูภายนอกและขยายตารางให้แสดงพอดีกับหน้ากระดาษ A4 ในโหมดพิมพ์
+  - คัดกรองข้อมูลตามระดับปีการศึกษา ช่วงวันที่ และประเภทธุรกรรมได้สะดวก
+
+---
+
+### **Phase 11 (Dashboard): Main dashboard stats, top depositors list, and metrics visualization**
+* **Goal:** หน้ากระดานสรุปผลแสดงสถิติและข้อมูลแนวโน้มทางการเงินภาพรวมของโรงเรียน เพื่อให้ผู้ดูแลรับรู้สุขภาพทางการเงิน
+* **Key Files:**
+  * [DashboardMainContent.tsx](file:///h:/05-Physics/Bank-Of-School/src/components/DashboardMainContent.tsx) - หน้าแรกแสดงบอร์ดสถิติตัวเลข ยอดเงินออมสะสม กราฟแสดงสถิติ และทำเนียบนักเรียนยอดรักการออม (Top Depositors)
+* **Core Logic & Business Rules:**
+  - ตัวเลขสรุปข้อมูลสถิติประจำวันจะไม่ถูกดึงมาจาก Firestore ตรงๆ ทุกครั้งที่มีการโหลดหน้าจอ แต่จะดึงมาจากเอกสารตั้งค่าส่วนกลาง `dashboard_summary` ที่อัปเดตแบบเรียลไทม์ผ่านการทำธุรกรรม เพื่อประหยัด Firestore Reads
+  - แสดงผลกราฟเส้นแนวโน้มการฝาก-ถอนย้อนหลัง 7 วันเพื่อให้เห็นพฤติกรรมทางการเงิน
+
+---
+
+### **Phase 12 (Reports): Daily reports, closing metrics, and classroom summaries**
+* **Goal:** ระบบรายงานสรุปผลทางการเงินสำหรับฝ่ายบัญชีโรงเรียน ประกอบด้วยรายงานธุรกรรมประจำวัน รายงานแยกรายห้องเรียน และระบบส่งออกข้อมูล
+* **Key Files:**
+  * [ReportsMainContent.tsx](file:///h:/05-Physics/Bank-Of-School/src/components/ReportsMainContent.tsx) - แท็บหลักควบคุมการเลือกดูประเภทรายงาน
+  * [DailyReportView.tsx](file:///h:/05-Physics/Bank-Of-School/src/components/DailyReportView.tsx) - แสดงยอดเปิดบัญชี ยอดฝากเข้า ยอดถอนออก และยอดเงินปิดระบบประจำวัน พร้อมฟังก์ชันดาวน์โหลดรายงาน (.csv)
+  * [ClassroomSummaryView.tsx](file:///h:/05-Physics/Bank-Of-School/src/components/ClassroomSummaryView.tsx) - รายงานสรุปยอดการออมแยกตามชั้นเรียนและห้องเรียน เพื่อส่งให้ครูประจำชั้นตรวจสอบ
+* **Core Logic & Business Rules:**
+  - มีรายงาน Daily Financial Report ที่ระบุยอดคงเหลือก่อนหน้าธุรกรรม ยอดออม/ถอนระหว่างวัน และยอดสิ้นสุดวัน
+  - รองรับการ Export ข้อมูลธุรกรรมออกมาเป็นรูปแบบ CSV เพื่อให้ฝ่ายการเงินนำไปเปิดใช้งานต่อบน Excel ได้ทันที
+
+---
+
+### **Phase 13 (Audit Log): Audit tracking for database modifications, teacher action logs**
+* **Goal:** ระบบบันทึกและตรวจสอบประวัติพฤติกรรมการใช้งานระบบของคุณครูและแอดมิน เพื่อความโปร่งใสและตรวจสอบย้อนหลังได้ 100%
+* **Key Files:**
+  * [LogsMainContent.tsx](file:///h:/05-Physics/Bank-Of-School/src/components/LogsMainContent.tsx) - แท็บส่องประวัติปูมการใช้งานระบบ (Audit Log Viewer) มาพร้อมตัวกรองตามวัน เวลา ครูผู้ทำ และประเภทกิจกรรม
+  * [bankUtils.ts](file:///h:/05-Physics/Bank-Of-School/src/utils/bankUtils.ts) - ฟังก์ชันส่งค่าเขียนปูมระบบเข้าไปยังฐานข้อมูลแบบเบื้องหลัง
+* **Core Logic & Security Constraints:**
+  - บันทึกรายละเอียดการกระทำที่สำคัญทั้งหมด: ลงชื่อเข้าใช้, ลงชื่อออก, การเพิ่ม/แก้ไขนักเรียน, การทำธุรกรรมฝากถอน และการยกเลิกรายการ (Void)
+  - เก็บค่าเปรียบเทียบก่อน-หลังการเปลี่ยนแปลง (`oldValue` และ `newValue`) เพื่อความแม่นยำในการแกะรอยประวัติ
+  - **Write-once Rule:** เอกสารในคอลเลกชัน `audit_logs` จะได้รับการป้องกันด้วย Firebase Security Rules ไม่ให้มีผู้ใดแก้ไขหรือลบรายการได้เด็ดขาด
+
+---
+
+### **Phase 14 (Security Rules, Multi-level Roles & Admin Control Panel):**
+* **Goal:** กำหนดสิทธิ์การเข้าถึงฐานข้อมูลอย่างรัดกุมผ่านกฎความปลอดภัย แยกสิทธิ์การทำงานครูออกเป็น 3 ระดับ และมีศูนย์ควบคุมการตั้งค่าระบบส่วนกลาง
+* **Key Files:**
+  * [admin_control_panel_ui.tsx](file:///h:/05-Physics/Bank-Of-School/app/admin_control_panel_ui.tsx) - หน้าจอกลางสำหรับ Super Admin/Admin ในการตั้งค่าสถานศึกษา และจัดการข้อมูลพนักงาน (Staff Management)
+  * [SettingsMainContent.tsx](file:///h:/05-Physics/Bank-Of-School/src/components/SettingsMainContent.tsx) - แท็บรวบรวมฟังก์ชันการจัดการบัญชีครู ข้อมูลระบบส่วนกลาง และเครื่องมือตรวจสอบระบบ
+  * [firestore.rules](file:///h:/05-Physics/Bank-Of-School/firestore.rules) - รหัสควบคุมสิทธิ์การเขียน/อ่านข้อมูลบน Cloud Firestore ตามระดับชั้นยศอย่างเข้มข้น
+* **3-Tier User Hierarchy Constraints (ลำดับสิทธิ์การใช้งานอย่างเคร่งครัด):**
+  1. **Super admin (ผู้ดูแลสูงสุด):**
+     - มีสิทธิ์เข้าถึงทุกหน้าจอและฟังก์ชันของระบบ รวมถึงหน้าจอควบคุมระบบส่วนกลาง (Global Settings)
+     - สามารถสร้าง แก้ไข ระงับสิทธิ์ และกำหนดบทบาทผู้ใช้งานในระบบได้ทุกระดับ (Super admin / admin / user)
+     - ตรวจสอบประวัติการใช้งานและ Audit Logs ทั้งหมด
+  2. **admin (ครูผู้ดูแลระบบ):**
+     - สามารถเข้าถึงหน้าจอตั้งค่าทั่วไปได้
+     - จัดการบทบาทและเปิดบัญชีผู้ใช้ได้เฉพาะในระดับครู (user) เท่านั้น
+     - จัดการข้อมูลนักเรียน, บัญชีเงินฝาก, และการตรวจสอบความถูกต้องทางการเงินเบื้องต้น
+     - ดูประวัติ Audit Logs ได้
+  3. **user (ครูผู้ใช้):**
+     - จัดการธุรกรรมทางการเงินพื้นฐาน (ฝากเงิน, ถอนเงิน) 
+     - เข้าดูข้อมูลนักเรียนเบื้องต้น ออกรายงานธุรกรรม และพิมพ์ Statement/Passbook
+     - **ห้ามเข้าถึง** หน้าจอ Admin Control Panel หรือส่วนการตั้งค่าความปลอดภัยและสิทธิ์การใช้งานโดยเด็ดขาด
+
+---
+
+### **Phase 15 (Testing): Verification checklist, E2E testing, error flow validation**
+* **Goal:** ระบบตรวจทานความถูกต้องทางการเงินและช่องโหว่ความปลอดภัยก่อนนำระบบไปใช้งานจริงในรูปแบบการรันระบบทดสอบอัตโนมัติ (In-App Automated Testing)
+* **Key Files:**
+  * [test_runner_ui.tsx](file:///h:/05-Physics/Bank-Of-School/app/test_runner_ui.tsx) - เครื่องมือรันระบบทดสอบคุณลักษณะการเขียนฐานข้อมูล ตรวจเช็ค Race Condition, ตรวจความล้มเหลวของกติกา Security Rules และแสดงผลทดสอบทีละขั้นตอน
+* **Core Logic & Verification Checks:**
+  - **Security Rules Audit:** จำลองสิทธิ์ล็อกอินที่ไม่ถูกต้องเพื่อพิสูจน์ว่า Firestore จะดีดตัวกลับและบล็อกการแก้ไขปูมหรือธุรกรรม
+  - **Financial Concurrency Check:** จำลองคำสั่งฝากเงินแบบพร้อมเพรียงกันสองรายการจากสองยูสเซอร์ เพื่อทดสอบว่ายอดเงินใน Firestore Transaction จะเพิ่มพูนอย่างแม่นยำและไม่เกิดปัญหายอดหาย (Race condition)
+  - **Double-submit lock Check:** ตรวจเช็คระบบล็อกหน้าจอปุ่มฝาก-ถอนป้องกันการกดเบิ้ล
+
+---
+
+### **Phase 16 (Deployment): Cloud deployment, production environment setup, and release**
+* **Goal:** การตั้งค่าการจัดจำหน่ายแอปพลิเคชัน โหมดออฟไลน์เพื่อความต่อเนื่อง (PWA) และการทำแผนผังไฟล์บริการโฮสต์
+* **Key Files:**
+  * [firebase.json](file:///h:/05-Physics/Bank-Of-School/firebase.json) - กำหนดเป้าหมายโฮสติ้งและสคริปต์การทำทรานส์เลชันกฎบนฐานข้อมูล
+  * [manifest.ts](file:///h:/05-Physics/Bank-Of-School/app/manifest.ts) - กำหนดรายละเอียดสี ไอคอน และหน้าตาเริ่มต้นสำหรับนำเสนอเว็บเพจในรูปแบบ Progressive Web App (PWA)
+  * [public/sw.js](file:///h:/05-Physics/Bank-Of-School/public/sw.js) - ไฟล์ Service Worker คอยให้บริการเก็บแคชเนื้อหาคงที่ ช่วยให้หน้าจอยังสามารถเปิดสแตนด์บายได้แม้อินเทอร์เน็ตขาดหาย
+  * [package.json](file:///h:/05-Physics/Bank-Of-School/package.json) - กำหนดคำสั่งการคอมไพล์และบิวด์ซอร์สโค้ด (`next build`)
 
 > [!IMPORTANT]
 > **At the end of every phase, wait for approval before proceeding to the next phase.**
