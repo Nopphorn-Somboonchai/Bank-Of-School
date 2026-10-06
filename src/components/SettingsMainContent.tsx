@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { setDoc, onSnapshot } from 'firebase/firestore';
 import { getPublicCollection, getPublicDoc } from '@/src/utils/dbPaths';
+import { writeAuditLog, recalculateDashboardSummary } from '@/src/utils/bankUtils';
 import dynamic from 'next/dynamic';
 
 const LogsMainContent = dynamic(() => import('./LogsMainContent'), {
