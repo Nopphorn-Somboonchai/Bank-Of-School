@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Users, UserPlus, Search, Filter, FileText, Edit2, Trash2, X, RefreshCw } from 'lucide-react';
-import { Student, StudentStatus } from '@/src/types';
+import { Student, StudentStatus, UserSession } from '@/src/types';
 import { createStudent, updateStudent, softDeleteStudent } from '@/src/services/studentService';
 import { BankError } from '@/src/utils/errors';
 import { useStudents } from '@/src/hooks/useStudents';
@@ -19,7 +19,7 @@ const TableSkeleton = () => (
 
 interface StudentsMainContentProps {
   showToast: (message: string, type?: string) => void;
-  userSession: any;
+  userSession: UserSession;
 }
 
 export default function StudentsMainContent({ showToast, userSession }: StudentsMainContentProps) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, Printer, Filter, ArrowDownToLine, ArrowUpFromLine, RefreshCw } from 'lucide-react';
 import { query, where, onSnapshot } from 'firebase/firestore';
 import { getPublicCollection } from '@/src/utils/dbPaths';
-import { Student, Account, Transaction } from '@/src/types';
+import { Student, Account, Transaction, UserSession } from '@/src/types';
 import { writeAuditLog } from '@/src/utils/bankUtils';
 
 interface StudentLedgerViewProps {
@@ -10,7 +10,7 @@ interface StudentLedgerViewProps {
   account: Account | undefined;
   onBack: () => void;
   showToast: (message: string, type?: string) => void;
-  userSession: any;
+  userSession: UserSession;
 }
 
 export default function StudentLedgerView({

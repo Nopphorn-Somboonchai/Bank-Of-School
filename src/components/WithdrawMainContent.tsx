@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ArrowUpFromLine, AlertCircle } from 'lucide-react';
-import { Student } from '@/src/types';
+import { Student, UserSession } from '@/src/types';
 import { useAccounts } from '@/src/hooks/useAccounts';
 import { performWithdrawal } from '@/src/services/transactionService';
 import { useTransactionSubmit } from '@/src/hooks/useTransactionSubmit';
@@ -14,7 +14,7 @@ import { ReceiptModal } from './ui/ReceiptModal';
 
 interface WithdrawMainContentProps {
   showToast: (message: string, type?: string) => void;
-  userSession: any;
+  userSession: UserSession;
 }
 
 export default function WithdrawMainContent({ showToast, userSession }: WithdrawMainContentProps) {

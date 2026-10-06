@@ -6,12 +6,14 @@ import { auth } from '@/src/config/firebase';
 import { getPublicDoc, getPublicCollection } from '@/src/utils/dbPaths';
 import { getDoc, setDoc, deleteDoc, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { writeAuditLog } from '@/src/utils/bankUtils';
+import { UserSession } from '@/src/types';
+import { normalizeRole } from '@/src/utils/roleUtils';
 
 interface AuthContextType {
-  userSession: any | null;
+  userSession: UserSession | null;
   loading: boolean;
   logout: () => Promise<void>;
-  setUserSession: React.Dispatch<React.SetStateAction<any | null>>;
+  setUserSession: React.Dispatch<React.SetStateAction<UserSession | null>>;
   showToast: (message: string, type?: string) => void;
 }
 
@@ -24,7 +26,7 @@ export function AuthProvider({
   children: React.ReactNode;
   showToast: (message: string, type?: string) => void;
 }) {
-  const [userSession, setUserSession] = useState<any | null>(null);
+  const [userSession, setUserSession] = useState<UserSession | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Firebase Auth State Listener & Session Restoration
@@ -118,7 +120,7 @@ export function AuthProvider({
               userId: user.uid,
               email: user.email || data.email,
               fullName: data.fullName || "คุณครูผู้ดูแลระบบ",
-              role: data.role || "ครูผู้ดูแลระบบ (Teacher)",
+              role: normalizeRole(data.role || "Teacher"),
               classAssignment: data.classAssignment || "ชั้นมัธยมศึกษาปีที่ 1/2",
               schoolName: "โรงเรียนสาธิตวิทยาคาร",
               academicYear: "2569",
@@ -148,7 +150,7 @@ export function AuthProvider({
     const unsubscribe = onSnapshot(configDocRef, (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setUserSession((prev: any) => {
+        setUserSession((prev) => {
           if (!prev) return null;
           if (prev.schoolName === data.schoolName && prev.academicYear === data.academicYear) {
             return prev;

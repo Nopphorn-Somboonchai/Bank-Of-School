@@ -135,14 +135,15 @@ export default function SettingsMainContent({
         'settings/system_config',
         null,
         settings,
-        `แก้ไขการตั้งค่าระบบส่วนกลางโดย ${userSession.fullName}`,
-        userSession.userId
+        `แก้ไขการตั้งค่าระบบส่วนกลางโดย ${userSession?.fullName || 'ผู้ดูแลระบบ'}`,
+        userSession?.userId || 'unknown'
       );
       
       showToast("บันทึกการตั้งค่าระบบส่วนกลางสำเร็จ", "success");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error saving settings to Firestore:", err);
-      showToast("ล้มเหลวในการบันทึกข้อมูลตั้งค่า (" + err.message + ")", "error");
+      const msg = err instanceof Error ? err.message : String(err);
+      showToast("ล้มเหลวในการบันทึกข้อมูลตั้งค่า (" + msg + ")", "error");
     } finally {
       setIsSaving(false);
     }
@@ -245,10 +246,10 @@ export default function SettingsMainContent({
         null,
         staffData,
         `สร้างบัญชีเจ้าหน้าที่ ${formName} (${formRole})`,
-        userSession.userId
+        userSession?.userId || 'unknown'
       );
       showToast("เพิ่มบัญชีเจ้าหน้าที่สำเร็จ", "success");
-    } catch (err: any) {
+    } catch {
       console.warn("Firestore rule blocked creating other user. Fallback to simulation mode.");
       // Fallback: update local simulation state
       const simStaff = {
@@ -288,10 +289,10 @@ export default function SettingsMainContent({
         null,
         staffData,
         `แก้ไขบัญชีเจ้าหน้าที่ ${formName}`,
-        userSession.userId
+        userSession?.userId || 'unknown'
       );
       showToast("อัปเดตสิทธิ์เจ้าหน้าที่สำเร็จ", "success");
-    } catch (err: any) {
+    } catch {
       console.warn("Firestore rule blocked modifying other user. Fallback to simulation mode.");
       // Fallback: update simulated staff list
       if (simulatedStaffList.some(s => s.id === selectedStaff.id)) {
@@ -326,10 +327,10 @@ export default function SettingsMainContent({
         { status: staff.status },
         { status: nextStatus },
         `เปลี่ยนสถานะบัญชีเจ้าหน้าที่ ${staff.name} เป็น ${nextStatus}`,
-        userSession.userId
+        userSession?.userId || 'unknown'
       );
       showToast(`เปลี่ยนสถานะเจ้าหน้าที่เป็น ${nextStatus === 'Active' ? 'พร้อมใช้งาน' : 'ระงับการเข้าใช้งาน'} สำเร็จ`, "success");
-    } catch (err: any) {
+    } catch {
       console.warn("Firestore rule blocked toggling status. Fallback to simulation.");
       // Fallback
       if (simulatedStaffList.some(s => s.id === staff.id)) {
@@ -675,8 +676,8 @@ export default function SettingsMainContent({
                           <button 
                             type="button"
                             onClick={() => handleToggleSuspend(staff)}
-                            disabled={staff.id === userSession.userId} 
-                            className={`p-1.5 rounded-lg transition-colors ${staff.id === userSession.userId ? 'text-slate-700 cursor-not-allowed' : 'text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 cursor-pointer'}`} 
+                            disabled={staff.id === userSession?.userId} 
+                            className={`p-1.5 rounded-lg transition-colors ${staff.id === userSession?.userId ? 'text-slate-700 cursor-not-allowed' : 'text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 cursor-pointer'}`} 
                             title={staff.status === 'Active' ? "ระงับการใช้งาน" : "ยกเลิกระงับการใช้งาน"}
                           >
                             <Trash2 className="w-3.5 h-3.5" />

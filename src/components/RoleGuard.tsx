@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { useAuthRole } from '@/src/hooks/useAuthRole';
+import { Role } from '@/src/types';
 
-export type UserRole = 'Super Admin' | 'Admin' | 'Teacher';
+export type UserRole = Role;
 
 interface RoleGuardProps {
   children: React.ReactNode;

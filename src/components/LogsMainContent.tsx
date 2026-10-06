@@ -2,11 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Clock, Search, Filter, Eye, X, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
 import { query, orderBy, onSnapshot } from 'firebase/firestore';
 import { getPublicCollection } from '@/src/utils/dbPaths';
-import { AuditLog } from '@/src/types';
+import { AuditLog, UserSession } from '@/src/types';
 
 interface LogsMainContentProps {
   showToast: (message: string, type?: string) => void;
-  userSession: any;
+  userSession: UserSession | null;
   embedded?: boolean;
 }
 

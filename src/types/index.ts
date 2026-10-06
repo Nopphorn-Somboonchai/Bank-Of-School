@@ -111,3 +111,20 @@ export interface YearCounter {
     year: number;              // ปี ค.ศ. คีย์หลัก (เช่น 2026)
     lastSequenceNumber: number;// ตัวเลขลำดับล่าสุดที่ถูกใช้งานไป
 }
+
+// ==========================================
+// 7. สิทธิ์และการระบุตัวตน (Auth & RBAC)
+// ==========================================
+export type Role = 'Super Admin' | 'Admin' | 'Teacher';
+
+export interface UserSession {
+    userId: string;
+    email: string | null;
+    fullName: string;
+    role: Role;
+    classAssignment?: string;
+    schoolName?: string;
+    academicYear?: string;
+    loginTime?: string;
+}
+

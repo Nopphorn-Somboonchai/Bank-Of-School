@@ -3,10 +3,11 @@
 import React from 'react';
 import { useAuthRole } from '@/src/hooks/useAuthRole';
 import { ShieldAlert, RefreshCw } from 'lucide-react';
+import { Role } from '@/src/types';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: ('Super Admin' | 'Admin' | 'Teacher')[];
+  allowedRoles?: Role[];
   fallback?: React.ReactNode;
 }
 

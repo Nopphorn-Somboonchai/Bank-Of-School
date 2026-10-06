@@ -104,10 +104,10 @@
 
 **เป้าหมาย:** ลบ `any` ในแกนหลัก, role มี source เดียว, แก้บั๊ก UI เล็กๆ
 
-- [ ] **4.1** `src/types/index.ts` → เพิ่ม `Role = 'Super Admin' | 'Admin' | 'Teacher'` และ `UserSession` interface; `AuthContext`/`useAuthRole`/components ที่รับ `userSession: any` → ใช้ type ใหม่ (ใช้ grep `userSession: any` / `userSession?: any`)
-- [ ] **4.2** `useAuthRole.ts` → เปลี่ยน `includes` เป็นการ normalize role ครั้งเดียว (map ค่าเก่าภาษาไทย/สตริงเดิม → `Role`) แล้วเทียบแบบตรงตัว; `AuthContext` fallback role ใช้ `'Teacher'` (ตรงกับ rules)
-- [ ] **4.3** `app/page.tsx` → ย้าย `ToastContainer` ออกมาเป็นคอมโพเนนต์ระดับ module (รับ `toasts` เป็น prop) → ลบ prop `toasts`/`ToastContainer` ที่ส่งเข้า `AppContent` แบบเดิม; รองรับ type `'warning'` (สีเหลือง); แก้ class พิมพ์ผิด `emerald-505`→`emerald-500`, `rose-450`→`rose-400`, `duration-305`→`duration-300`; ลบ `any[]` ของ toast (สร้าง `Toast` type)
-- [ ] **4.4** กวาด `catch (err: any)` → `unknown` เฉพาะไฟล์ที่แตะในเฟส 2-3 (ไม่ต้องไล่ทั้งโปรเจกต์)
+- [x] **4.1** `src/types/index.ts` → เพิ่ม `Role = 'Super Admin' | 'Admin' | 'Teacher'` และ `UserSession` interface; `AuthContext`/`useAuthRole`/components ที่รับ `userSession: any` → ใช้ type ใหม่ (ใช้ grep `userSession: any` / `userSession?: any`)
+- [x] **4.2** `useAuthRole.ts` → เปลี่ยน `includes` เป็นการ normalize role ครั้งเดียว (map ค่าเก่าภาษาไทย/สตริงเดิม → `Role`) แล้วเทียบแบบตรงตัว; `AuthContext` fallback role ใช้ `'Teacher'` (ตรงกับ rules)
+- [x] **4.3** `app/page.tsx` → ย้าย `ToastContainer` ออกมาเป็นคอมโพเนนต์ระดับ module (รับ `toasts` เป็น prop) → ลบ prop `toasts`/`ToastContainer` ที่ส่งเข้า `AppContent` แบบเดิม; รองรับ type `'warning'` (สีเหลือง); แก้ class พิมพ์ผิด `emerald-505`→`emerald-500`, `rose-450`→`rose-400`, `duration-305`→`duration-300`; ลบ `any[]` ของ toast (สร้าง `Toast` type)
+- [x] **4.4** กวาด `catch (err: any)` → `unknown` เฉพาะไฟล์ที่แตะในเฟส 2-3 (ไม่ต้องไล่ทั้งโปรเจกต์)
 
 **Verification:** tsc/lint ผ่าน; ทดสอบ route settings ด้วย user ที่ไม่ใช่ Admin ยังถูกกัน; toast แสดงครบ 3 แบบ
 
@@ -158,3 +158,8 @@
 | 2026-10-06 | 3.3 | สำเร็จ | `src/components/StudentsMainContent.tsx` | เปลี่ยน handler เพิ่ม/แก้ไข/ลบนักเรียนให้เรียก studentService แทนเขียน Firestore ตรง, ลบ import ไม่จำเป็น (setDoc, updateDoc, getDoc, increment, writeAuditLog, recalculateDashboardSummary), แปลง catch เป็น unknown + BankError |
 | 2026-10-06 | 3.4 | สำเร็จ | `src/utils/bankUtils.ts`, `src/components/SettingsMainContent.tsx`, `src/components/DashboardMainContent.tsx` | เพิ่ม JSDoc เตือนราคาแพงและ role guard ใน recalculateDashboardSummary, เพิ่มปุ่มซ่อมแซมสรุปยอดสำหรับ Admin ในหน้า Settings, ปรับ Dashboard ให้อ่าน snapshot/refresh แบบ lightweight |
 | 2026-10-06 | Phase 3 สรุป | เสร็จสิ้น | `src/services/studentService.ts`, `src/utils/errors.ts`, `src/utils/bankUtils.ts`, `src/components/StudentsMainContent.tsx`, `src/components/SettingsMainContent.tsx`, `src/components/DashboardMainContent.tsx` | เสร็จสิ้น Phase 3: Student Atomicity & Dashboard Summary ครบทุก task (3.1-3.4); tsc ผ่าน 100%; พร้อม commit |
+| 2026-10-06 | 4.1 | สำเร็จ | `src/types/index.ts`, `src/store/notificationStore.ts`, `src/context/AuthContext.tsx`, `src/components/*` | เพิ่ม Role และ UserSession interface ใน types; ลบ userSession: any ในทุกคอมโพเนนต์และ store |
+| 2026-10-06 | 4.2 | สำเร็จ | `src/utils/roleUtils.ts`, `src/hooks/useAuthRole.ts`, `src/context/AuthContext.tsx`, `src/components/LoginView.tsx`, `src/components/RoleGuard.tsx`, `src/components/ProtectedRoute.tsx` | สร้าง pure helper normalizeRole, เปลี่ยน useAuthRole จาก includes มาเป็นการ normalize ครั้งเดียวแล้วเปรียบเทียบตรงตัว, fallback role ใช้ 'Teacher' |
+| 2026-10-06 | 4.3 | สำเร็จ | `app/page.tsx` | ย้าย ToastContainer เป็น module component, ลบ toasts/ToastContainer props จาก AppContent, รองรับ warning type (สี amber), แก้ typos (emerald-500, rose-400, duration-300), กำหนด Toast interface แทน any[] |
+| 2026-10-06 | 4.4 | สำเร็จ | `src/components/SettingsMainContent.tsx`, `src/components/LoginView.tsx` | กวาด catch (err: any) เป็น catch (err: unknown) พร้อม Error type guards ในไฟล์ SettingsMainContent และ LoginView |
+| 2026-10-06 | Phase 4 สรุป | เสร็จสิ้น | `src/types/index.ts`, `src/utils/roleUtils.ts`, `src/hooks/useAuthRole.ts`, `src/context/AuthContext.tsx`, `src/components/*`, `app/page.tsx` | เสร็จสิ้น Phase 4: Types, RBAC & Small UI Bugs ครบทุก task (4.1-4.4); tsc/lint ตรวจสอบแล้วผ่าน 100%; พร้อม commit |

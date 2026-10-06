@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import { Printer, Download, TrendingUp, Building, Users } from 'lucide-react';
-import { Student, Account } from '@/src/types';
+import { Student, Account, UserSession } from '@/src/types';
 import { writeAuditLog } from '@/src/utils/bankUtils';
 
 interface ClassroomSummaryViewProps {
   students: Student[];
   accounts: Record<string, Account>;
-  userSession: any;
+  userSession: UserSession;
   onExportCSV: (filename: string, headers: string[], rows: any[][]) => void;
 }
 

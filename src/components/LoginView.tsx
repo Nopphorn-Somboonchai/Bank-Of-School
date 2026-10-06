@@ -4,9 +4,11 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/src/config/firebase';
 import { getPublicDoc, getPublicCollection } from '@/src/utils/dbPaths';
 import { getDoc, setDoc, query, where, getDocs, deleteDoc } from 'firebase/firestore';
+import { UserSession } from '@/src/types';
+import { normalizeRole } from '@/src/utils/roleUtils';
 
 interface LoginViewProps {
-  onLogin: (session: any) => void;
+  onLogin: (session: UserSession) => void;
   showToast: (message: string, type?: string) => void;
 }
 
@@ -52,7 +54,7 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
           userId: user.uid,
           email: user.email || data.email,
           fullName: data.fullName || "คุณครูผู้ดูแลระบบ",
-          role: data.role || "ครูผู้ดูแลระบบ (Teacher)",
+          role: normalizeRole(data.role || "Teacher"),
           classAssignment: data.classAssignment || "ชั้นมัธยมศึกษาปีที่ 1/2",
           schoolName: "โรงเรียนสาธิตวิทยาคาร",
           academicYear: "2569",
@@ -123,7 +125,7 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
           userId: user.uid,
           email: newTeacherDoc.email,
           fullName: newTeacherDoc.fullName,
-          role: newTeacherDoc.role || "ครูผู้ดูแลระบบ (Teacher)",
+          role: normalizeRole(newTeacherDoc.role || "Teacher"),
           classAssignment: newTeacherDoc.classAssignment,
           schoolName: "โรงเรียนสาธิตวิทยาคาร",
           academicYear: "2569",
@@ -132,15 +134,16 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
       }
       
       onLogin(sessionData);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Login verification failed:", err);
-      const errMsg = err.code === 'auth/invalid-credential' 
+      const errObj = (err && typeof err === 'object') ? (err as { code?: string; message?: string }) : null;
+      const errMsg = errObj?.code === 'auth/invalid-credential' 
         ? 'อีเมลผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง'
-        : err.code === 'auth/user-not-found'
+        : errObj?.code === 'auth/user-not-found'
         ? 'ไม่พบผู้ใช้นี้ในระบบ'
-        : err.code === 'auth/wrong-password'
+        : errObj?.code === 'auth/wrong-password'
         ? 'รหัสผ่านไม่ถูกต้อง'
-        : err.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
+        : (errObj?.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ');
       setErrorMsg(errMsg);
       showToast(errMsg, 'error');
     } finally {

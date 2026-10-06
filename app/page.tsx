@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, AlertCircle, CheckCircle } from 'lucide-react';
+import { RefreshCw, AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
 import { writeAuditLog } from '@/src/utils/bankUtils';
 import { AuthProvider } from '@/src/context/AuthContext';
 import { useAuthRole } from '@/src/hooks/useAuthRole';
@@ -22,14 +22,18 @@ import WithdrawMainContent from '@/src/components/WithdrawMainContent';
 import ReportsMainContent from '@/src/components/ReportsMainContent';
 import SettingsMainContent from '@/src/components/SettingsMainContent';
 
+export type ToastType = 'success' | 'error' | 'warning';
+
+export interface Toast {
+  id: number;
+  message: string;
+  type: ToastType;
+}
+
 function AppContent({ 
-  showToast, 
-  toasts, 
-  ToastContainer 
+  showToast 
 }: { 
   showToast: (message: string, type?: string) => void;
-  toasts: any[];
-  ToastContainer: React.ComponentType<any>;
 }) {
   const { userSession, loading: authLoading, isAdmin, logout, setUserSession } = useAuthRole();
   const [activeTab, setActiveTab] = useState<string>('dashboard');
@@ -116,7 +120,7 @@ function AppContent({
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center font-sans">
         <div className="flex flex-col items-center gap-4">
-          <RefreshCw className="w-10 h-10 text-emerald-505 animate-spin" />
+          <RefreshCw className="w-10 h-10 text-emerald-500 animate-spin" />
           <p className="text-sm font-semibold text-slate-400">กำลังเชื่อมต่อฐานข้อมูลความปลอดภัย...</p>
         </div>
       </div>
@@ -170,43 +174,64 @@ function AppContent({
           )}
         </DashboardLayout>
       )}
-      <ToastContainer />
+    </div>
+  );
+}
+
+interface ToastContainerProps {
+  toasts: Toast[];
+}
+
+function ToastContainer({ toasts }: ToastContainerProps) {
+  return (
+    <div className="fixed bottom-5 right-5 flex flex-col gap-2 z-50 max-w-sm w-full pointer-events-none">
+      {toasts.map((toast) => {
+        const isError = toast.type === 'error';
+        const isWarning = toast.type === 'warning';
+
+        return (
+          <div
+            key={toast.id}
+            className={`p-4 rounded-xl shadow-lg flex items-center gap-3 border transition-all duration-300 pointer-events-auto animate-slideIn ${
+              isError
+                ? 'bg-rose-950/90 border-rose-500/40 text-rose-200'
+                : isWarning
+                ? 'bg-amber-950/90 border-amber-500/40 text-amber-200'
+                : 'bg-emerald-950/90 border-emerald-500/40 text-emerald-200'
+            }`}
+          >
+            {isError ? (
+              <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+            ) : isWarning ? (
+              <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
+            ) : (
+              <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+            )}
+            <span className="text-xs font-semibold">{toast.message}</span>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
 export default function App() {
-  const [toasts, setToasts] = useState<any[]>([]);
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   // --- Toast Manager ---
   const showToast = useCallback((message: string, type: string = 'success') => {
     const id = Date.now();
-    setToasts((prev) => [...prev, { id, message, type }]);
+    const resolvedType: ToastType = type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'success';
+    setToasts((prev) => [...prev, { id, message, type: resolvedType }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((toast) => toast.id !== id));
     }, 4000);
   }, []);
 
-  const ToastContainer = () => (
-    <div className="fixed bottom-5 right-5 flex flex-col gap-2 z-50 max-w-sm w-full pointer-events-none">
-      {toasts.map((toast) => (
-        <div key={toast.id} className={`p-4 rounded-xl shadow-lg flex items-center gap-3 border transition-all duration-305 pointer-events-auto animate-slideIn ${
-          toast.type === 'error' ? 'bg-rose-950/90 border-rose-500/40 text-rose-200' : 'bg-emerald-950/90 border-emerald-500/40 text-emerald-200'
-        }`}>
-          {toast.type === 'error' ? <AlertCircle className="w-5 h-5 text-rose-450" /> : <CheckCircle className="w-5 h-5 text-emerald-400" />}
-          <span className="text-xs font-semibold">{toast.message}</span>
-        </div>
-      ))}
-    </div>
-  );
-
   return (
     <AuthProvider showToast={showToast}>
-      <AppContent 
-        showToast={showToast} 
-        toasts={toasts} 
-        ToastContainer={ToastContainer} 
-      />
+      <AppContent showToast={showToast} />
+      <ToastContainer toasts={toasts} />
     </AuthProvider>
   );
 }

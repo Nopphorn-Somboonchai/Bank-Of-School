@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Printer, Download, TrendingUp, TrendingDown, Clock, AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
 import { query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { getPublicCollection } from '@/src/utils/dbPaths';
-import { Student, Transaction } from '@/src/types';
+import { Student, Transaction, UserSession } from '@/src/types';
 import { writeAuditLog } from '@/src/utils/bankUtils';
 import DatePicker from './DatePicker';
 
 interface DailyReportViewProps {
   allStudentsMap: Record<string, Student>;
-  userSession: any;
+  userSession: UserSession;
   onExportCSV: (filename: string, headers: string[], rows: any[][]) => void;
   showToast: (message: string, type?: string) => void;
 }

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { FileText, User, Calendar, Building, Search, RefreshCw } from 'lucide-react';
-import { Student, Account } from '@/src/types';
+import { Student, Account, UserSession } from '@/src/types';
 import { writeAuditLog } from '@/src/utils/bankUtils';
 import { useStudents } from '@/src/hooks/useStudents';
 import { useAccounts } from '@/src/hooks/useAccounts';
@@ -10,7 +10,7 @@ import ClassroomSummaryView from './ClassroomSummaryView';
 
 interface ReportsMainContentProps {
   showToast: (message: string, type?: string) => void;
-  userSession: any;
+  userSession: UserSession;
 }
 
 export default function ReportsMainContent({ showToast, userSession }: ReportsMainContentProps) {

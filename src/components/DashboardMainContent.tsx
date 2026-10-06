@@ -3,10 +3,11 @@ import { TrendingUp, Clock, Building, Users, ArrowDownToLine, ArrowUpFromLine, R
 import { onSnapshot, query, orderBy, limit, getDoc } from 'firebase/firestore';
 import { getPublicDoc, getPublicCollection } from '@/src/utils/dbPaths';
 import { getLocalDateString } from '@/src/utils/bankUtils';
+import { UserSession } from '@/src/types';
 
 interface DashboardMainContentProps {
   showToast: (message: string, type?: string) => void;
-  userSession: any;
+  userSession: UserSession;
 }
 
 const MetricCard = ({

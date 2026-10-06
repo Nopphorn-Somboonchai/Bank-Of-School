@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { onSnapshot, query, orderBy, limit } from 'firebase/firestore';
 import { getPublicCollection } from '@/src/utils/dbPaths';
+import { UserSession } from '@/src/types';
 
 export interface BankNotification {
   logId: string;
@@ -17,7 +18,7 @@ interface NotificationState {
   loading: boolean;
   currentUserId: string | null;
   subscribeNotifications: (
-    userSession: any,
+    userSession: UserSession | null,
     showToast: (message: string, type?: string) => void
   ) => () => void;
   markNotificationsAsRead: () => void;
