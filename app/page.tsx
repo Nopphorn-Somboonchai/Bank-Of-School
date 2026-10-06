@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { RefreshCw, AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react';
 import { writeAuditLog } from '@/src/utils/bankUtils';
 import { AuthProvider } from '@/src/context/AuthContext';
@@ -12,15 +13,26 @@ import { useStudentStore } from '@/src/store/studentStore';
 import { useAccountStore } from '@/src/store/accountStore';
 import { useNotificationStore } from '@/src/store/notificationStore';
 
-// Extracted Sub-Components
+// Extracted Sub-Components - LoginView loaded statically for instant FCP/LCP
 import LoginView from '@/src/components/LoginView';
-import DashboardLayout from '@/src/components/DashboardLayout';
-import DashboardMainContent from '@/src/components/DashboardMainContent';
-import StudentsMainContent from '@/src/components/StudentsMainContent';
-import DepositMainContent from '@/src/components/DepositMainContent';
-import WithdrawMainContent from '@/src/components/WithdrawMainContent';
-import ReportsMainContent from '@/src/components/ReportsMainContent';
-import SettingsMainContent from '@/src/components/SettingsMainContent';
+
+// Code-splitting authenticated dashboard views to eliminate main-thread blocking
+const DashboardLayout = dynamic(() => import('@/src/components/DashboardLayout'), {
+  loading: () => (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center font-sans">
+      <div className="flex flex-col items-center gap-4">
+        <RefreshCw className="w-10 h-10 text-emerald-500 animate-spin" />
+        <p className="text-sm font-semibold text-slate-400">กำลังเข้าสู่ระบบจัดการบัญชี...</p>
+      </div>
+    </div>
+  ),
+});
+const DashboardMainContent = dynamic(() => import('@/src/components/DashboardMainContent'));
+const StudentsMainContent = dynamic(() => import('@/src/components/StudentsMainContent'));
+const DepositMainContent = dynamic(() => import('@/src/components/DepositMainContent'));
+const WithdrawMainContent = dynamic(() => import('@/src/components/WithdrawMainContent'));
+const ReportsMainContent = dynamic(() => import('@/src/components/ReportsMainContent'));
+const SettingsMainContent = dynamic(() => import('@/src/components/SettingsMainContent'));
 
 export type ToastType = 'success' | 'error' | 'warning';
 
@@ -116,7 +128,9 @@ function AppContent({
     }
   }, [activeTab, userSession, isAdmin]);
 
-  if (authLoading) {
+  // Only show full-screen loader if user session is already verified and restoring
+  // For initial public visit / unauthenticated state, render LoginView immediately for instant FCP & LCP (< 1.2s)
+  if (authLoading && userSession) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center font-sans">
         <div className="flex flex-col items-center gap-4">

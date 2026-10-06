@@ -11,9 +11,9 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#10b981', // Emerald 500 theme color
     icons: [
       {
-        src: '/icon.png',
+        src: '/icon.svg',
         sizes: 'any',
-        type: 'image/png',
+        type: 'image/svg+xml',
       },
       {
         src: '/icon-192.png',

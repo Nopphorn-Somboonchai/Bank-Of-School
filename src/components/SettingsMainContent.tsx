@@ -6,9 +6,26 @@ import {
 } from 'lucide-react';
 import { setDoc, onSnapshot } from 'firebase/firestore';
 import { getPublicCollection, getPublicDoc } from '@/src/utils/dbPaths';
-import { writeAuditLog, recalculateDashboardSummary } from '@/src/utils/bankUtils';
-import LogsMainContent from './LogsMainContent';
-import SystemTestingPage from '@/app/test_runner_ui';
+import dynamic from 'next/dynamic';
+
+const LogsMainContent = dynamic(() => import('./LogsMainContent'), {
+  loading: () => (
+    <div className="py-20 flex flex-col items-center justify-center text-slate-400 gap-3">
+      <RefreshCw className="w-8 h-8 animate-spin text-emerald-500" />
+      <span className="text-sm">กำลังโหลดบันทึกการทำงาน...</span>
+    </div>
+  ),
+});
+
+const SystemTestingPage = dynamic(() => import('@/app/test_runner_ui'), {
+  loading: () => (
+    <div className="py-20 flex flex-col items-center justify-center text-slate-400 gap-3">
+      <RefreshCw className="w-8 h-8 animate-spin text-emerald-500" />
+      <span className="text-sm">กำลังโหลดชุดทดสอบระบบ...</span>
+    </div>
+  ),
+});
+
 import { useAuthRole } from '@/src/hooks/useAuthRole';
 
 interface SettingsMainContentProps {

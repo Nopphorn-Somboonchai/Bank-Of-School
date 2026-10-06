@@ -15,6 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Bank Of School",
   description: "ระบบธนาคารโรงเรียน (Bank of School) - ระบบจัดการบัญชีออมทรัพย์นักเรียน",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

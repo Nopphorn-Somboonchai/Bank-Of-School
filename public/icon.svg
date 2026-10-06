@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#020617" />
+      <stop offset="100%" stop-color="#064e3b" />
+    </linearGradient>
+    <linearGradient id="emeraldGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="50%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="goldCoin" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="40%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background rounded canvas -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+  <rect width="504" height="504" x="4" y="4" rx="124" fill="none" stroke="#10b981" stroke-opacity="0.3" stroke-width="4" />
+
+  <!-- Background Ambient Glow -->
+  <circle cx="256" cy="280" r="140" fill="#10b981" fill-opacity="0.12" filter="url(#glow)" />
+  <circle cx="256" cy="140" r="70" fill="#f59e0b" fill-opacity="0.18" filter="url(#glow)" />
+
+  <!-- Golden Coin -->
+  <g filter="url(#softShadow)">
+    <circle cx="256" cy="140" r="54" fill="url(#goldCoin)" stroke="#fef08a" stroke-width="4"/>
+    <circle cx="256" cy="140" r="42" fill="none" stroke="#b45309" stroke-width="3" stroke-opacity="0.6" stroke-dasharray="6,4" />
+    <!-- Coin Symbol ($ or School/Bank sign) -->
+    <text x="256" y="157" font-family="Arial, sans-serif" font-weight="900" font-size="52" fill="#78350f" text-anchor="middle">฿</text>
+  </g>
+
+  <!-- Piggy Bank Body Outline & Glass Shape -->
+  <g filter="url(#softShadow)">
+    <!-- Back Ear -->
+    <path d="M 180 210 L 195 160 Q 215 170 215 200 Z" fill="#047857" stroke="#34d399" stroke-width="6" />
+
+    <!-- Main Piggy Body -->
+    <path d="M 160 270
+             C 140 270 120 285 110 305
+             C 105 315 105 330 115 340
+             C 125 350 145 350 155 345
+             L 165 390 C 168 400 185 400 188 390
+             L 198 350
+             L 300 350
+             L 310 390 C 313 400 330 400 333 390
+             L 345 345
+             C 385 330 405 295 405 260
+             C 405 210 355 185 295 185
+             C 245 185 190 205 165 245
+             Z"
+          fill="#064e3b"
+          fill-opacity="0.75"
+          stroke="url(#emeraldGlow)"
+          stroke-width="12"
+          stroke-linejoin="round" />
+
+    <!-- Front Ear -->
+    <path d="M 215 220 L 230 165 Q 255 175 250 215 Z" fill="#10b981" stroke="#6ee7b7" stroke-width="6" />
+
+    <!-- Snout / Nose -->
+    <ellipse cx="120" cy="315" rx="18" ry="24" fill="#065f46" stroke="#34d399" stroke-width="6" />
+    <circle cx="116" cy="310" r="3.5" fill="#34d399" />
+    <circle cx="124" cy="310" r="3.5" fill="#34d399" />
+
+    <!-- Eye -->
+    <circle cx="190" cy="265" r="7" fill="#6ee7b7" />
+    <circle cx="188" cy="263" r="2.5" fill="#ffffff" />
+
+    <!-- Coin Slot on top -->
+    <rect x="235" y="180" width="42" height="10" rx="5" fill="#022c22" stroke="#34d399" stroke-width="4" />
+
+    <!-- Curly Tail -->
+    <path d="M 405 270 Q 425 260 425 245 Q 425 235 415 240 Q 410 245 420 255" fill="none" stroke="#34d399" stroke-width="8" stroke-linecap="round" />
+
+    <!-- Glass highlight reflections -->
+    <path d="M 200 240 Q 280 205 340 230" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.3" />
+    <path d="M 180 320 Q 260 335 330 310" fill="none" stroke="#34d399" stroke-width="4" stroke-linecap="round" opacity="0.4" />
+  </g>
+</svg>
