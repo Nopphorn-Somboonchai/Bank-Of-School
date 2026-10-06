@@ -1,9 +1,10 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth, db, getAppId } from '@/src/config/firebase';
-import { doc, getDoc, collection, setDoc, deleteDoc, query, where, getDocs, onSnapshot } from 'firebase/firestore';
+import { auth } from '@/src/config/firebase';
+import { getPublicDoc, getPublicCollection } from '@/src/utils/dbPaths';
+import { getDoc, setDoc, deleteDoc, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { writeAuditLog } from '@/src/utils/bankUtils';
 
 interface AuthContextType {
@@ -31,25 +32,47 @@ export function AuthProvider({
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
-          const appId = getAppId();
-          const userDocRef = doc(db, 'artifacts', appId, 'users', user.uid);
+          const userDocRef = getPublicDoc('users', user.uid);
           let userDocSnap = await getDoc(userDocRef);
 
           if (!userDocSnap.exists()) {
-            // Search for a placeholder created by Admin (by email) and migrate it
-            const usersCol = collection(db, 'artifacts', appId, 'users');
-            const q = query(usersCol, where('email', '==', user.email));
-            const querySnapshot = await getDocs(q);
+            // TODO: ในอนาคตเมื่อพร้อมบังคับใช้อีเมลจริงและต้องการบังคับยืนยันอีเมล ให้เปิดใช้งานเงื่อนไขนี้:
+            // if (!user.emailVerified) {
+            //   showToast("กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ", "error");
+            //   setUserSession(null);
+            //   await signOut(auth);
+            //   setLoading(false);
+            //   return;
+            // }
 
+            // Search for a placeholder created by Admin (by email) and migrate it
+            const targetEmail = (user.email || "").toLowerCase().trim();
             let placeholderData: any = null;
             let placeholderDocRef: any = null;
 
-            querySnapshot.forEach((docSnap) => {
-              if (docSnap.id.startsWith('STAFF_')) {
-                placeholderData = docSnap.data();
-                placeholderDocRef = docSnap.ref;
+            // ตรวจสอบตาม Deterministic ID ก่อน (STAFF_<email ตัวพิมพ์เล็ก> ตาม D1)
+            if (targetEmail) {
+              const directPlaceholderRef = getPublicDoc('users', `STAFF_${targetEmail}`);
+              const directSnap = await getDoc(directPlaceholderRef);
+              if (directSnap.exists()) {
+                placeholderData = directSnap.data();
+                placeholderDocRef = directSnap.ref;
               }
-            });
+            }
+
+            // Fallback รองรับ Legacy placeholder เดิมที่ขึ้นต้นด้วย STAFF_
+            if (!placeholderData && user.email) {
+              const usersCol = getPublicCollection('users');
+              const q = query(usersCol, where('email', '==', user.email));
+              const querySnapshot = await getDocs(q);
+
+              querySnapshot.forEach((docSnap) => {
+                if (docSnap.id.startsWith('STAFF_')) {
+                  placeholderData = docSnap.data();
+                  placeholderDocRef = docSnap.ref;
+                }
+              });
+            }
 
             if (placeholderData) {
               if (placeholderData.status === 'Suspended') {
@@ -121,8 +144,7 @@ export function AuthProvider({
   useEffect(() => {
     if (!userSession?.userId) return;
 
-    const appId = getAppId();
-    const configDocRef = doc(db, 'artifacts', appId, 'settings', 'system_config');
+    const configDocRef = getPublicDoc('settings', 'system_config');
     const unsubscribe = onSnapshot(configDocRef, (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data();

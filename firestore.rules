@@ -26,6 +26,32 @@ service cloud.firestore {
         );
     }
 
+    // 4. ฟังก์ชันตรวจสอบการมีอยู่ของเอกสาร Placeholder สำหรับครู/เจ้าหน้าที่ (ตาม D1)
+    function hasStaffPlaceholder(appId, email) {
+      return exists(/databases/$(database)/documents/artifacts/$(appId)/users/$('STAFF_' + email.lower()));
+    }
+
+    // 5. ฟังก์ชันดึงข้อมูลเอกสาร Placeholder
+    function getStaffPlaceholder(appId, email) {
+      return get(/databases/$(database)/documents/artifacts/$(appId)/users/$('STAFF_' + email.lower()));
+    }
+
+    // 6. ฟังก์ชันตรวจสอบความถูกต้องของข้อมูลสรุปแดชบอร์ด (Dashboard Summary Validation)
+    function isValidDashboardSummary() {
+      return request.resource.data.keys().hasOnly([
+        'totalSavings', 'totalStudents', 'totalAccounts',
+        'activeStudents', 'activeAccounts', 'todayDeposits',
+        'todayWithdrawals', 'dailyStats', 'lastUpdated', 'currentDate'
+      ]) &&
+      (!('totalSavings' in request.resource.data) || (request.resource.data.totalSavings is number && request.resource.data.totalSavings >= 0)) &&
+      (!('totalStudents' in request.resource.data) || (request.resource.data.totalStudents is number && request.resource.data.totalStudents >= 0)) &&
+      (!('totalAccounts' in request.resource.data) || (request.resource.data.totalAccounts is number && request.resource.data.totalAccounts >= 0)) &&
+      (!('activeStudents' in request.resource.data) || (request.resource.data.activeStudents is number && request.resource.data.activeStudents >= 0)) &&
+      (!('activeAccounts' in request.resource.data) || (request.resource.data.activeAccounts is number && request.resource.data.activeAccounts >= 0)) &&
+      (!('todayDeposits' in request.resource.data) || (request.resource.data.todayDeposits is number && request.resource.data.todayDeposits >= 0)) &&
+      (!('todayWithdrawals' in request.resource.data) || (request.resource.data.todayWithdrawals is number && request.resource.data.todayWithdrawals >= 0));
+    }
+
     // Fallback: ปิดกั้นการเข้าถึงที่ไม่ได้ระบุไว้ในเงื่อนไขอย่างชัดเจน (ป้องกันบุคคลภายนอกเข้าถึงข้อมูลทุกส่วน)
     match /{document=**} {
       allow read, write: if false;
@@ -44,11 +70,25 @@ service cloud.firestore {
           (resource != null && resource.data.email == request.auth.token.email)
         );
         // อนุญาตให้คุณครูสร้างข้อมูลตัวเองได้ตอนสมัครใช้งานครั้งแรก หรือโดย Admin
+        // ป้องกัน Privilege Escalation (D1): role/status ต้องตรงกับ placeholder หรือเป็น role ต่ำสุด (Teacher, Active)
         allow create: if isAuthenticated() && (
           isAdmin(appId) || 
           (
             request.auth.uid == userId && 
-            request.resource.data.email == request.auth.token.email
+            request.auth.token.email != null &&
+            request.resource.data.email == request.auth.token.email &&
+            (
+              (
+                hasStaffPlaceholder(appId, request.auth.token.email) &&
+                request.resource.data.role == getStaffPlaceholder(appId, request.auth.token.email).data.role &&
+                request.resource.data.status == getStaffPlaceholder(appId, request.auth.token.email).data.status
+              ) ||
+              (
+                !hasStaffPlaceholder(appId, request.auth.token.email) &&
+                request.resource.data.role == 'Teacher' &&
+                request.resource.data.status == 'Active'
+              )
+            )
           )
         );
         // อนุญาตให้แก้ไขข้อมูลเฉพาะของตัวเอง หรือโดย Admin
@@ -60,8 +100,15 @@ service cloud.firestore {
             request.resource.data.status == resource.data.status
           )
         );
-        // อนุญาตให้ลบข้อมูลโดย Admin หรือลบ temporary placeholder ของตนเอง (ที่มีอีเมลตรงกัน)
-        allow delete: if isAuthenticated() && (isAdmin(appId) || resource.data.email == request.auth.token.email);
+        // อนุญาตให้ลบข้อมูลโดย Admin หรือลบ temporary placeholder ของตนเอง (STAFF_* ที่มีอีเมลตรงกัน) เท่านั้น
+        allow delete: if isAuthenticated() && (
+          isAdmin(appId) || 
+          (
+            userId.matches('^STAFF_.*') && 
+            request.auth.token.email != null && 
+            resource.data.email == request.auth.token.email
+          )
+        );
       }
       
       // ==========================================
@@ -118,8 +165,11 @@ service cloud.firestore {
       }
       
       match /settings/dashboard_summary {
-        // คุณครูสามารถอ่านและแก้ไขข้อมูลสรุปแดชบอร์ดได้
-        allow read, write: if isTeacher(appId);
+        // คุณครูสามารถอ่านข้อมูลสรุปแดชบอร์ดได้
+        // การเขียนจำกัดเฉพาะฟิลด์ที่ได้รับอนุญาต และต้องมีค่าตัวเลข >= 0
+        allow read: if isTeacher(appId);
+        allow create, update: if isAdmin(appId) || (isTeacher(appId) && isValidDashboardSummary());
+        allow delete: if isAdmin(appId);
       }
 
       match /settings/{settingId} {

@@ -49,7 +49,7 @@
 
 ## 2. Open Decisions (ต้องถามผู้ใช้ถ้า AI ยังไม่เห็นคำตอบ)
 
-- [ ] **D1 (P1):** วิธีกัน privilege escalation ตอนสร้าง user doc — แนะนำ **Option A**: placeholder ใช้ docId แบบ deterministic (`STAFF_<email ตัวพิมพ์เล็ก>`) เพื่อให้ rules `get()` ตรวจ role ได้ และ self-create ต้อง role ตรงกับ placeholder + `email_verified == true`; Super Admin คนแรกสร้างผ่าน Firebase Console. (Option B: Cloud Function — ต้อง Blaze plan)
+- [x] **D1 (P1):** วิธีกัน privilege escalation ตอนสร้าง user doc — **มติผู้ใช้ (2026-10-06):** ยังไม่เปิดบังคับ `email_verified == true` เพราะระบบยังมีครูใช้งานจริงปัจจุบันเพียง 1 ท่าน และยังใช้ Mock Email อยู่ (ป้องกันไม่ให้บล็อกการเข้าสู่ระบบ) โดยเลือก **Option A (ปรับเงื่อนไข)**: placeholder ใช้ docId แบบ deterministic (`STAFF_<email ตัวพิมพ์เล็ก>`) เพื่อให้ rules `get()` ตรวจ role ได้ และ self-create ต้อง role ตรงกับ placeholder หรือเป็น role ต่ำสุด (`Teacher`, `Active`) โดยยังไม่บังคับ `email_verified`
 - [ ] **D2 (P3):** นักเรียนที่ถูก Soft Delete และยังมียอดคงเหลือ — ให้หักยอดออกจาก `totalSavings` (สอดคล้องพฤติกรรม recalc เดิม) แล้วบวกกลับเมื่อกู้คืน? (ค่าเริ่มต้นที่แนะนำ: ใช่)
 - [ ] **D3 (P5):** ฟีเจอร์ **Void** (ยกเลิกรายการ) — เลื่อนไป backlog (ค่าเริ่มต้น) หรือทำตอนนี้ (ต้องทำ reversal transaction + แก้ rules)
 
@@ -57,15 +57,18 @@
 
 ## Phase 1 — Security: Rules & Auth (🔴 ทำก่อนสุด)
 
-**เป้าหมาย:** ปิดช่องยกระดับสิทธิ์ และผูกสิทธิ์กับอีเมลที่ยืนยันแล้ว
+**เป้าหมาย:** ปิดช่องยกระดับสิทธิ์ และผูกสิทธิ์กับอีเมล/placeholder โดยไม่กระทบผู้ใช้งานปัจจุบัน
 
-- [ ] **1.1** `firestore.rules` → `users/{userId}` `create`: Admin สร้างได้; self-create ต้อง `request.auth.token.email_verified == true`, email ตรง และ `role`/`status` ต้องตรงกับ placeholder (ตาม D1) หรือเป็น role ต่ำสุด (`Teacher`, `Active`) เท่านั้น
-- [ ] **1.2** `firestore.rules` → ปรับ `delete` ของ users ให้ลบได้เฉพาะ placeholder ของตัวเอง (`STAFF_*` + email ตรง) หรือ Admin
-- [ ] **1.3** `AuthContext.tsx` (L38-82) + `LoginView.tsx` (L~91) → เช็ค `user.emailVerified` ก่อน migrate/สร้าง user doc; ถ้ายังไม่ยืนยัน → toast + `signOut`
-- [ ] **1.4** `SettingsMainContent.tsx` (สร้าง placeholder staff ~L218) → ใช้ docId ตามที่ตัดสินใจใน D1; ห้ามแก้ UI อื่น
-- [ ] **1.5** `firestore.rules` → `dashboard_summary`: จำกัด field ที่เขียนได้ (ไม่ให้ teacher ตั้ง `totalSavings` ตรงๆ ได้ตามอำเภอใจ ถ้าทำได้โดยไม่ทำให้ transaction ฝาก/ถอนพัง) — ถ้าทำไม่ได้ให้บันทึกเป็น risk ที่ยอมรับใน Progress Log
+> ⚠️ **Note สำคัญจากการตกลงกับผู้ใช้ (User Decision):**
+> **ยังไม่เปิดบังคับ `email_verified == true`** สำหรับระบบที่ยังใช้ Mock Email และมีคุณครูใช้งานจริงอยู่ในระบบปัจจุบัน 1 ท่าน เพื่อไม่ให้เกิดผลกระทบต่อการเข้าใช้งาน (ไม่บล็อกใน rules 1.1 และไม่บังคับ signOut ใน 1.3)
 
-**Verification:** อ่านทวน rules เทียบเคสโจมตี (self-create เป็น Super Admin / อีเมลไม่ยืนยัน) → ต้องถูก deny; tsc/lint ผ่าน
+- [x] **1.1** `firestore.rules` → `users/{userId}` `create`: Admin สร้างได้; self-create ต้อง email ตรง และ `role`/`status` ต้องตรงกับ placeholder (ตาม D1) หรือเป็น role ต่ำสุด (`Teacher`, `Active`) เท่านั้น *(ยังไม่บังคับ email_verified ตาม Note)*
+- [x] **1.2** `firestore.rules` → ปรับ `delete` ของ users ให้ลบได้เฉพาะ placeholder ของตัวเอง (`STAFF_*` + email ตรง) หรือ Admin
+- [x] **1.3** `AuthContext.tsx` (L38-82) + `LoginView.tsx` (L~91) → ปรับปรุง logic การ migrate/สร้าง user doc แต่ **ยังไม่ใส่เงื่อนไข signOut หาก email ยังไม่ verified** (ใส่ comment TODO รองรับไว้สำหรับอนาคตเมื่อพร้อมใช้อีเมลจริง)
+- [x] **1.4** `SettingsMainContent.tsx` (สร้าง placeholder staff ~L218) → ใช้ docId ตามที่ตัดสินใจใน D1; ห้ามแก้ UI อื่น
+- [x] **1.5** `firestore.rules` → `dashboard_summary`: จำกัด field ที่เขียนได้ (ไม่ให้ teacher ตั้ง `totalSavings` ตรงๆ ได้ตามอำเภอใจ ถ้าทำได้โดยไม่ทำให้ transaction ฝาก/ถอนพัง) — ถ้าทำไม่ได้ให้บันทึกเป็น risk ที่ยอมรับใน Progress Log
+
+**Verification:** อ่านทวน rules เทียบเคสโจมตี (self-create เป็น Super Admin) → ต้องถูก deny; tsc/lint ผ่าน
 
 ---
 
@@ -139,3 +142,10 @@
 | วันที่ | Task | สถานะ | ไฟล์ที่แก้ | หมายเหตุ/สิ่งที่ค้าง |
 |---|---|---|---|---|
 | 2026-10-06 | — | แผนถูกสร้าง | `implement plan.md` | ยังไม่เริ่ม; D1–D3 รอคำตอบ |
+| 2026-10-06 | D1 / Phase 1 Note | บันทึกข้อตกลง | `doc/implement plan.md` | บันทึกเงื่อนไขไม่บังคับ email_verified == true เนื่องจากมีครูใช้งานจริง 1 ท่าน และใช้ Mock Email |
+| 2026-10-06 | 1.1 | สำเร็จ | `firestore.rules` | เพิ่ม helper hasStaffPlaceholder/getStaffPlaceholder และจำกัด self-create role/status ให้ตรงกับ placeholder หรือ Teacher/Active ป้องกัน privilege escalation |
+| 2026-10-06 | 1.2 | สำเร็จ | `firestore.rules` | ปรับ delete users ให้ลบได้เฉพาะ Admin หรือ placeholder ตัวเอง (`STAFF_*` + email ตรงกัน) ป้องกันลบ user doc ตัวจริง |
+| 2026-10-06 | 1.3 | สำเร็จ | `src/context/AuthContext.tsx`, `src/components/LoginView.tsx` | ปรับปรุงการ migrate รองรับ deterministic docId (`STAFF_<email>`) พร้อม fallback เดิม, ใช้ dbPaths และใส่คอมเมนต์ TODO สำหรับ email_verified ในอนาคต |
+| 2026-10-06 | 1.4 | สำเร็จ | `src/components/SettingsMainContent.tsx` | เปลี่ยน docId ของ staff placeholder ตอน Admin เพิ่มเจ้าหน้าที่เป็น `STAFF_<email ตัวพิมพ์เล็ก>` ตาม D1 |
+| 2026-10-06 | 1.5 | สำเร็จ | `firestore.rules` | เพิ่ม isValidDashboardSummary จำกัดฟิลด์ (hasOnly) และบังคับค่าตัวเลข >= 0, delete ได้เฉพาะ Admin; Accepted Risk: ยังไม่สามารถตัดสิทธิ์ teacher อัปเดต totalSavings ออกได้ทั้งหมดเนื่องจาก client transaction ฝาก/ถอนยังต้องส่งค่ายอดสุทธิ |
+| 2026-10-06 | Phase 1 สรุป | เสร็จสิ้น | `firestore.rules`, `AuthContext.tsx`, `LoginView.tsx`, `SettingsMainContent.tsx` | เสร็จสิ้น Phase 1: Security & Auth ครบทุก task (1.1-1.5); tsc/lint ตรวจสอบแล้วผ่าน; พร้อม commit |

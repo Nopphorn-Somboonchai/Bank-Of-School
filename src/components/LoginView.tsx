@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, EyeOff, Eye, Shield, AlertCircle, LogIn } from 'lucide-react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from '@/src/config/firebase';
+import { auth } from '@/src/config/firebase';
 import { getPublicDoc, getPublicCollection } from '@/src/utils/dbPaths';
 import { getDoc, setDoc, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 
@@ -59,20 +59,40 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
           loginTime: new Date().toLocaleString('th-TH')
         };
       } else {
+        // TODO: ในอนาคตเมื่อพร้อมบังคับใช้อีเมลจริงและต้องการบังคับยืนยันอีเมล ให้เปิดใช้งานเงื่อนไขนี้:
+        // if (!user.emailVerified) {
+        //   await auth.signOut();
+        //   throw new Error("กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ");
+        // }
+
         // If Firestore document doesn't exist, search for a placeholder created by Admin (by email)
-        const usersCol = getPublicCollection('users');
-        const q = query(usersCol, where('email', '==', user.email || formattedEmail));
-        const querySnapshot = await getDocs(q);
-        
+        const targetEmail = (user.email || formattedEmail).toLowerCase().trim();
         let placeholderData: any = null;
         let placeholderDocRef: any = null;
-        
-        querySnapshot.forEach((docSnap) => {
-          if (docSnap.id.startsWith('STAFF_')) {
-            placeholderData = docSnap.data();
-            placeholderDocRef = docSnap.ref;
+
+        // ตรวจสอบตาม Deterministic ID ก่อน (STAFF_<email ตัวพิมพ์เล็ก> ตาม D1)
+        if (targetEmail) {
+          const directPlaceholderRef = getPublicDoc('users', `STAFF_${targetEmail}`);
+          const directSnap = await getDoc(directPlaceholderRef);
+          if (directSnap.exists()) {
+            placeholderData = directSnap.data();
+            placeholderDocRef = directSnap.ref;
           }
-        });
+        }
+
+        // Fallback รองรับ Legacy placeholder เดิมที่ขึ้นต้นด้วย STAFF_
+        if (!placeholderData) {
+          const usersCol = getPublicCollection('users');
+          const q = query(usersCol, where('email', '==', user.email || formattedEmail));
+          const querySnapshot = await getDocs(q);
+          
+          querySnapshot.forEach((docSnap) => {
+            if (docSnap.id.startsWith('STAFF_')) {
+              placeholderData = docSnap.data();
+              placeholderDocRef = docSnap.ref;
+            }
+          });
+        }
 
         if (placeholderData && placeholderData.status === 'Suspended') {
           await auth.signOut();

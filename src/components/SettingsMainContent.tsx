@@ -201,11 +201,12 @@ export default function SettingsMainContent({
       return;
     }
 
-    const newId = "STAFF_" + Date.now();
+    const cleanEmail = formEmail.trim().toLowerCase();
+    const newId = `STAFF_${cleanEmail}`;
     const staffData = {
       userId: newId,
       fullName: formName,
-      email: formEmail,
+      email: formEmail.trim(),
       role: formRole,
       status: formStatus,
       classAssignment: formClass,
@@ -232,7 +233,7 @@ export default function SettingsMainContent({
       const simStaff = {
         id: newId,
         name: formName,
-        email: formEmail,
+        email: formEmail.trim(),
         role: formRole,
         status: formStatus,
         classAssignment: formClass,
