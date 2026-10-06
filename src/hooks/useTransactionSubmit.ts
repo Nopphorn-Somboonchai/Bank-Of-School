@@ -1,45 +1,54 @@
-import { useState, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { BankError } from '../utils/errors';
 
-export function useTransactionSubmit(showToast: (msg: string, type?: string) => void) {
+export type ToastType = 'success' | 'error' | 'warning' | string;
+
+export function useTransactionSubmit(showToast: (msg: string, type?: ToastType) => void) {
   const [submitting, setSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
 
   const execute = useCallback(
     async <T>(
       action: () => Promise<T>,
       successMessage?: string
     ): Promise<T | null> => {
-      // 1. Idempotency Check: ป้องกันการส่งคำขอซ้อนกันในระยะเวลาเดียวกัน
-      if (submitting) {
+      // 1. Idempotency Check: ล็อกแบบ Synchronous ด้วย useRef ทันที ป้องกันการคลิกซ้ำซ้อนระดับเสี้ยววินาที
+      if (isSubmittingRef.current) {
         showToast("ระบบกำลังประมวลผลธุรกรรมทางการเงิน กรุณารอสักครู่...", "warning");
         return null;
       }
 
+      isSubmittingRef.current = true;
       setSubmitting(true);
+
       try {
         const result = await action();
         if (successMessage) {
           showToast(successMessage, 'success');
         }
         return result;
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Transaction execution failed:", err);
-        
-        // 2. จัดกลุ่ม Error Handling อย่างเป็นระบบ
+
+        // 2. จัดกลุ่ม Error Handling อย่างเป็นระบบผ่าน Type Guard
         if (err instanceof BankError) {
-          // โยลตาม Custom Error Class ของระบบ
           showToast(err.message, 'error');
-        } else if (err.message && err.message.includes("permission-denied")) {
-          showToast("คุณไม่มีสิทธิ์ในการเขียนข้อมูลธุรกรรมนี้ลงบนฐานข้อมูลระบบ (Permission Denied)", "error");
+        } else if (err instanceof Error) {
+          if (err.message.includes("permission-denied")) {
+            showToast("คุณไม่มีสิทธิ์ในการเขียนข้อมูลธุรกรรมนี้ลงบนฐานข้อมูลระบบ (Permission Denied)", "error");
+          } else {
+            showToast(err.message || "เกิดข้อผิดพลาดที่ไม่คาดคิดในการประมวลผลธุรกรรม", 'error');
+          }
         } else {
-          showToast(err.message || "เกิดข้อผิดพลาดที่ไม่คาดคิดในการประมวลผลธุรกรรม", 'error');
+          showToast("เกิดข้อผิดพลาดที่ไม่คาดคิดในการประมวลผลธุรกรรม", 'error');
         }
         return null;
       } finally {
+        isSubmittingRef.current = false;
         setSubmitting(false);
       }
     },
-    [submitting, showToast]
+    [showToast]
   );
 
   return {

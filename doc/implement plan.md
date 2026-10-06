@@ -76,12 +76,12 @@
 
 **เป้าหมาย:** `transactionService` ปลอดภัยและไม่ซ้ำซ้อน โดย **พฤติกรรมเงินเหมือนเดิม 100%**
 
-- [ ] **2.1** `src/utils/money.ts` (ไฟล์ใหม่): `normalizeAmount(n)` → ตรวจ `Number.isFinite`, `> 0`, ปัดทศนิยม 2 ตำแหน่ง (`Math.round(n*100)/100`), throw `BankError` subclass ใหม่ `InvalidAmountError` (เพิ่มใน `src/utils/errors.ts`); ใช้ `roundMoney` กับ balanceAfter/totalSavings/daily stats
-- [ ] **2.2** `transactionService.ts` → ดึง logic ร่วม (counter, dashboard summary/dailyStats, สร้าง tx doc, audit) เป็น `executeLedgerEntry({ type: 'Deposit' | 'Withdrawal', ... })` ภายในไฟล์; `performDeposit/performWithdrawal` เป็น wrapper บาง (signature ภายนอกเดิมห้ามเปลี่ยน → ไม่ต้องแก้ UI)
-- [ ] **2.3** เช็คสถานะนักเรียนใน transaction เดียวกัน: อ่าน `students/{id}` → ถ้า `deletedAt != null` หรือ status ไม่ใช่ Active → throw `InvalidAccountStatusError`
-- [ ] **2.4** ปีใน reference number ใช้ปีตามเวลา `Asia/Bangkok` (เพิ่ม `getLocalYear()` ใน `bankUtils.ts` แล้วใช้แทน `new Date().getFullYear()`)
-- [ ] **2.5** `useTransactionSubmit.ts` → ใช้ `useRef` เป็น lock จริง (เก็บ `submitting` state ไว้สำหรับ UI); type `'warning'` ให้ครอบคลุมใน toast (ดู P4.3)
-- [ ] **2.6** แทนที่ `catch (err: any)` ใน hook ด้วย `unknown` + type guard
+- [x] **2.1** `src/utils/money.ts` (ไฟล์ใหม่): `normalizeAmount(n)` → ตรวจ `Number.isFinite`, `> 0`, ปัดทศนิยม 2 ตำแหน่ง (`Math.round(n*100)/100`), throw `BankError` subclass ใหม่ `InvalidAmountError` (เพิ่มใน `src/utils/errors.ts`); ใช้ `roundMoney` กับ balanceAfter/totalSavings/daily stats
+- [x] **2.2** `transactionService.ts` → ดึง logic ร่วม (counter, dashboard summary/dailyStats, สร้าง tx doc, audit) เป็น `executeLedgerEntry({ type: 'Deposit' | 'Withdrawal', ... })` ภายในไฟล์; `performDeposit/performWithdrawal` เป็น wrapper บาง (signature ภายนอกเดิมห้ามเปลี่ยน → ไม่ต้องแก้ UI)
+- [x] **2.3** เช็คสถานะนักเรียนใน transaction เดียวกัน: อ่าน `students/{id}` → ถ้า `deletedAt != null` หรือ status ไม่ใช่ Active → throw `InvalidAccountStatusError`
+- [x] **2.4** ปีใน reference number ใช้ปีตามเวลา `Asia/Bangkok` (เพิ่ม `getLocalYear()` ใน `bankUtils.ts` แล้วใช้แทน `new Date().getFullYear()`)
+- [x] **2.5** `useTransactionSubmit.ts` → ใช้ `useRef` เป็น lock จริง (เก็บ `submitting` state ไว้สำหรับ UI); type `'warning'` ให้ครอบคลุมใน toast (ดู P4.3)
+- [x] **2.6** แทนที่ `catch (err: any)` ใน hook ด้วย `unknown` + type guard
 
 **Verification:** diff ของ `balanceBefore/After`, `referenceNumber` format (`DEP{ปี}{6 หลัก}`/`WDL…`), audit log shape ต้องเหมือนเดิม; ถอนเกินยอด → `InsufficientFundsError`; tsc/lint ผ่าน
 
@@ -149,3 +149,7 @@
 | 2026-10-06 | 1.4 | สำเร็จ | `src/components/SettingsMainContent.tsx` | เปลี่ยน docId ของ staff placeholder ตอน Admin เพิ่มเจ้าหน้าที่เป็น `STAFF_<email ตัวพิมพ์เล็ก>` ตาม D1 |
 | 2026-10-06 | 1.5 | สำเร็จ | `firestore.rules` | เพิ่ม isValidDashboardSummary จำกัดฟิลด์ (hasOnly) และบังคับค่าตัวเลข >= 0, delete ได้เฉพาะ Admin; Accepted Risk: ยังไม่สามารถตัดสิทธิ์ teacher อัปเดต totalSavings ออกได้ทั้งหมดเนื่องจาก client transaction ฝาก/ถอนยังต้องส่งค่ายอดสุทธิ |
 | 2026-10-06 | Phase 1 สรุป | เสร็จสิ้น | `firestore.rules`, `AuthContext.tsx`, `LoginView.tsx`, `SettingsMainContent.tsx` | เสร็จสิ้น Phase 1: Security & Auth ครบทุก task (1.1-1.5); tsc/lint ตรวจสอบแล้วผ่าน; พร้อม commit |
+| 2026-10-06 | 2.1 | สำเร็จ | `src/utils/errors.ts`, `src/utils/money.ts` | เพิ่ม InvalidAmountError ใน errors.ts และสร้าง money.ts พร้อมฟังก์ชัน normalizeAmount และ roundMoney |
+| 2026-10-06 | 2.2–2.4 | สำเร็จ | `src/services/transactionService.ts`, `src/utils/bankUtils.ts` | รวม logic ฝาก/ถอนเป็น executeLedgerEntry, ตรวจสถานะนักเรียนใน tx, ใช้ getLocalYear (Asia/Bangkok) และประยุกต์ใช้ normalizeAmount/roundMoney |
+| 2026-10-06 | 2.5–2.6 | สำเร็จ | `src/hooks/useTransactionSubmit.ts` | ใช้ useRef (isSubmittingRef) เป็น synchronous lock, เพิ่ม ToastType รองรับ 'warning', และแปลง catch (err: any) เป็น unknown + BankError/Error type guard |
+| 2026-10-06 | Phase 2 สรุป | เสร็จสิ้น | `src/utils/errors.ts`, `src/utils/money.ts`, `src/services/transactionService.ts`, `src/utils/bankUtils.ts`, `src/hooks/useTransactionSubmit.ts` | เสร็จสิ้น Phase 2: Financial Core ครบทุก task (2.1-2.6); tsc/lint ผ่าน 100%; พร้อม commit |

@@ -10,6 +10,15 @@ export const getLocalDateString = () => {
 };
 
 /**
+ * ดึงปี ค.ศ. ปัจจุบันตามเขตเวลา Asia/Bangkok
+ */
+export const getLocalYear = (): number => {
+  const yearStr = getLocalDateString().split('-')[0];
+  const year = parseInt(yearStr, 10);
+  return Number.isFinite(year) ? year : new Date().getFullYear();
+};
+
+/**
  * Log user actions to audit logs collection in Firestore.
  */
 export const writeAuditLog = async (

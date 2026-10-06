@@ -56,3 +56,16 @@ export class AccountNotFoundError extends BankError {
     this.name = 'AccountNotFoundError';
   }
 }
+
+/**
+ * จำนวนเงินไม่ถูกต้อง (ต้องเป็นตัวเลขที่ถูกต้องและมากกว่า 0)
+ */
+export class InvalidAmountError extends BankError {
+  constructor(amount?: unknown) {
+    super(
+      `จำนวนเงินไม่ถูกต้อง (${amount !== undefined ? String(amount) : 'ค่าว่าง'}) ต้องเป็นตัวเลขมากกว่า 0`,
+      'INVALID_AMOUNT'
+    );
+    this.name = 'InvalidAmountError';
+  }
+}
