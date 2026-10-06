@@ -20,6 +20,19 @@ export const getLocalYear = (): number => {
 };
 
 /**
+ * Trims a daily statistics map to retain only the most recent N days based on sorted date keys.
+ */
+export function trimDailyStats<T>(stats: Record<string, T>, maxDays = 10): Record<string, T> {
+  const result: Record<string, T> = { ...stats };
+  const sortedKeys = Object.keys(result).sort();
+  if (sortedKeys.length > maxDays) {
+    const keysToDelete = sortedKeys.slice(0, sortedKeys.length - maxDays);
+    keysToDelete.forEach((k) => delete result[k]);
+  }
+  return result;
+}
+
+/**
  * Log user actions to audit logs collection in Firestore.
  */
 export const writeAuditLog = async (

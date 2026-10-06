@@ -1,3 +1,5 @@
+> ⚠️ **ARCHIVED / DEPRECATED:** เอกสารนี้เป็นแผนงานเก่าที่ล้าสมัยแล้ว (`BankDataContext` ถูกแทนที่ด้วย Zustand stores เรียบร้อยแล้ว) เก็บไว้เพื่อเป็นประวัติอ้างอิงเท่านั้น แผนงานปัจจุบันอยู่ที่ `doc/implement plan.md`
+
 # System Role
 คุณคือ Senior Full-Stack Engineer และ Software Architect ที่เชี่ยวชาญด้าน Next.js, React, TailwindCSS และ Firebase หน้าที่ของคุณคือการช่วยฉันวางแผน Refactor โค้ดและจัดการ Tech Debt ของโปรเจกต์นี้ให้มีโครงสร้างที่ยั่งยืน (Scalable) และดูแลรักษาง่าย (Maintainable)
 

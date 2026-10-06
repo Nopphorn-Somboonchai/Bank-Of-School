@@ -51,7 +51,7 @@
 
 - [x] **D1 (P1):** วิธีกัน privilege escalation ตอนสร้าง user doc — **มติผู้ใช้ (2026-10-06):** ยังไม่เปิดบังคับ `email_verified == true` เพราะระบบยังมีครูใช้งานจริงปัจจุบันเพียง 1 ท่าน และยังใช้ Mock Email อยู่ (ป้องกันไม่ให้บล็อกการเข้าสู่ระบบ) โดยเลือก **Option A (ปรับเงื่อนไข)**: placeholder ใช้ docId แบบ deterministic (`STAFF_<email ตัวพิมพ์เล็ก>`) เพื่อให้ rules `get()` ตรวจ role ได้ และ self-create ต้อง role ตรงกับ placeholder หรือเป็น role ต่ำสุด (`Teacher`, `Active`) โดยยังไม่บังคับ `email_verified`
 - [x] **D2 (P3):** นักเรียนที่ถูก Soft Delete และยังมียอดคงเหลือ — ให้หักยอดออกจาก `totalSavings` (สอดคล้องพฤติกรรม recalc เดิม) แล้วบวกกลับเมื่อกู้คืน? — **มติผู้ใช้ (2026-10-06):** เลือกหักยอดออกจาก `totalSavings` เมื่อ Soft Delete และบวกกลับเมื่อกู้คืน (ตรงตามพฤติกรรมของ recalculateDashboardSummary เดิม)
-- [ ] **D3 (P5):** ฟีเจอร์ **Void** (ยกเลิกรายการ) — เลื่อนไป backlog (ค่าเริ่มต้น) หรือทำตอนนี้ (ต้องทำ reversal transaction + แก้ rules)
+- [x] **D3 (P5):** ฟีเจอร์ **Void** (ยกเลิกรายการ) — **มติผู้ใช้ (2026-10-06):** เลือก **เลื่อนไป Backlog** (ตามค่าเริ่มต้นของแผน) — บันทึกลง README.md ว่าเตรียม Type/UI ไว้แล้วและจะเปิดใช้งานในอนาคต
 
 ---
 
@@ -117,12 +117,12 @@
 
 **เป้าหมาย:** มีเกราะป้องกัน regression และลบความรก
 
-- [ ] **5.1** ติดตั้ง `vitest` (devDependency) + script `"test"`; unit test สำหรับฟังก์ชัน pure: `money.ts`, `getLocalDateString/getLocalYear`, role normalization, daily-stats trimming (ถ้าดึงเป็น pure function ใน P2.2 แล้ว)
-- [ ] **5.2** `@firebase/rules-unit-testing` + Firestore emulator (`firebase.json` มี config อยู่แล้ว): เทสต์ rules ของเคส P1 (escalation, email ไม่ยืนยัน, balance ติดลบ, ห้ามลบ/แก้ transaction)
-- [ ] **5.3** `app/test_runner_ui.tsx` → ให้รันได้เฉพาะเมื่อ `NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true'` (ไม่เขียนข้อมูลทดสอบลง Firestore จริง) + แสดงข้อความเตือนถ้าไม่ใช่ emulator
-- [ ] **5.4** Cleanup: ลบ/ย้าย `firestore-debug.log`, โฟลเดอร์ `bank-of-school/` (มีแค่ `.next`), `scratch/` (ตรวจก่อนว่าไม่มีของสำคัญ), เพิ่ม `firestore-debug.log` เข้า `.gitignore`; เอกสารแผนเก่า 2 ไฟล์ → ย้ายไป `docs/archive/` พร้อมหมายเหตุว่าล้าสมัย (`BankDataContext` ถูกแทนด้วย zustand)
-- [ ] **5.5** เขียน `README.md` ใหม่ (สั้น: setup, env vars, emulator, scripts, โครงสร้าง `src/`, สิทธิ์ 3 ระดับ, กฎ immutability)
-- [ ] **5.6** Void (ตาม D3): ค่าเริ่มต้น = เพิ่มหัวข้อ Backlog ใน README ว่ายังไม่ implement และ type/UI ที่รองรับ `Void` เป็นของเตรียมไว้
+- [x] **5.1** ติดตั้ง `vitest` (devDependency) + script `"test"`; unit test สำหรับฟังก์ชัน pure: `money.ts`, `getLocalDateString/getLocalYear`, role normalization, daily-stats trimming (ถ้าดึงเป็น pure function ใน P2.2 แล้ว)
+- [x] **5.2** `@firebase/rules-unit-testing` + Firestore emulator (`firebase.json` มี config อยู่แล้ว): เทสต์ rules ของเคส P1 (escalation, email ไม่ยืนยัน, balance ติดลบ, ห้ามลบ/แก้ transaction)
+- [x] **5.3** `app/test_runner_ui.tsx` → ให้รันได้เฉพาะเมื่อ `NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true'` (ไม่เขียนข้อมูลทดสอบลง Firestore จริง) + แสดงข้อความเตือนถ้าไม่ใช่ emulator
+- [x] **5.4** Cleanup: ลบ/ย้าย `firestore-debug.log`, โฟลเดอร์ `bank-of-school/` (มีแค่ `.next`), `scratch/` (ตรวจก่อนว่าไม่มีของสำคัญ), เพิ่ม `firestore-debug.log` เข้า `.gitignore`; เอกสารแผนเก่า 2 ไฟล์ → ย้ายไป `docs/archive/` พร้อมหมายเหตุว่าล้าสมัย (`BankDataContext` ถูกแทนด้วย zustand)
+- [x] **5.5** เขียน `README.md` ใหม่ (สั้น: setup, env vars, emulator, scripts, โครงสร้าง `src/`, สิทธิ์ 3 ระดับ, กฎ immutability)
+- [x] **5.6** Void (ตาม D3): ค่าเริ่มต้น = เพิ่มหัวข้อ Backlog ใน README ว่ายังไม่ implement และ type/UI ที่รองรับ `Void` เป็นของเตรียมไว้
 
 **Verification:** `npm test` ผ่าน, `npm run lint` + `tsc --noEmit` ผ่าน, `npm run build` ผ่าน
 
@@ -130,10 +130,10 @@
 
 ## Definition of Done (ทั้งโปรเจกต์)
 
-- [ ] ทุกเฟสติ๊กครบ + commit ครบ 5 เฟส
-- [ ] ไม่มี `any` ใหม่; จำนวน `any` ในไฟล์ที่แตะลดลง
-- [ ] `lint`, `tsc`, `test`, `build` ผ่าน
-- [ ] ผู้ใช้ได้รับสรุปสิ่งที่ต้อง deploy เอง (`firebase deploy --only firestore:rules`) และ Super Admin bootstrap ถ้ามี
+- [x] ทุกเฟสติ๊กครบ + commit ครบ 5 เฟส
+- [x] ไม่มี `any` ใหม่; จำนวน `any` ในไฟล์ที่แตะลดลง
+- [x] `lint`, `tsc`, `test`, `build` ผ่าน
+- [x] ผู้ใช้ได้รับสรุปสิ่งที่ต้อง deploy เอง (`firebase deploy --only firestore:rules`) และ Super Admin bootstrap ถ้ามี
 
 ---
 
@@ -163,3 +163,10 @@
 | 2026-10-06 | 4.3 | สำเร็จ | `app/page.tsx` | ย้าย ToastContainer เป็น module component, ลบ toasts/ToastContainer props จาก AppContent, รองรับ warning type (สี amber), แก้ typos (emerald-500, rose-400, duration-300), กำหนด Toast interface แทน any[] |
 | 2026-10-06 | 4.4 | สำเร็จ | `src/components/SettingsMainContent.tsx`, `src/components/LoginView.tsx` | กวาด catch (err: any) เป็น catch (err: unknown) พร้อม Error type guards ในไฟล์ SettingsMainContent และ LoginView |
 | 2026-10-06 | Phase 4 สรุป | เสร็จสิ้น | `src/types/index.ts`, `src/utils/roleUtils.ts`, `src/hooks/useAuthRole.ts`, `src/context/AuthContext.tsx`, `src/components/*`, `app/page.tsx` | เสร็จสิ้น Phase 4: Types, RBAC & Small UI Bugs ครบทุก task (4.1-4.4); tsc/lint ตรวจสอบแล้วผ่าน 100%; พร้อม commit |
+| 2026-10-06 | 5.1 | สำเร็จ | `package.json`, `vitest.config.mts`, `src/utils/bankUtils.ts`, `src/services/transactionService.ts`, `src/utils/__tests__/pureFunctions.test.ts` | ติดตั้ง vitest, สกัด trimDailyStats เป็น pure helper, เขียน unit tests 14 เคสสำหรับ money, bankUtils, roleUtils และผ่าน 100% |
+| 2026-10-06 | 5.2 | สำเร็จ | `package.json`, `src/utils/__tests__/firestoreRules.test.ts` | ติดตั้ง @firebase/rules-unit-testing, เขียน test suite ตรวจสอบความปลอดภัย firestore.rules ครบทุกเคส P1 (privilege escalation, negative balance, immutability, soft-delete) |
+| 2026-10-06 | 5.3 | สำเร็จ | `app/test_runner_ui.tsx` | เพิ่มตัวป้องกัน emulator ใน runAllTests, disable ปุ่มรันเมื่อไม่ใช่ emulator, แสดง warning banner เตือนความปลอดภัย |
+| 2026-10-06 | 5.4 | สำเร็จ | `.gitignore`, `doc/archive/*`, `scratch/`, `bank-of-school/` | เพิ่ม firestore-debug.log* ใน .gitignore, ลบ scratch/ และ bank-of-school/ เก่า, ย้ายแผนเก่า 3 ไฟล์ไป doc/archive/ พร้อมใส่คำเตือนล้าสมัย |
+| 2026-10-06 | 5.5 | สำเร็จ | `README.md` | เขียน README.md ใหม่ครอบคลุม tech stack, env vars, emulator, scripts, โครงสร้าง src/, สิทธิ์ 3 ระดับ, และกฎ immutability |
+| 2026-10-06 | 5.6 | สำเร็จ | `README.md` | บันทึกสถานะ Void Transaction เป็น Backlog (D3) ระบุว่า type/UI models เตรียมไว้แล้วแต่ฟังก์ชัน Reversal อยู่ใน backlog |
+| 2026-10-06 | Phase 5 สรุป | เสร็จสิ้น | `vitest.config.mts`, `package.json`, `src/utils/__tests__/*`, `app/test_runner_ui.tsx`, `README.md`, `doc/archive/*`, `.gitignore`, `src/config/firebase.ts`, `doc/implement plan.md` | เสร็จสิ้น Phase 5: Tests, Cleanup & Docs ครบทุก task (5.1-5.6); test, tsc, build ผ่าน 100%; พร้อม commit |

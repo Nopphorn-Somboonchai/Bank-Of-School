@@ -1,3 +1,5 @@
+> ⚠️ **ARCHIVED / DEPRECATED:** เอกสารนี้เป็นแผนงานเก่าที่ล้าสมัยแล้ว (`BankDataContext` ถูกแทนที่ด้วย Zustand stores เรียบร้อยแล้ว) เก็บไว้เพื่อเป็นประวัติอ้างอิงเท่านั้น แผนงานปัจจุบันอยู่ที่ `doc/implement plan.md`
+
 # Refactoring & Fixing Technical Debt (Bank of School) - Phased Plan
 
 This plan outlines the steps to refactor the monolithic `app/page.tsx` (6,277 lines) into clean, modular, and optimized components.

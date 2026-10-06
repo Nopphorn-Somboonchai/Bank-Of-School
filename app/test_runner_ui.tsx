@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { 
   Shield, Play, CheckCircle, XCircle, Clock, 
   Terminal, Server, Database, Smartphone, 
-  Activity, RefreshCw, Check, Printer, Award, FileText, Lock
+  Activity, RefreshCw, Check, Printer, Award, FileText, Lock,
+  AlertTriangle
 } from 'lucide-react';
 import { db, auth, initializeAppAuth, getAppId } from '@/src/config/firebase';
 import { initializeApp, getApps } from 'firebase/app';
@@ -108,6 +109,8 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
   const [testExecuted, setTestExecuted] = useState(false);
   const [showReport, setShowReport] = useState(false);
 
+  const isEmulator = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === 'true';
+
   const totalTests = suites.reduce((acc, suite) => acc + suite.tests.length, 0);
   const passedTests = suites.reduce((acc, suite) => acc + suite.tests.filter(t => t.status === 'passed').length, 0);
   const failedTests = suites.reduce((acc, suite) => acc + suite.tests.filter(t => t.status === 'failed').length, 0);
@@ -122,6 +125,10 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
 
   const runAllTests = async () => {
     if (isRunning) return;
+    if (!isEmulator) {
+      addLog("⛔ ปฏิเสธการรันทดสอบ: อนุญาตให้รันได้เฉพาะเมื่อใช้งาน Firestore Emulator (NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true) เท่านั้น เพื่อป้องกันข้อมูลจริงเสียหาย", "error");
+      return;
+    }
     setIsRunning(true);
     setProgress(0);
     setLogs([]);
@@ -533,8 +540,10 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-xs text-slate-400 bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 flex items-center gap-2">
-                <Server className="w-3 h-3" /> Environment: Local (Emulator)
+              <span className={`text-xs px-3 py-1.5 rounded-full border flex items-center gap-2 ${
+                isEmulator ? 'text-slate-400 bg-slate-800 border-slate-700' : 'text-amber-400 bg-amber-950/60 border-amber-500/30'
+              }`}>
+                <Server className="w-3 h-3" /> Environment: {isEmulator ? 'Local (Emulator)' : 'Live / Production'}
               </span>
             </div>
           </header>
@@ -561,7 +570,8 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
                 )}
                 <button 
                   onClick={runAllTests} 
-                  disabled={isRunning}
+                  disabled={isRunning || !isEmulator}
+                  title={!isEmulator ? "สามารถรันได้เฉพาะเมื่อเปิดใช้งาน Firestore Emulator เท่านั้น" : undefined}
                   className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-indigo-900/20 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   {isRunning ? (
@@ -572,6 +582,18 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
                 </button>
               </div>
             </div>
+
+            {!isEmulator && (
+              <div className="mb-6 bg-amber-950/40 border border-amber-500/40 rounded-2xl p-4 flex items-start gap-3 text-amber-200">
+                <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div className="text-xs space-y-1">
+                  <p className="font-bold text-amber-300">แจ้งเตือนความปลอดภัย: ปิดการทำงานบนฐานข้อมูลจริง</p>
+                  <p className="text-amber-200/90 leading-relaxed">
+                    โหมด Test Runner ถูกจำกัดไม่ให้เขียนข้อมูลจำลองลง Firestore จริง กรุณาเปิดใช้งาน Firestore Emulator และตั้งค่า <code className="bg-amber-900/50 px-1.5 py-0.5 rounded text-amber-300 font-mono">NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true</code> ก่อนเริ่มรัน
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Overall Progress */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-8">

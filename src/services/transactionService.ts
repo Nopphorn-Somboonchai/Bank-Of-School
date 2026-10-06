@@ -2,7 +2,7 @@ import { runTransaction } from 'firebase/firestore';
 import { db } from '@/src/config/firebase';
 import { getPublicDoc } from '@/src/utils/dbPaths';
 import { Student, Account, Transaction } from '@/src/types';
-import { getLocalDateString, getLocalYear } from '@/src/utils/bankUtils';
+import { getLocalDateString, getLocalYear, trimDailyStats } from '@/src/utils/bankUtils';
 import { InsufficientFundsError, InvalidAccountStatusError, AccountNotFoundError } from '../utils/errors';
 import { normalizeAmount, roundMoney } from '../utils/money';
 
@@ -140,11 +140,7 @@ async function executeLedgerEntry({
       withdrawals: todayWithdrawals
     };
 
-    const sortedKeys = Object.keys(dailyStats).sort();
-    if (sortedKeys.length > 10) {
-      const keysToDelete = sortedKeys.slice(0, sortedKeys.length - 10);
-      keysToDelete.forEach(k => delete dailyStats[k]);
-    }
+    dailyStats = trimDailyStats(dailyStats, 10);
 
     transaction.set(summaryDocRef, {
       totalSavings,
