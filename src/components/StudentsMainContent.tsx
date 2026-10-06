@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Users, UserPlus, Search, Filter, FileText, Edit2, Trash2, X, RefreshCw } from 'lucide-react';
-import { setDoc, updateDoc, getDoc, increment } from 'firebase/firestore';
-import { db } from '@/src/config/firebase';
-import { getPublicCollection, getPublicDoc } from '@/src/utils/dbPaths';
-import { Student, StudentStatus, Account } from '@/src/types';
-import { writeAuditLog, recalculateDashboardSummary } from '@/src/utils/bankUtils';
+import { Student, StudentStatus } from '@/src/types';
+import { createStudent, updateStudent, softDeleteStudent } from '@/src/services/studentService';
+import { BankError } from '@/src/utils/errors';
 import { useStudents } from '@/src/hooks/useStudents';
 import { useAccounts } from '@/src/hooks/useAccounts';
 import StudentLedgerView from './StudentLedgerView';
@@ -95,7 +93,7 @@ export default function StudentsMainContent({ showToast, userSession }: Students
       if (formMode === 'create') {
         const studentId = "STD" + formattedNum;
 
-        // Check duplicate
+        // Check duplicate on client-side for rapid feedback
         const exists = students.some(s => s.studentId === studentId);
         if (exists) {
           showToast("รหัสนักเรียนนี้มีอยู่ในระบบแล้ว", "error");
@@ -103,87 +101,37 @@ export default function StudentsMainContent({ showToast, userSession }: Students
           return;
         }
 
-        const studentDocRef = getPublicDoc('students', studentId);
-        const studentData: Student = {
-          studentId,
-          studentNumber: formattedNum,
-          fullName: formattedName,
-          classRoom: formattedRoom,
-          status: 'Active',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          deletedAt: null
-        };
-
-        // Write student
-        await setDoc(studentDocRef, studentData);
-
-        // Auto create savings account for the student
-        const accountDocRef = getPublicDoc('accounts', studentId);
-        await setDoc(accountDocRef, {
-          accountId: studentId,
-          studentId: studentId,
-          accountNumber: "AC" + formattedNum,
-          currentBalance: 0.00,
-          status: 'Active',
-          createdAt: new Date().toISOString(),
-          lastTransactionAt: new Date().toISOString()
-        });
-
-        // Audit Log
-        await writeAuditLog(
-          'CreateStudent',
-          `students/${studentId}`,
-          null,
-          studentData,
-          `เพิ่มนักเรียนใหม่: ${formattedName} (รหัสประจำตัว: ${formattedNum}, ชั้น: ${formattedRoom})`,
-          userSession.userId
+        await createStudent(
+          {
+            studentNumber: formattedNum,
+            fullName: formattedName,
+            classRoom: formattedRoom
+          },
+          userSession?.userId || 'unknown'
         );
-
-        // Increment totalStudents in dashboard summary
-        const summaryDocRef = getPublicDoc('settings', 'dashboard_summary');
-        await setDoc(summaryDocRef, {
-          totalStudents: increment(1)
-        }, { merge: true });
 
         showToast("เพิ่มข้อมูลนักเรียนใหม่เรียบร้อยแล้ว");
       } else {
         // Edit Mode
         if (!editingStudentId) return;
-        const studentDocRef = getPublicDoc('students', editingStudentId);
 
-        // Fetch old data for audit trail
-        const oldSnap = await getDoc(studentDocRef);
-        const oldData = oldSnap.exists() ? oldSnap.data() : null;
-
-        const updatedData = {
-          fullName: formattedName,
-          classRoom: formattedRoom,
-          status,
-          updatedAt: new Date().toISOString(),
-          ...(status === 'Active' ? { deletedAt: null } : {})
-        };
-
-        await updateDoc(studentDocRef, updatedData);
-
-        // Audit Log
-        await writeAuditLog(
-          'EditStudent',
-          `students/${editingStudentId}`,
-          oldData,
-          { ...oldData, ...updatedData },
-          `แก้ไขข้อมูลนักเรียน: ${formattedName} (ชั้น: ${formattedRoom}, สถานะ: ${status})`,
-          userSession.userId
+        await updateStudent(
+          editingStudentId,
+          {
+            fullName: formattedName,
+            classRoom: formattedRoom,
+            status
+          },
+          userSession?.userId || 'unknown'
         );
 
         showToast("แก้ไขข้อมูลนักเรียนเรียบร้อยแล้ว");
-        // Recalculate dashboard summary to reflect student status changes and total savings updates
-        await recalculateDashboardSummary();
       }
       setIsFormOpen(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      showToast("เกิดข้อผิดพลาด: " + err.message, "error");
+      const msg = err instanceof BankError || err instanceof Error ? err.message : String(err);
+      showToast("เกิดข้อผิดพลาด: " + msg, "error");
     } finally {
       setSubmitting(false);
     }
@@ -195,36 +143,18 @@ export default function StudentsMainContent({ showToast, userSession }: Students
     setSubmitting(true);
 
     try {
-      const studentDocRef = getPublicDoc('students', deleteTarget.studentId);
-      const oldSnap = await getDoc(studentDocRef);
-      const oldData = oldSnap.exists() ? oldSnap.data() : null;
-
-      const updatedData = {
-        status: deleteStatus,
-        updatedAt: new Date().toISOString(),
-        deletedAt: new Date().toISOString()
-      };
-
-      await updateDoc(studentDocRef, updatedData);
-
-      // Audit Log
-      await writeAuditLog(
-        'EditStudent',
-        `students/${deleteTarget.studentId}`,
-        oldData,
-        { ...oldData, ...updatedData },
-        `ลบนักเรียนแบบ Soft Delete: ${deleteTarget.fullName} (เปลี่ยนสถานะเป็น ${deleteStatus})`,
-        userSession.userId
+      await softDeleteStudent(
+        deleteTarget.studentId,
+        deleteStatus,
+        userSession?.userId || 'unknown'
       );
-
-      // Recalculate dashboard summary to reflect student status changes and total savings updates
-      await recalculateDashboardSummary();
 
       showToast(`เปลี่ยนสถานะนักเรียนเป็น ${deleteStatus} เรียบร้อยแล้ว`);
       setDeleteTarget(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      showToast("เกิดข้อผิดพลาดในการเปลี่ยนสถานะ: " + err.message, "error");
+      const msg = err instanceof BankError || err instanceof Error ? err.message : String(err);
+      showToast("เกิดข้อผิดพลาดในการเปลี่ยนสถานะ: " + msg, "error");
     } finally {
       setSubmitting(false);
     }

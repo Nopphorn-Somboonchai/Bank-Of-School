@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { setDoc, onSnapshot } from 'firebase/firestore';
 import { getPublicCollection, getPublicDoc } from '@/src/utils/dbPaths';
-import { writeAuditLog } from '@/src/utils/bankUtils';
+import { writeAuditLog, recalculateDashboardSummary } from '@/src/utils/bankUtils';
 import LogsMainContent from './LogsMainContent';
 import SystemTestingPage from '@/app/test_runner_ui';
 import { useAuthRole } from '@/src/hooks/useAuthRole';
@@ -37,6 +37,7 @@ export default function SettingsMainContent({
   });
   const [dbLoading, setDbLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isRecalculating, setIsRecalculating] = useState(false);
   
   // Staff State
   const [staffList, setStaffList] = useState<any[]>([]);
@@ -144,6 +145,26 @@ export default function SettingsMainContent({
       showToast("ล้มเหลวในการบันทึกข้อมูลตั้งค่า (" + err.message + ")", "error");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // Handler for Admin Manual Summary Recalculation (Task 3.4)
+  const handleRecalculateSummary = async () => {
+    if (userSession?.role !== 'Admin' && userSession?.role !== 'Super Admin') {
+      showToast("เฉพาะผู้ดูแลระบบ (Admin) เท่านั้นที่สามารถใช้เครื่องมือนี้ได้", "error");
+      return;
+    }
+
+    setIsRecalculating(true);
+    try {
+      await recalculateDashboardSummary(userSession?.role);
+      showToast("คำนวณและปรับปรุงข้อมูลสรุปยอดเรียบร้อยแล้ว");
+    } catch (err: unknown) {
+      console.error("Recalculate summary error:", err);
+      const msg = err instanceof Error ? err.message : String(err);
+      showToast("เกิดข้อผิดพลาดในการซ่อมแซมสรุปยอด: " + msg, "error");
+    } finally {
+      setIsRecalculating(false);
     }
   };
 
@@ -529,6 +550,41 @@ export default function SettingsMainContent({
                   </li>
                 </ul>
               </div>
+            </div>
+          </div>
+
+          {/* Admin System Maintenance Card (Task 3.4) */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden p-6 space-y-4 animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <Activity className="w-5 h-5 text-amber-400" />
+                <span>การบำรุงรักษาและกู้คืนข้อมูล (System Maintenance & Repair)</span>
+              </h3>
+              <span className="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-full font-medium">
+                เฉพาะ Admin
+              </span>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-slate-950 border border-slate-800/80 rounded-xl p-4">
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-slate-200">ซ่อมแซมและคำนวณยอดสรุปแดชบอร์ดใหม่ (Recalculate Summary)</h4>
+                <p className="text-xs text-slate-400 max-w-xl leading-relaxed">
+                  สแกนรวบรวมข้อมูลจริงจากทั้งระบบ (นักเรียน, บัญชี, รายการธุรกรรม) เพื่อคำนวณยอดเงินออมรวมและจำนวนนักเรียนใหม่ทั้งหมด เหมาะสำหรับใช้กู้คืนเมื่อยอดตัวเลขในแดชบอร์ดไม่ตรงกับความเป็นจริง
+                </p>
+                <p className="text-[10px] text-amber-500/80 font-medium">
+                  *กระบวนการนี้เป็นการสแกนทั้ง Collection ใช้เฉพาะกรณีจำเป็นและไม่ควรเรียกใช้บ่อย
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleRecalculateSummary}
+                disabled={isRecalculating}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50 active:scale-95 shrink-0"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isRecalculating ? 'animate-spin' : ''}`} />
+                <span>{isRecalculating ? 'กำลังคำนวณ...' : 'เริ่มคำนวณยอดใหม่'}</span>
+              </button>
             </div>
           </div>
         </div>

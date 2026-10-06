@@ -2,12 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { TrendingUp, Clock, Building, Users, ArrowDownToLine, ArrowUpFromLine, RefreshCw, CheckCircle, Shield } from 'lucide-react';
 import { onSnapshot, query, orderBy, limit, getDoc } from 'firebase/firestore';
 import { getPublicDoc, getPublicCollection } from '@/src/utils/dbPaths';
-import { getLocalDateString, recalculateDashboardSummary } from '@/src/utils/bankUtils';
+import { getLocalDateString } from '@/src/utils/bankUtils';
 
 interface DashboardMainContentProps {
   showToast: (message: string, type?: string) => void;
   userSession: any;
 }
+
+const MetricCard = ({
+  title,
+  value,
+  icon: Icon,
+  colorClass,
+  trendText
+}: {
+  title: string;
+  value: string | number;
+  icon: React.ComponentType<any>;
+  colorClass: string;
+  trendText: string;
+}) => (
+  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm animate-fadeIn">
+    <div className="flex justify-between items-start">
+      <div>
+        <p className="text-sm text-slate-400 font-medium mb-1">{title}</p>
+        <h3 className="text-2xl font-bold text-white mb-2">{value}</h3>
+        <p className={`text-xs flex items-center gap-1 ${trendText.includes('+') ? 'text-emerald-400' : 'text-slate-500'}`}>
+          {trendText.includes('+') ? <TrendingUp className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+          {trendText}
+        </p>
+      </div>
+      <div className={`p-3 rounded-xl ${colorClass}`}>
+        <Icon className="w-6 h-6" />
+      </div>
+    </div>
+  </div>
+);
 
 export default function DashboardMainContent({ showToast, userSession }: DashboardMainContentProps) {
   const [summary, setSummary] = useState<any>(null);
@@ -20,32 +50,25 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
   useEffect(() => {
     const summaryDocRef = getPublicDoc('settings', 'dashboard_summary');
 
-    const unsubscribeSummary = onSnapshot(summaryDocRef, async (docSnap) => {
+    const unsubscribeSummary = onSnapshot(summaryDocRef, (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         const todayStr = getLocalDateString();
+        const isToday = data.currentDate === todayStr;
 
-        // Auto-healing/Rollover when dates don't match
-        if (data.currentDate !== todayStr) {
-          console.log("Rollover mismatch detected in summary subscription. Recalculating...");
-          try {
-            const freshData = await recalculateDashboardSummary();
-            setSummary(freshData);
-          } catch (err) {
-            console.error("Error auto-recalculating on subscribe:", err);
-          }
-        } else {
-          setSummary(data);
-        }
+        setSummary({
+          ...data,
+          todayDeposits: isToday ? (data.todayDeposits || 0) : 0,
+          todayWithdrawals: isToday ? (data.todayWithdrawals || 0) : 0
+        });
       } else {
-        // Init summary if it doesn't exist
-        console.log("Summary document does not exist. Recalculating for the first time...");
-        try {
-          const freshData = await recalculateDashboardSummary();
-          setSummary(freshData);
-        } catch (err) {
-          console.error("Error initializing summary on subscribe:", err);
-        }
+        setSummary({
+          totalSavings: 0,
+          totalStudents: 0,
+          todayDeposits: 0,
+          todayWithdrawals: 0,
+          dailyStats: {}
+        });
       }
       setLoading(false);
     }, (error) => {
@@ -102,50 +125,31 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
     fetchMissingNames();
   }, [recentTransactions]);
 
-  // 3. Manual recalculate handler
-  const handleManualRecalculate = async () => {
+  // 3. Manual refresh handler
+  const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      const freshData = await recalculateDashboardSummary();
-      setSummary(freshData);
+      const summaryDocRef = getPublicDoc('settings', 'dashboard_summary');
+      const snap = await getDoc(summaryDocRef);
+      if (snap.exists()) {
+        const data = snap.data();
+        const todayStr = getLocalDateString();
+        const isToday = data.currentDate === todayStr;
+        setSummary({
+          ...data,
+          todayDeposits: isToday ? (data.todayDeposits || 0) : 0,
+          todayWithdrawals: isToday ? (data.todayWithdrawals || 0) : 0
+        });
+      }
       showToast("รีเฟรชข้อมูลแดชบอร์ดเรียบร้อยแล้ว");
-    } catch (err: any) {
-      console.error("Manual recalculate error:", err);
-      showToast("ไม่สามารถรีเฟรชข้อมูลได้: " + err.message, "error");
+    } catch (err: unknown) {
+      console.error("Manual refresh error:", err);
+      const msg = err instanceof Error ? err.message : String(err);
+      showToast("ไม่สามารถรีเฟรชข้อมูลได้: " + msg, "error");
     } finally {
       setRefreshing(false);
     }
   };
-
-  const MetricCard = ({
-    title,
-    value,
-    icon: Icon,
-    colorClass,
-    trendText
-  }: {
-    title: string;
-    value: string | number;
-    icon: React.ComponentType<any>;
-    colorClass: string;
-    trendText: string;
-  }) => (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm animate-fadeIn">
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="text-sm text-slate-400 font-medium mb-1">{title}</p>
-          <h3 className="text-2xl font-bold text-white mb-2">{value}</h3>
-          <p className={`text-xs flex items-center gap-1 ${trendText.includes('+') ? 'text-emerald-400' : 'text-slate-500'}`}>
-            {trendText.includes('+') ? <TrendingUp className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
-            {trendText}
-          </p>
-        </div>
-        <div className={`p-3 rounded-xl ${colorClass}`}>
-          <Icon className="w-6 h-6" />
-        </div>
-      </div>
-    </div>
-  );
 
   if (loading) {
     return (
@@ -204,12 +208,13 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
         <div className="flex gap-2">
           <button
             type="button"
-            onClick={handleManualRecalculate}
+            onClick={handleRefresh}
             disabled={refreshing}
             className="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 hover:text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95"
+            title="รีเฟรชข้อมูลแดชบอร์ดล่าสุด"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-            คำนวณใหม่
+            รีเฟรช
           </button>
         </div>
       </div>

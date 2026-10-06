@@ -1,6 +1,7 @@
-import { db } from '@/src/config/firebase';
 import { getPublicCollection, getPublicDoc } from '@/src/utils/dbPaths';
 import { doc, setDoc, getDocs, query, where } from 'firebase/firestore';
+import { roundMoney } from '@/src/utils/money';
+import { ForbiddenError } from '@/src/utils/errors';
 
 /**
  * Format localized Thai dates in YYYY-MM-DD format under Bangkok timezone.
@@ -49,10 +50,26 @@ export const writeAuditLog = async (
   }
 };
 
+
 /**
- * Recalculate dashboard statistics atomically from transaction history.
+ * เครื่องมือซ่อมแซมสรุปยอดข้อมูลภาพรวม (Admin Repair Tool)
+ * 
+ * ⚠️ คำเตือนสำคัญ (Expensive Operation):
+ * ฟังก์ชันนี้มีค่าใช้จ่ายสูงและใช้ทรัพยากรมาก เนื่องจากต้องอ่านข้อมูลทั้ง Collection ของ
+ * `students`, `accounts`, และ `transactions` ห้ามเรียกใช้ใน Flow การทำงานปกติเด็ดขาด!
+ * 
+ * ให้ใช้เฉพาะเมื่อข้อมูลใน dashboard_summary คลาดเคลื่อน และต้องเรียกโดยผู้ดูแลระบบ (Admin) เท่านั้น
+ *
+ * @param callerRole บทบาทของผู้เรียก (ต้องเป็น 'Admin' หรือ 'Super Admin')
  */
-export const recalculateDashboardSummary = async () => {
+export const recalculateDashboardSummary = async (callerRole?: string) => {
+  if (callerRole && callerRole !== 'Admin' && callerRole !== 'Super Admin') {
+    throw new ForbiddenError('เฉพาะผู้ดูแลระบบ (Admin) เท่านั้นที่สามารถเรียกใช้การคำนวณซ่อมแซมสรุปยอดได้');
+  }
+  if (!callerRole) {
+    console.warn('⚠️ recalculateDashboardSummary called without explicit callerRole. Restricted to Admin.');
+  }
+
   try {
     const studentsCol = getPublicCollection('students');
     const accountsCol = getPublicCollection('accounts');
@@ -105,14 +122,14 @@ export const recalculateDashboardSummary = async () => {
       }
 
       if (tx.transactionType === 'Deposit') {
-        dailyStats[txDateStr].deposits += amount;
+        dailyStats[txDateStr].deposits = roundMoney(dailyStats[txDateStr].deposits + amount);
         if (txDateStr === todayStr) {
-          todayDeposits += amount;
+          todayDeposits = roundMoney(todayDeposits + amount);
         }
       } else if (tx.transactionType === 'Withdrawal') {
-        dailyStats[txDateStr].withdrawals += amount;
+        dailyStats[txDateStr].withdrawals = roundMoney(dailyStats[txDateStr].withdrawals + amount);
         if (txDateStr === todayStr) {
-          todayWithdrawals += amount;
+          todayWithdrawals = roundMoney(todayWithdrawals + amount);
         }
       }
     });
@@ -128,10 +145,10 @@ export const recalculateDashboardSummary = async () => {
     }
 
     const summaryData = {
-      totalSavings,
+      totalSavings: roundMoney(totalSavings),
       totalStudents: activeStudentCount,
-      todayDeposits,
-      todayWithdrawals,
+      todayDeposits: roundMoney(todayDeposits),
+      todayWithdrawals: roundMoney(todayWithdrawals),
       dailyStats,
       lastUpdated: new Date().toISOString(),
       currentDate: todayStr
@@ -145,3 +162,4 @@ export const recalculateDashboardSummary = async () => {
     throw error;
   }
 };
+

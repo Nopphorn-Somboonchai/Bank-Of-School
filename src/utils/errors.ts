@@ -69,3 +69,40 @@ export class InvalidAmountError extends BankError {
     this.name = 'InvalidAmountError';
   }
 }
+
+/**
+ * รหัสนักเรียนซ้ำในระบบ
+ */
+export class DuplicateStudentError extends BankError {
+  constructor(studentIdOrNumber?: string) {
+    super(
+      `รหัสนักเรียนนี้มีอยู่ในระบบแล้ว${studentIdOrNumber ? ` (${studentIdOrNumber})` : ''}`,
+      'DUPLICATE_STUDENT'
+    );
+    this.name = 'DuplicateStudentError';
+  }
+}
+
+/**
+ * ไม่พบข้อมูลนักเรียนในระบบ
+ */
+export class StudentNotFoundError extends BankError {
+  constructor(studentId?: string) {
+    super(
+      `ไม่พบข้อมูลนักเรียนในระบบ${studentId ? ` (ID: ${studentId})` : ''}`,
+      'STUDENT_NOT_FOUND'
+    );
+    this.name = 'StudentNotFoundError';
+  }
+}
+
+/**
+ * ข้อผิดพลาดการไม่มีสิทธิ์เข้าถึงหรือดำเนินการ
+ */
+export class ForbiddenError extends BankError {
+  constructor(message: string = 'ไม่มีสิทธิ์ในการดำเนินการนี้') {
+    super(message, 'FORBIDDEN');
+    this.name = 'ForbiddenError';
+  }
+}
+

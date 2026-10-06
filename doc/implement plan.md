@@ -50,7 +50,7 @@
 ## 2. Open Decisions (ต้องถามผู้ใช้ถ้า AI ยังไม่เห็นคำตอบ)
 
 - [x] **D1 (P1):** วิธีกัน privilege escalation ตอนสร้าง user doc — **มติผู้ใช้ (2026-10-06):** ยังไม่เปิดบังคับ `email_verified == true` เพราะระบบยังมีครูใช้งานจริงปัจจุบันเพียง 1 ท่าน และยังใช้ Mock Email อยู่ (ป้องกันไม่ให้บล็อกการเข้าสู่ระบบ) โดยเลือก **Option A (ปรับเงื่อนไข)**: placeholder ใช้ docId แบบ deterministic (`STAFF_<email ตัวพิมพ์เล็ก>`) เพื่อให้ rules `get()` ตรวจ role ได้ และ self-create ต้อง role ตรงกับ placeholder หรือเป็น role ต่ำสุด (`Teacher`, `Active`) โดยยังไม่บังคับ `email_verified`
-- [ ] **D2 (P3):** นักเรียนที่ถูก Soft Delete และยังมียอดคงเหลือ — ให้หักยอดออกจาก `totalSavings` (สอดคล้องพฤติกรรม recalc เดิม) แล้วบวกกลับเมื่อกู้คืน? (ค่าเริ่มต้นที่แนะนำ: ใช่)
+- [x] **D2 (P3):** นักเรียนที่ถูก Soft Delete และยังมียอดคงเหลือ — ให้หักยอดออกจาก `totalSavings` (สอดคล้องพฤติกรรม recalc เดิม) แล้วบวกกลับเมื่อกู้คืน? — **มติผู้ใช้ (2026-10-06):** เลือกหักยอดออกจาก `totalSavings` เมื่อ Soft Delete และบวกกลับเมื่อกู้คืน (ตรงตามพฤติกรรมของ recalculateDashboardSummary เดิม)
 - [ ] **D3 (P5):** ฟีเจอร์ **Void** (ยกเลิกรายการ) — เลื่อนไป backlog (ค่าเริ่มต้น) หรือทำตอนนี้ (ต้องทำ reversal transaction + แก้ rules)
 
 ---
@@ -91,10 +91,10 @@
 
 **เป้าหมาย:** เลิก scan ทั้ง collection และเลิกเขียนหลายขั้นตอนแบบไม่ atomic
 
-- [ ] **3.1** `src/services/studentService.ts` (ไฟล์ใหม่): `createStudent` ใช้ `runTransaction` → เช็ค duplicate จาก DB จริง, เขียน student + account + `totalStudents +1` + audit log รวมใน transaction เดียว
-- [ ] **3.2** `studentService.ts`: `updateStudent` / `softDeleteStudent` / `restoreStudent` → transaction ที่อัปเดต `totalStudents` และ `totalSavings` แบบ delta (ตาม D2) + audit log; ไม่เรียก `recalculateDashboardSummary`
-- [ ] **3.3** `StudentsMainContent.tsx` → เปลี่ยน handler (L~90-230) ให้เรียก service แทนเขียน Firestore ตรง; UI/ข้อความ toast เหมือนเดิม; ลบ import ที่ไม่ใช้ (`setDoc`, `updateDoc`, `increment`, …)
-- [ ] **3.4** `recalculateDashboardSummary` → คงไว้เป็นเครื่องมือ "ซ่อมสรุปยอด" สำหรับ Admin เท่านั้น (ย้ายจุดเรียกไปปุ่มใน Settings ถ้ายังไม่มี; ถ้ามีอยู่แล้วให้คงไว้) + ใส่คอมเมนต์ว่าแพง/ไม่ใช้ใน flow ปกติ และ guard ด้วย role Admin
+- [x] **3.1** `src/services/studentService.ts` (ไฟล์ใหม่): `createStudent` ใช้ `runTransaction` → เช็ค duplicate จาก DB จริง, เขียน student + account + `totalStudents +1` + audit log รวมใน transaction เดียว
+- [x] **3.2** `studentService.ts`: `updateStudent` / `softDeleteStudent` / `restoreStudent` → transaction ที่อัปเดต `totalStudents` และ `totalSavings` แบบ delta (ตาม D2) + audit log; ไม่เรียก `recalculateDashboardSummary`
+- [x] **3.3** `StudentsMainContent.tsx` → เปลี่ยน handler (L~90-230) ให้เรียก service แทนเขียน Firestore ตรง; UI/ข้อความ toast เหมือนเดิม; ลบ import ที่ไม่ใช้ (`setDoc`, `updateDoc`, `increment`, …)
+- [x] **3.4** `recalculateDashboardSummary` → คงไว้เป็นเครื่องมือ "ซ่อมสรุปยอด" สำหรับ Admin เท่านั้น (ย้ายจุดเรียกไปปุ่มใน Settings ถ้ายังไม่มี; ถ้ามีอยู่แล้วให้คงไว้) + ใส่คอมเมนต์ว่าแพง/ไม่ใช้ใน flow ปกติ และ guard ด้วย role Admin
 
 **Verification:** สร้างนักเรียน → มี student+account+summary+audit ครบ หรือไม่มีเลย (ทดสอบ throw กลางทาง); ลบ/กู้คืนนักเรียนที่มียอด → `totalSavings` ตรงกับผล recalc เดิม; tsc/lint ผ่าน
 
@@ -153,3 +153,8 @@
 | 2026-10-06 | 2.2–2.4 | สำเร็จ | `src/services/transactionService.ts`, `src/utils/bankUtils.ts` | รวม logic ฝาก/ถอนเป็น executeLedgerEntry, ตรวจสถานะนักเรียนใน tx, ใช้ getLocalYear (Asia/Bangkok) และประยุกต์ใช้ normalizeAmount/roundMoney |
 | 2026-10-06 | 2.5–2.6 | สำเร็จ | `src/hooks/useTransactionSubmit.ts` | ใช้ useRef (isSubmittingRef) เป็น synchronous lock, เพิ่ม ToastType รองรับ 'warning', และแปลง catch (err: any) เป็น unknown + BankError/Error type guard |
 | 2026-10-06 | Phase 2 สรุป | เสร็จสิ้น | `src/utils/errors.ts`, `src/utils/money.ts`, `src/services/transactionService.ts`, `src/utils/bankUtils.ts`, `src/hooks/useTransactionSubmit.ts` | เสร็จสิ้น Phase 2: Financial Core ครบทุก task (2.1-2.6); tsc/lint ผ่าน 100%; พร้อม commit |
+| 2026-10-06 | 3.1 | สำเร็จ | `src/utils/errors.ts`, `src/services/studentService.ts` | สร้าง studentService.ts พร้อม createStudent ใช้ runTransaction ตรวจสอบ duplicate จาก DB จริง, เขียน student + account + totalStudents +1 และ audit log รวมแบบ atomic |
+| 2026-10-06 | 3.2 | สำเร็จ | `src/services/studentService.ts` | เพิ่ม updateStudent, softDeleteStudent, restoreStudent ใน studentService.ts ใช้ runTransaction อัปเดต totalStudents และ totalSavings แบบ delta (ตาม D2) และบันทึก audit log โดยไม่ต้อง scan collection |
+| 2026-10-06 | 3.3 | สำเร็จ | `src/components/StudentsMainContent.tsx` | เปลี่ยน handler เพิ่ม/แก้ไข/ลบนักเรียนให้เรียก studentService แทนเขียน Firestore ตรง, ลบ import ไม่จำเป็น (setDoc, updateDoc, getDoc, increment, writeAuditLog, recalculateDashboardSummary), แปลง catch เป็น unknown + BankError |
+| 2026-10-06 | 3.4 | สำเร็จ | `src/utils/bankUtils.ts`, `src/components/SettingsMainContent.tsx`, `src/components/DashboardMainContent.tsx` | เพิ่ม JSDoc เตือนราคาแพงและ role guard ใน recalculateDashboardSummary, เพิ่มปุ่มซ่อมแซมสรุปยอดสำหรับ Admin ในหน้า Settings, ปรับ Dashboard ให้อ่าน snapshot/refresh แบบ lightweight |
+| 2026-10-06 | Phase 3 สรุป | เสร็จสิ้น | `src/services/studentService.ts`, `src/utils/errors.ts`, `src/utils/bankUtils.ts`, `src/components/StudentsMainContent.tsx`, `src/components/SettingsMainContent.tsx`, `src/components/DashboardMainContent.tsx` | เสร็จสิ้น Phase 3: Student Atomicity & Dashboard Summary ครบทุก task (3.1-3.4); tsc ผ่าน 100%; พร้อม commit |
