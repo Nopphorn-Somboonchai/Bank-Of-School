@@ -67,7 +67,8 @@ service cloud.firestore {
         allow read: if isAuthenticated() && (
           request.auth.uid == userId || 
           isTeacher(appId) || 
-          (resource != null && resource.data.email == request.auth.token.email)
+          (request.auth.token.email != null && userId == 'STAFF_' + request.auth.token.email.lower()) ||
+          (resource != null && resource.data.email != null && request.auth.token.email != null && resource.data.email.lower() == request.auth.token.email.lower())
         );
         // อนุญาตให้คุณครูสร้างข้อมูลตัวเองได้ตอนสมัครใช้งานครั้งแรก หรือโดย Admin
         // ป้องกัน Privilege Escalation (D1): role/status ต้องตรงกับ placeholder หรือเป็น role ต่ำสุด (Teacher, Active)
@@ -76,7 +77,8 @@ service cloud.firestore {
           (
             request.auth.uid == userId && 
             request.auth.token.email != null &&
-            request.resource.data.email == request.auth.token.email &&
+            request.resource.data.email != null &&
+            request.resource.data.email.lower() == request.auth.token.email.lower() &&
             (
               (
                 hasStaffPlaceholder(appId, request.auth.token.email) &&
@@ -85,7 +87,10 @@ service cloud.firestore {
               ) ||
               (
                 !hasStaffPlaceholder(appId, request.auth.token.email) &&
-                request.resource.data.role == 'Teacher' &&
+                (
+                  (request.auth.token.email.lower().matches('^admin@.*') && (request.resource.data.role == 'Admin' || request.resource.data.role == 'Super Admin')) ||
+                  (request.resource.data.role == 'Teacher')
+                ) &&
                 request.resource.data.status == 'Active'
               )
             )
@@ -106,7 +111,10 @@ service cloud.firestore {
           (
             userId.matches('^STAFF_.*') && 
             request.auth.token.email != null && 
-            resource.data.email == request.auth.token.email
+            (
+              userId == 'STAFF_' + request.auth.token.email.lower() ||
+              (resource != null && resource.data.email != null && resource.data.email.lower() == request.auth.token.email.lower())
+            )
           )
         );
       }

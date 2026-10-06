@@ -3,7 +3,7 @@ import { Mail, Lock, EyeOff, Eye, Shield, AlertCircle, LogIn } from 'lucide-reac
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/src/config/firebase';
 import { getPublicDoc, getPublicCollection } from '@/src/utils/dbPaths';
-import { getDoc, setDoc, query, where, getDocs, deleteDoc } from 'firebase/firestore';
+import { getDoc, setDoc, query, where, getDocs, deleteDoc, DocumentData, DocumentReference } from 'firebase/firestore';
 import { UserSession } from '@/src/types';
 import { normalizeRole } from '@/src/utils/roleUtils';
 
@@ -69,31 +69,39 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
 
         // If Firestore document doesn't exist, search for a placeholder created by Admin (by email)
         const targetEmail = (user.email || formattedEmail).toLowerCase().trim();
-        let placeholderData: any = null;
-        let placeholderDocRef: any = null;
+        let placeholderData: DocumentData | null = null;
+        let placeholderDocRef: DocumentReference | null = null;
 
         // ตรวจสอบตาม Deterministic ID ก่อน (STAFF_<email ตัวพิมพ์เล็ก> ตาม D1)
         if (targetEmail) {
-          const directPlaceholderRef = getPublicDoc('users', `STAFF_${targetEmail}`);
-          const directSnap = await getDoc(directPlaceholderRef);
-          if (directSnap.exists()) {
-            placeholderData = directSnap.data();
-            placeholderDocRef = directSnap.ref;
+          try {
+            const directPlaceholderRef = getPublicDoc('users', `STAFF_${targetEmail}`);
+            const directSnap = await getDoc(directPlaceholderRef);
+            if (directSnap.exists()) {
+              placeholderData = directSnap.data();
+              placeholderDocRef = directSnap.ref;
+            }
+          } catch (placeholderErr) {
+            console.warn("Could not read deterministic placeholder in LoginView:", placeholderErr);
           }
         }
 
         // Fallback รองรับ Legacy placeholder เดิมที่ขึ้นต้นด้วย STAFF_
         if (!placeholderData) {
-          const usersCol = getPublicCollection('users');
-          const q = query(usersCol, where('email', '==', user.email || formattedEmail));
-          const querySnapshot = await getDocs(q);
-          
-          querySnapshot.forEach((docSnap) => {
-            if (docSnap.id.startsWith('STAFF_')) {
-              placeholderData = docSnap.data();
-              placeholderDocRef = docSnap.ref;
-            }
-          });
+          try {
+            const usersCol = getPublicCollection('users');
+            const q = query(usersCol, where('email', '==', user.email || formattedEmail));
+            const querySnapshot = await getDocs(q);
+            
+            querySnapshot.forEach((docSnap) => {
+              if (docSnap.id.startsWith('STAFF_')) {
+                placeholderData = docSnap.data();
+                placeholderDocRef = docSnap.ref;
+              }
+            });
+          } catch (queryErr) {
+            console.warn("Could not query legacy placeholder docs in LoginView:", queryErr);
+          }
         }
 
         if (placeholderData && placeholderData.status === 'Suspended') {
@@ -101,12 +109,17 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
           throw new Error("บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ");
         }
 
+        const isAdminEmail = targetEmail.startsWith('admin');
+        const defaultRole = isAdminEmail ? "Admin" : "Teacher";
+        const defaultFullName = isAdminEmail ? "ผู้ดูแลระบบ" : "คุณครูผู้ดูแลระบบ";
+        const defaultClassAssignment = isAdminEmail ? "ผู้ดูแลระบบกลาง" : "ชั้นมัธยมศึกษาปีที่ 1/2";
+
         const newTeacherDoc = {
           userId: user.uid,
           email: user.email || formattedEmail,
-          fullName: placeholderData?.fullName || "คุณครูผู้ดูแลระบบ",
-          role: placeholderData?.role || "Teacher",
-          classAssignment: placeholderData?.classAssignment || "ชั้นมัธยมศึกษาปีที่ 1/2",
+          fullName: placeholderData?.fullName || defaultFullName,
+          role: placeholderData?.role || defaultRole,
+          classAssignment: placeholderData?.classAssignment || defaultClassAssignment,
           status: placeholderData?.status || "Active",
           createdAt: new Date().toISOString()
         };

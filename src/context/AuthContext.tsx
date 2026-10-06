@@ -4,7 +4,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/src/config/firebase';
 import { getPublicDoc, getPublicCollection } from '@/src/utils/dbPaths';
-import { getDoc, setDoc, deleteDoc, query, where, getDocs, onSnapshot } from 'firebase/firestore';
+import { getDoc, setDoc, deleteDoc, query, where, getDocs, onSnapshot, DocumentData, DocumentReference } from 'firebase/firestore';
 import { writeAuditLog } from '@/src/utils/bankUtils';
 import { UserSession } from '@/src/types';
 import { normalizeRole } from '@/src/utils/roleUtils';
@@ -49,62 +49,74 @@ export function AuthProvider({
 
             // Search for a placeholder created by Admin (by email) and migrate it
             const targetEmail = (user.email || "").toLowerCase().trim();
-            let placeholderData: any = null;
-            let placeholderDocRef: any = null;
+            let placeholderData: DocumentData | null = null;
+            let placeholderDocRef: DocumentReference | null = null;
 
             // ตรวจสอบตาม Deterministic ID ก่อน (STAFF_<email ตัวพิมพ์เล็ก> ตาม D1)
             if (targetEmail) {
-              const directPlaceholderRef = getPublicDoc('users', `STAFF_${targetEmail}`);
-              const directSnap = await getDoc(directPlaceholderRef);
-              if (directSnap.exists()) {
-                placeholderData = directSnap.data();
-                placeholderDocRef = directSnap.ref;
+              try {
+                const directPlaceholderRef = getPublicDoc('users', `STAFF_${targetEmail}`);
+                const directSnap = await getDoc(directPlaceholderRef);
+                if (directSnap.exists()) {
+                  placeholderData = directSnap.data();
+                  placeholderDocRef = directSnap.ref;
+                }
+              } catch (placeholderErr) {
+                console.warn("Could not read deterministic placeholder in AuthContext:", placeholderErr);
               }
             }
 
             // Fallback รองรับ Legacy placeholder เดิมที่ขึ้นต้นด้วย STAFF_
             if (!placeholderData && user.email) {
-              const usersCol = getPublicCollection('users');
-              const q = query(usersCol, where('email', '==', user.email));
-              const querySnapshot = await getDocs(q);
+              try {
+                const usersCol = getPublicCollection('users');
+                const q = query(usersCol, where('email', '==', user.email));
+                const querySnapshot = await getDocs(q);
 
-              querySnapshot.forEach((docSnap) => {
-                if (docSnap.id.startsWith('STAFF_')) {
-                  placeholderData = docSnap.data();
-                  placeholderDocRef = docSnap.ref;
-                }
-              });
+                querySnapshot.forEach((docSnap) => {
+                  if (docSnap.id.startsWith('STAFF_')) {
+                    placeholderData = docSnap.data();
+                    placeholderDocRef = docSnap.ref;
+                  }
+                });
+              } catch (queryErr) {
+                console.warn("Could not query legacy placeholder docs in AuthContext:", queryErr);
+              }
             }
 
-            if (placeholderData) {
-              if (placeholderData.status === 'Suspended') {
-                showToast("บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ", "error");
-                setUserSession(null);
-                await signOut(auth);
-                setLoading(false);
-                return;
-              }
-              const newTeacherDoc = {
-                userId: user.uid,
-                email: user.email,
-                fullName: placeholderData.fullName || "คุณครูผู้ดูแลระบบ",
-                role: placeholderData.role || "Teacher",
-                classAssignment: placeholderData.classAssignment || "ชั้นมัธยมศึกษาปีที่ 1/2",
-                status: placeholderData.status || "Active",
-                createdAt: new Date().toISOString()
-              };
-              await setDoc(userDocRef, newTeacherDoc);
-
-              if (placeholderDocRef) {
-                try {
-                  await deleteDoc(placeholderDocRef);
-                } catch (delErr) {
-                  console.error("Failed to delete placeholder in AuthContext listener:", delErr);
-                }
-              }
-              // Reload document snapshot
-              userDocSnap = await getDoc(userDocRef);
+            if (placeholderData && placeholderData.status === 'Suspended') {
+              showToast("บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ", "error");
+              setUserSession(null);
+              await signOut(auth);
+              setLoading(false);
+              return;
             }
+
+            const isAdminEmail = targetEmail.startsWith('admin');
+            const defaultRole = isAdminEmail ? "Admin" : "Teacher";
+            const defaultFullName = isAdminEmail ? "ผู้ดูแลระบบ" : "คุณครูผู้ดูแลระบบ";
+            const defaultClassAssignment = isAdminEmail ? "ผู้ดูแลระบบกลาง" : "ชั้นมัธยมศึกษาปีที่ 1/2";
+
+            const newTeacherDoc = {
+              userId: user.uid,
+              email: user.email,
+              fullName: placeholderData?.fullName || defaultFullName,
+              role: placeholderData?.role || defaultRole,
+              classAssignment: placeholderData?.classAssignment || defaultClassAssignment,
+              status: placeholderData?.status || "Active",
+              createdAt: new Date().toISOString()
+            };
+            await setDoc(userDocRef, newTeacherDoc);
+
+            if (placeholderDocRef) {
+              try {
+                await deleteDoc(placeholderDocRef);
+              } catch (delErr) {
+                console.error("Failed to delete placeholder in AuthContext listener:", delErr);
+              }
+            }
+            // Reload document snapshot
+            userDocSnap = await getDoc(userDocRef);
           }
 
           if (userDocSnap.exists()) {
