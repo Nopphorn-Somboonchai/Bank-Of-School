@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, EyeOff, Eye, Vault, AlertCircle, LogIn } from 'lucide-react';
+import { Mail, Lock, EyeOff, Eye, AlertCircle, LogIn } from 'lucide-react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/src/config/firebase';
 import { getPublicDoc, getPublicCollection } from '@/src/utils/dbPaths';
@@ -173,8 +173,12 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
       {/* Header */}
       <header className="w-full mx-auto px-6 py-4 flex justify-between items-center border-b border-white/10 bg-slate-950/35 backdrop-blur-xl z-10">
         <div className="flex items-center gap-3">
-          <div className="bg-emerald-500/20 text-emerald-400 p-2.5 rounded-xl border border-emerald-400/30 shadow-sm shadow-emerald-500/20">
-            <Vault className="w-6 h-6 animate-pulse" />
+          <div className="bg-emerald-500/20 text-emerald-400 p-2 rounded-xl border border-emerald-400/30 shadow-sm shadow-emerald-500/20 flex items-center justify-center">
+            <img
+              src="/bank-of-school-icon.svg"
+              alt="Bank of School Logo"
+              className="w-7 h-7 object-contain drop-shadow-[0_2px_8px_rgba(34,226,195,0.45)]"
+            />
           </div>
           <div>
             <h1 className="text-xl font-bold text-white flex items-center gap-2">

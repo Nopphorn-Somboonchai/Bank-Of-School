@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  Vault, Menu, LayoutDashboard, Users,
+  Menu, LayoutDashboard, Users,
   ArrowDownToLine, ArrowUpFromLine, FileText, Settings,
   Bell, User, LogOut, Download, Activity, Clock, Key
 } from 'lucide-react';
@@ -110,7 +110,11 @@ export default function DashboardLayout({
         <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
           {sidebarOpen && (
             <div className="flex items-center gap-2 font-extrabold text-lg select-none">
-              <Vault className="w-6 h-6 text-emerald-400 drop-shadow-[0_2px_4px_rgba(16,185,129,0.35)]" />
+              <img
+                src="/bank-of-school-icon.svg"
+                alt="Bank of School Logo"
+                className="w-7 h-7 object-contain drop-shadow-[0_2px_8px_rgba(34,226,195,0.45)]"
+              />
               <span className="text-embossed-3d">Bank of School</span>
             </div>
           )}
