@@ -53,8 +53,8 @@ export function ReceiptModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-scaleUp">
+    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+      <div className="bg-slate-900/85 backdrop-blur-2xl border border-white/20 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-scaleUp">
         {/* Header Status */}
         <div className={`${headerColors[themeColor]} border-b px-6 py-5 text-center relative`}>
           <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2 text-xl font-bold border ${iconTextColors[themeColor]}`}>
@@ -118,11 +118,11 @@ export function ReceiptModal({
         </div>
 
         {/* Receipt Actions */}
-        <div className="px-6 py-4 bg-slate-950/30 border-t border-slate-800 flex justify-center gap-3">
+        <div className="px-6 py-4 bg-slate-950/40 border-t border-white/10 flex justify-center gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="w-full bg-slate-800 hover:bg-slate-750 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all cursor-pointer"
+            className="w-full bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all cursor-pointer shadow-md shadow-sky-500/25 active:scale-95"
           >
             ปิดหน้าต่าง
           </button>

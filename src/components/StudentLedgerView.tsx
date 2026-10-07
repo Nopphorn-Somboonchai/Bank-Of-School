@@ -229,7 +229,7 @@ export default function StudentLedgerView({
 
         <button
           onClick={handlePrint}
-          className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-950/20 active:scale-95 cursor-pointer self-end sm:self-auto"
+          className="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 active:scale-95 cursor-pointer self-end sm:self-auto"
         >
           <Printer className="w-4 h-4" />
           <span>พิมพ์สมุดบัญชี (Print Statement)</span>
@@ -253,11 +253,11 @@ export default function StudentLedgerView({
       </div>
 
       {/* Student Profile Card - Gorgeous on Screen, Clean & B&W on Print */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl ledger-container">
+      <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl overflow-hidden shadow-xl ledger-container">
         {/* Card Header (B&W/Gray style on print) */}
-        <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 border-b border-slate-800 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 print:bg-none print:border-b-2 print:border-slate-300 print:px-0">
+        <div className="bg-gradient-to-r from-sky-500/20 to-teal-500/20 border-b border-white/10 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 print:bg-none print:border-b-2 print:border-slate-300 print:px-0">
           <div>
-            <span className="text-xs font-bold text-blue-400 uppercase tracking-wider print:text-slate-700">ประวัติบัญชีออมทรัพย์</span>
+            <span className="text-xs font-bold text-sky-400 uppercase tracking-wider print:text-slate-700">ประวัติบัญชีออมทรัพย์</span>
             <h3 className="text-xl font-extrabold text-white mt-0.5 print:text-slate-900">{student.fullName}</h3>
           </div>
           <div className="flex items-center gap-2.5 print:mt-1">
@@ -314,20 +314,20 @@ export default function StudentLedgerView({
       </div>
 
       {/* Filters (Hidden on Print) */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 no-print shadow-md">
+      <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 no-print shadow-md">
         <h4 className="font-bold text-white flex items-center gap-2 text-sm shrink-0">
-          <Filter className="w-4 h-4 text-blue-400" />
+          <Filter className="w-4 h-4 text-sky-400" />
           ตัวกรองข้อมูล (Filters)
         </h4>
 
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
           {/* Month Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400 font-medium">เดือน:</span>
+            <span className="text-xs text-slate-300 font-medium">เดือน:</span>
             <select
               value={monthFilter}
               onChange={(e) => setMonthFilter(e.target.value)}
-              className="bg-slate-950/80 border border-slate-700/60 text-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-blue-500 cursor-pointer"
+              className="bg-slate-950/40 border border-white/15 text-slate-100 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-sky-400 cursor-pointer backdrop-blur-md"
             >
               <option value="All">ทุกเดือน</option>
               {monthsThai.map((m) => (
@@ -338,11 +338,11 @@ export default function StudentLedgerView({
 
           {/* Year Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400 font-medium">ปี:</span>
+            <span className="text-xs text-slate-300 font-medium">ปี:</span>
             <select
               value={yearFilter}
               onChange={(e) => setYearFilter(e.target.value)}
-              className="bg-slate-950/80 border border-slate-700/60 text-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-blue-500 cursor-pointer"
+              className="bg-slate-950/40 border border-white/15 text-slate-100 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-sky-400 cursor-pointer backdrop-blur-md"
             >
               <option value="All">ทุกปี</option>
               {uniqueYears.map((yr) => (
@@ -353,11 +353,11 @@ export default function StudentLedgerView({
 
           {/* Sort Order */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400 font-medium">เรียงลำดับ:</span>
+            <span className="text-xs text-slate-300 font-medium">เรียงลำดับ:</span>
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
-              className="bg-slate-950/80 border border-slate-700/60 text-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-blue-500 cursor-pointer"
+              className="bg-slate-950/40 border border-white/15 text-slate-100 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-sky-400 cursor-pointer backdrop-blur-md"
             >
               <option value="newest">ใหม่สุด &rarr; เก่าสุด</option>
               <option value="oldest">เก่าสุด &rarr; ใหม่สุด</option>
@@ -372,7 +372,7 @@ export default function StudentLedgerView({
                 setYearFilter('All');
                 setSortOrder('newest');
               }}
-              className="text-xs text-slate-400 hover:text-white underline cursor-pointer"
+              className="text-xs text-sky-400 hover:text-sky-300 underline cursor-pointer"
             >
               ล้างค่า
             </button>
@@ -382,28 +382,28 @@ export default function StudentLedgerView({
 
       {/* Summary statistics bar on screen (Hidden on print) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 no-print">
-        <div className="bg-slate-900 border border-slate-800/80 rounded-xl p-4 text-center">
-          <span className="text-xs font-semibold text-slate-500 uppercase block">รายการทั้งหมด</span>
+        <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-xl p-4 text-center">
+          <span className="text-xs font-semibold text-slate-400 uppercase block">รายการทั้งหมด</span>
           <span className="text-xl font-bold text-white mt-1 block font-mono">
             {filteredAndSortedTransactions.length} รายการ
           </span>
         </div>
-        <div className="bg-slate-900 border border-slate-800/80 rounded-xl p-4 text-center">
-          <span className="text-xs font-semibold text-slate-500 uppercase block">ยอดฝากรวม (ช่วงเวลาที่กรอง)</span>
-          <span className="text-xl font-bold text-emerald-400 mt-1 block font-mono">
+        <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-xl p-4 text-center">
+          <span className="text-xs font-semibold text-slate-400 uppercase block">ยอดฝากรวม (ช่วงเวลาที่กรอง)</span>
+          <span className="text-xl font-bold text-emerald-300 mt-1 block font-mono">
             ฿{totalDeposits.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
-        <div className="bg-slate-900 border border-slate-800/80 rounded-xl p-4 text-center">
-          <span className="text-xs font-semibold text-slate-500 uppercase block">ยอดถอนรวม (ช่วงเวลาที่กรอง)</span>
-          <span className="text-xl font-bold text-rose-400 mt-1 block font-mono">
+        <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-xl p-4 text-center">
+          <span className="text-xs font-semibold text-slate-400 uppercase block">ยอดถอนรวม (ช่วงเวลาที่กรอง)</span>
+          <span className="text-xl font-bold text-rose-300 mt-1 block font-mono">
             ฿{totalWithdrawals.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
-        <div className="bg-slate-900 border border-slate-800/80 rounded-xl p-4 text-center">
-          <span className="text-xs font-semibold text-slate-500 uppercase block">ยอดต่างฝาก-ถอน</span>
+        <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-xl p-4 text-center">
+          <span className="text-xs font-semibold text-slate-400 uppercase block">ยอดต่างฝาก-ถอน</span>
           <span className={`text-xl font-bold mt-1 block font-mono ${
-            (totalDeposits - totalWithdrawals) >= 0 ? 'text-emerald-400' : 'text-rose-400'
+            (totalDeposits - totalWithdrawals) >= 0 ? 'text-emerald-300' : 'text-rose-300'
           }`}>
             ฿{(totalDeposits - totalWithdrawals).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
@@ -411,21 +411,21 @@ export default function StudentLedgerView({
       </div>
 
       {/* Ledger Table Section */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl ledger-container">
+      <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl overflow-hidden shadow-xl ledger-container">
         {loading ? (
-          <div className="p-12 text-center text-slate-500 space-y-3">
-            <RefreshCw className="w-8 h-8 animate-spin text-blue-500 mx-auto" />
+          <div className="p-12 text-center text-slate-400 space-y-3">
+            <RefreshCw className="w-8 h-8 animate-spin text-sky-400 mx-auto" />
             <p className="text-sm font-medium">กำลังโหลดประวัติธุรกรรม...</p>
           </div>
         ) : filteredAndSortedTransactions.length === 0 ? (
-          <div className="p-20 text-center text-slate-500 space-y-2">
+          <div className="p-20 text-center text-slate-400 space-y-2">
             <p className="text-lg font-medium">ไม่พบรายการธุรกรรม</p>
-            <p className="text-xs text-slate-600 no-print">ไม่มีธุรกรรมตามช่วงเวลาที่กำหนด หรือนักเรียนยังไม่ได้ทำรายการฝาก-ถอน</p>
+            <p className="text-xs text-slate-500 no-print">ไม่มีธุรกรรมตามช่วงเวลาที่กำหนด หรือนักเรียนยังไม่ได้ทำรายการฝาก-ถอน</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm print:text-xs">
-              <thead className="bg-slate-950/40 text-slate-400 text-xs uppercase border-b border-slate-800 print:bg-slate-100 print:text-slate-900">
+              <thead className="bg-slate-950/40 text-slate-200 text-xs uppercase border-b border-white/10 print:bg-slate-100 print:text-slate-900">
                 <tr>
                   <th className="px-6 py-4 font-medium print:py-2">วันเวลาทำรายการ</th>
                   <th className="px-6 py-4 font-medium print:py-2">เลขที่อ้างอิง (Ref No.)</th>

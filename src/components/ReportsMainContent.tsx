@@ -107,20 +107,20 @@ export default function ReportsMainContent({ showToast, userSession }: ReportsMa
       {/* Header */}
       <div className="no-print">
         <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-          <FileText className="w-7 h-7 text-blue-400" />
+          <FileText className="w-7 h-7 text-sky-400" />
           ระบบรายงานสรุปผล (Reports Summary Dashboard)
         </h2>
-        <p className="text-sm text-slate-400 mt-1">เลือกประเภทรายงานที่ต้องการตรวจสอบ พิมพ์รายงาน และส่งออกข้อมูลเป็นไฟล์ Excel/CSV</p>
+        <p className="text-sm text-slate-300 mt-1">เลือกประเภทรายงานที่ต้องการตรวจสอบ พิมพ์รายงาน และส่งออกข้อมูลเป็นไฟล์ Excel/CSV</p>
       </div>
 
       {/* Tabs Selector */}
-      <div className="flex border-b border-slate-800 gap-2 no-print">
+      <div className="flex border-b border-white/10 gap-2 no-print">
         <button
           type="button"
           onClick={() => setReportsTab('individual')}
           className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
             reportsTab === 'individual'
-              ? 'border-blue-500 text-blue-400'
+              ? 'border-sky-400 text-sky-300'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
@@ -132,7 +132,7 @@ export default function ReportsMainContent({ showToast, userSession }: ReportsMa
           onClick={() => setReportsTab('daily')}
           className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
             reportsTab === 'daily'
-              ? 'border-blue-500 text-blue-400'
+              ? 'border-sky-400 text-sky-300'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
@@ -144,7 +144,7 @@ export default function ReportsMainContent({ showToast, userSession }: ReportsMa
           onClick={() => setReportsTab('classroom')}
           className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
             reportsTab === 'classroom'
-              ? 'border-blue-500 text-blue-400'
+              ? 'border-sky-400 text-sky-300'
               : 'border-transparent text-slate-400 hover:text-slate-200'
           }`}
         >
@@ -155,32 +155,32 @@ export default function ReportsMainContent({ showToast, userSession }: ReportsMa
 
       {/* Tab Contents */}
       {reportsTab === 'individual' && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4 no-print">
+        <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-6 shadow-xl space-y-4 no-print">
           <h3 className="text-md font-bold text-white flex items-center gap-2">
-            <Search className="w-4 h-4 text-blue-400" />
+            <Search className="w-4 h-4 text-sky-400" />
             ค้นหาและเลือกรายชื่อนักเรียน เพื่อพิมพ์ใบเคลื่อนไหวบัญชี (Statement)
           </h3>
           
           {/* Search Input */}
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input 
               type="text" 
               placeholder="พิมพ์ชื่อนักเรียน, รหัสประจำตัว หรือ ID ระบบ..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors focus:ring-1 focus:ring-blue-500"
+              className="w-full bg-slate-950/40 border border-white/15 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-400 transition-colors focus:ring-1 focus:ring-sky-400/30 backdrop-blur-md"
             />
           </div>
 
           {/* Students List Grid */}
           {loading ? (
-            <div className="p-12 text-center text-slate-500 flex flex-col items-center gap-2">
-              <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
+            <div className="p-12 text-center text-slate-400 flex flex-col items-center gap-2">
+              <RefreshCw className="w-8 h-8 animate-spin text-sky-400" />
               <span className="text-sm">กำลังโหลดรายชื่อนักเรียน...</span>
             </div>
           ) : filteredStudents.length === 0 ? (
-            <div className="p-12 text-center text-slate-500">
+            <div className="p-12 text-center text-slate-400">
               <span className="text-sm">ไม่พบนักเรียนตามเงื่อนไขการค้นหา</span>
             </div>
           ) : (
@@ -192,17 +192,17 @@ export default function ReportsMainContent({ showToast, userSession }: ReportsMa
                     key={student.studentId}
                     type="button"
                     onClick={() => setSelectedStudent(student)}
-                    className="text-left p-4 rounded-xl border border-slate-800 bg-slate-950/40 hover:bg-slate-800/40 hover:border-slate-700 transition-all flex justify-between items-start cursor-pointer group w-full"
+                    className="text-left p-4 rounded-xl border border-white/10 bg-slate-950/40 hover:bg-white/5 hover:border-sky-400/40 transition-all flex justify-between items-start cursor-pointer group w-full backdrop-blur-md"
                   >
                     <div className="space-y-1">
-                      <p className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">{student.fullName}</p>
-                      <p className="text-xs text-slate-500 font-mono">รหัสประจำตัว: {student.studentNumber}</p>
-                      <p className="text-xs text-slate-500">ห้องเรียน: ชั้น {student.classRoom}</p>
-                      {acc && <p className="text-[10px] text-slate-600 font-mono">เลขบัญชี: {acc.accountNumber}</p>}
+                      <p className="text-sm font-bold text-white group-hover:text-sky-300 transition-colors">{student.fullName}</p>
+                      <p className="text-xs text-slate-400 font-mono">รหัสประจำตัว: {student.studentNumber}</p>
+                      <p className="text-xs text-slate-400">ห้องเรียน: ชั้น {student.classRoom}</p>
+                      {acc && <p className="text-[10px] text-slate-500 font-mono">เลขบัญชี: {acc.accountNumber}</p>}
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] text-slate-500 block">ยอดคงเหลือ</span>
-                      <span className="text-sm font-extrabold text-emerald-400 font-mono block mt-1">
+                      <span className="text-[10px] text-slate-400 block">ยอดคงเหลือ</span>
+                      <span className="text-sm font-extrabold text-emerald-300 font-mono block mt-1">
                         ฿{acc ? acc.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                       </span>
                     </div>

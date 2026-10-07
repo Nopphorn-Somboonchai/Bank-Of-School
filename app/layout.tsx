@@ -40,7 +40,7 @@ export default function RootLayout({
         />
         {/* Subtle Frosted Overlay for Center Readability */}
         <div
-          className="fixed inset-0 -z-10 bg-slate-950/45 backdrop-blur-[2px] backdrop-brightness-95 pointer-events-none"
+          className="fixed inset-0 -z-10 bg-slate-950/20 backdrop-blur-[1px] pointer-events-none"
           aria-hidden="true"
         />
         {children}

@@ -165,20 +165,20 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between relative overflow-hidden bg-slate-950/40 backdrop-blur-[2px] backdrop-brightness-95">
+    <div className="min-h-screen flex flex-col justify-between relative overflow-hidden bg-transparent">
       {/* Background Ambient Glows */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-emerald-500/15 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-sky-500/15 blur-[120px] pointer-events-none" />
 
       {/* Header */}
-      <header className="w-full mx-auto px-6 py-4 flex justify-between items-center border-b border-white/10 bg-slate-900/65 backdrop-blur-xl z-10">
+      <header className="w-full mx-auto px-6 py-4 flex justify-between items-center border-b border-white/10 bg-slate-950/35 backdrop-blur-xl z-10">
         <div className="flex items-center gap-3">
           <div className="bg-emerald-500/20 text-emerald-400 p-2.5 rounded-xl border border-emerald-400/30 shadow-sm shadow-emerald-500/20">
             <Shield className="w-6 h-6 animate-pulse" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-white flex items-center gap-2">
-              Bank of School <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-500/30 font-medium">ครู/เจ้าหน้าที่</span>
+              Bank of School <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-400/30 font-medium">ครู/เจ้าหน้าที่</span>
             </h1>
           </div>
         </div>
@@ -186,13 +186,13 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
 
       {/* Login Box */}
       <main className="flex-grow flex items-center justify-center p-6 z-10">
-        <div className="w-full max-w-md bg-slate-900/80 backdrop-blur-2xl rounded-3xl border border-white/15 shadow-2xl shadow-sky-950/50 p-8 sm:p-9">
+        <div className="w-full max-w-md bg-slate-900/38 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl shadow-sky-950/40 p-8 sm:p-9">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-sky-500/20 border border-emerald-400/30 text-emerald-300 mb-3 shadow-lg shadow-emerald-950/30">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-500/20 to-emerald-500/20 border border-sky-400/30 text-sky-300 mb-3 shadow-lg shadow-sky-950/30">
               <span className="text-2xl">🏦</span>
             </div>
             <h2 className="text-2xl font-extrabold text-white tracking-tight">เข้าสู่ระบบจัดการบัญชี</h2>
-            <p className="text-sm text-slate-300 mt-1">ธนาคารโรงเรียน (เฉพาะคุณครูผู้ดูแลระบบ)</p>
+            <p className="text-sm text-slate-200 mt-1">ธนาคารโรงเรียน (เฉพาะคุณครูผู้ดูแลระบบ)</p>
           </div>
 
           {errorMsg && (
@@ -204,25 +204,25 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
 
           <form onSubmit={handleLogin} noValidate className="space-y-5">
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-300 uppercase block">อีเมลคุณครู</label>
+              <label className="text-xs font-semibold text-slate-200 uppercase block">อีเมลคุณครู</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><Mail className="w-5 h-5" /></span>
                 <input
                   type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@school.ac.th" disabled={isLoading}
-                  className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 text-sm backdrop-blur-md transition-all"
+                  className="w-full bg-slate-950/40 border border-white/15 rounded-xl py-3 pl-11 pr-4 text-white placeholder-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 text-sm backdrop-blur-md transition-all"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <label className="text-xs font-semibold text-slate-300 uppercase block">รหัสผ่านบัญชี</label>
+                <label className="text-xs font-semibold text-slate-200 uppercase block">รหัสผ่านบัญชี</label>
               </div>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><Lock className="w-5 h-5" /></span>
                 <input
                   type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" disabled={isLoading}
-                  className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-3 pl-11 pr-12 text-white placeholder-slate-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 text-sm backdrop-blur-md transition-all"
+                  className="w-full bg-slate-950/40 border border-white/15 rounded-xl py-3 pl-11 pr-12 text-white placeholder-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 text-sm backdrop-blur-md transition-all"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} disabled={isLoading} className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition-colors">
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -230,14 +230,14 @@ export default function LoginView({ onLogin, showToast }: LoginViewProps) {
               </div>
             </div>
 
-            <button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-950/40 transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50 cursor-pointer active:scale-[0.99]">
+            <button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-sky-500 via-teal-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-sky-500/25 transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50 cursor-pointer active:scale-[0.99]">
               {isLoading ? <span>กำลังตรวจสอบสิทธิ์...</span> : <><LogIn className="w-5 h-5" /><span>เข้าสู่ระบบอย่างปลอดภัย</span></>}
             </button>
           </form>
         </div>
       </main>
 
-      <footer className="w-full text-center py-4 text-xs text-slate-300/80 border-t border-white/10 z-10 bg-slate-900/65 backdrop-blur-xl">
+      <footer className="w-full text-center py-4 text-xs text-slate-300/80 border-t border-white/10 z-10 bg-slate-950/35 backdrop-blur-xl">
         <p>© 2569 Bank of School. สงวนลิขสิทธิ์เฉพาะสถาบันการศึกษา</p>
       </footer>
     </div>

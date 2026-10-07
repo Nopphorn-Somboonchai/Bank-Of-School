@@ -28,23 +28,95 @@ body {
 
 /* Glassmorphism Utilities */
 .glass-panel {
-  background-color: rgba(15, 23, 42, 0.80);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: rgba(15, 23, 42, 0.38);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .glass-header {
-  background-color: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-color: rgba(255, 255, 255, 0.10);
+  background-color: rgba(15, 23, 42, 0.42);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.glass-card-vibrant {
+  background-color: rgba(15, 23, 42, 0.38);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 30px -10px rgba(8, 47, 73, 0.3);
+}
+
+.glass-card-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+  background-color: rgba(15, 23, 42, 0.48);
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 12px 36px -8px rgba(56, 189, 248, 0.22);
+}
+
+.glass-input-vibrant {
+  background-color: rgba(2, 6, 23, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.glass-input-vibrant:focus {
+  border-color: #38bdf8;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+}
+
+.btn-vibrant-sky {
+  background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 16px -2px rgba(6, 182, 212, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-vibrant-sky:hover {
+  background: linear-gradient(135deg, #0ea5e9 0%, #22d3ee 100%);
+  box-shadow: 0 6px 20px -2px rgba(56, 189, 248, 0.45);
+}
+
+.btn-vibrant-green {
+  background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 16px -2px rgba(16, 185, 129, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-vibrant-green:hover {
+  background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+  box-shadow: 0 6px 20px -2px rgba(16, 185, 129, 0.45);
+}
+
+.btn-glass-secondary {
+  background-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.btn-glass-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.16);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #ffffff;
 }
 
 .glass-overlay {
-  background: radial-gradient(circle at 50% 35%, rgba(15, 23, 42, 0.45) 0%, rgba(10, 15, 30, 0.75) 100%);
-  backdrop-filter: blur(2px) brightness(95%);
-  -webkit-backdrop-filter: blur(2px) brightness(95%);
+  background: radial-gradient(circle at 50% 35%, rgba(15, 23, 42, 0.20) 0%, rgba(10, 15, 30, 0.45) 100%);
+  backdrop-filter: blur(1.5px) brightness(98%);
+  -webkit-backdrop-filter: blur(1.5px) brightness(98%);
 }
 
 select {

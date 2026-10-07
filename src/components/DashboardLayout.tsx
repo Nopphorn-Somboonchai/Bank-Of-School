@@ -76,9 +76,9 @@ export default function DashboardLayout({
   }) => (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium cursor-pointer ${active
-          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-          : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-semibold cursor-pointer ${active
+          ? 'bg-gradient-to-r from-sky-500/25 via-teal-500/20 to-emerald-500/20 text-white border-l-4 border-sky-400 shadow-sm shadow-sky-950/20 backdrop-blur-sm'
+          : 'text-slate-300 hover:bg-white/10 hover:text-white'
         }`}
     >
       <Icon className="w-5 h-5" />
@@ -87,18 +87,18 @@ export default function DashboardLayout({
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-950/45 backdrop-blur-[2px] backdrop-brightness-95">
+    <div className="flex h-screen overflow-hidden bg-transparent">
 
       {/* Sidebar (Desktop First) */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} flex-shrink-0 bg-slate-900/85 backdrop-blur-2xl border-r border-white/10 flex flex-col transition-all duration-300`}>
+      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} flex-shrink-0 bg-slate-950/35 backdrop-blur-xl border-r border-white/15 flex flex-col transition-all duration-300`}>
         <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
           {sidebarOpen && (
-            <div className="flex items-center gap-2 text-emerald-400 font-bold text-lg">
-              <Shield className="w-6 h-6" />
+            <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-teal-300 to-emerald-400 font-extrabold text-lg">
+              <Shield className="w-6 h-6 text-emerald-400" />
               <span>Bank of School</span>
             </div>
           )}
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 mx-auto cursor-pointer">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-white/10 text-slate-300 mx-auto cursor-pointer transition-colors">
             <Menu className="w-5 h-5" />
           </button>
         </div>
@@ -121,7 +121,7 @@ export default function DashboardLayout({
           <div className="p-4 border-t border-white/10">
             <button
               onClick={onInstallApp}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition-all text-xs font-bold shadow-md cursor-pointer active:scale-95 ${!sidebarOpen && 'justify-center'}`}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white rounded-xl transition-all text-xs font-bold shadow-md shadow-sky-500/25 cursor-pointer active:scale-95 ${!sidebarOpen && 'justify-center'}`}
               title="ติดตั้งแอป (Install App)"
             >
               <Download className="w-4 h-4" />
@@ -131,11 +131,11 @@ export default function DashboardLayout({
         )}
 
         {/* Sidebar App Version Footer */}
-        <div className="p-4 border-t border-white/10 flex flex-col gap-1.5 shrink-0 bg-slate-900/40">
+        <div className="p-4 border-t border-white/10 flex flex-col gap-1.5 shrink-0 bg-slate-950/20">
           {sidebarOpen ? (
-            <div className="flex items-center justify-between text-[11px] text-slate-400 font-medium">
+            <div className="flex items-center justify-between text-[11px] text-slate-300 font-medium">
               <span>เวอร์ชันระบบ (App Version)</span>
-              <span className="bg-slate-950/70 text-emerald-400 px-2 py-0.5 rounded-md border border-white/10 font-bold uppercase tracking-wider text-[10px]">
+              <span className="bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-md border border-sky-400/30 font-bold uppercase tracking-wider text-[10px]">
                 v0.1.0-web
               </span>
             </div>
@@ -151,11 +151,11 @@ export default function DashboardLayout({
       <div className="flex-1 flex flex-col min-w-0">
 
         {/* Top Navbar */}
-        <header className="h-16 flex items-center justify-between px-6 bg-slate-900/80 backdrop-blur-xl border-b border-white/10 shrink-0">
+        <header className="h-16 flex items-center justify-between px-6 bg-slate-950/35 backdrop-blur-xl border-b border-white/15 shrink-0">
           <div className="flex-1 flex items-center">
             <div className="relative w-64 hidden sm:block">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input type="text" placeholder="ค้นหา รหัสนักเรียน, ชื่อ..." className="w-full bg-slate-800/80 border border-white/10 rounded-full py-1.5 pl-9 pr-4 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-emerald-400 backdrop-blur-md" />
+              <input type="text" placeholder="ค้นหา รหัสนักเรียน, ชื่อ..." className="w-full bg-slate-950/40 border border-white/15 rounded-full py-1.5 pl-9 pr-4 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400/30 backdrop-blur-md transition-all" />
             </div>
           </div>
 
@@ -168,7 +168,7 @@ export default function DashboardLayout({
                     markNotificationsAsRead();
                   }
                 }}
-                className={`relative text-slate-400 hover:text-white p-2 cursor-pointer rounded-lg hover:bg-slate-800 transition-colors ${notificationsOpen ? 'bg-slate-800 text-white' : ''}`}
+                className={`relative text-slate-300 hover:text-white p-2 cursor-pointer rounded-lg hover:bg-white/10 transition-colors ${notificationsOpen ? 'bg-white/15 text-white' : ''}`}
               >
                 <Bell className="w-5 h-5" />
                 {unreadCount > 0 && (
@@ -182,14 +182,14 @@ export default function DashboardLayout({
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setNotificationsOpen(false)}></div>
 
-                  <div className="absolute right-0 mt-2 w-80 max-h-[480px] bg-slate-900/95 backdrop-blur-2xl border border-white/15 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden animate-fadeIn">
-                    <div className="p-4 border-b border-white/10 flex justify-between items-center bg-slate-900/60">
+                  <div className="absolute right-0 mt-2 w-80 max-h-[480px] bg-slate-950/80 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl shadow-sky-950/40 z-50 flex flex-col overflow-hidden animate-fadeIn">
+                    <div className="p-4 border-b border-white/10 flex justify-between items-center bg-slate-950/50">
                       <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                        <Activity className="w-4 h-4 text-emerald-450" />
+                        <Activity className="w-4 h-4 text-emerald-400" />
                         <span>การแจ้งเตือนระบบ (Audit Logs)</span>
                       </h4>
                       {unreadCount > 0 && (
-                        <span className="text-[10px] bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded-full font-bold">
+                        <span className="text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2 py-0.5 rounded-full font-bold">
                           {unreadCount} ใหม่
                         </span>
                       )}
@@ -197,8 +197,8 @@ export default function DashboardLayout({
 
                     <div className="overflow-y-auto flex-1 max-h-[350px] divide-y divide-white/5 custom-scrollbar">
                       {notifications.length === 0 ? (
-                        <div className="p-8 text-center text-xs text-slate-500 flex flex-col items-center gap-2">
-                          <Bell className="w-8 h-8 text-slate-600 stroke-[1.5]" />
+                        <div className="p-8 text-center text-xs text-slate-400 flex flex-col items-center gap-2">
+                          <Bell className="w-8 h-8 text-slate-500 stroke-[1.5]" />
                           <span>ไม่มีประวัติการแจ้งเตือน</span>
                         </div>
                       ) : (
@@ -206,7 +206,7 @@ export default function DashboardLayout({
                           const Icon = getNotificationIcon(notif.actionType);
                           const iconColorClass = getNotificationIconColor(notif.actionType);
                           return (
-                            <div key={notif.logId} className="p-3.5 hover:bg-slate-800/60 transition-colors flex gap-3 text-left">
+                            <div key={notif.logId} className="p-3.5 hover:bg-white/5 transition-colors flex gap-3 text-left">
                               <div className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center ${iconColorClass}`}>
                                 <Icon className="w-4 h-4" />
                               </div>
@@ -214,7 +214,7 @@ export default function DashboardLayout({
                                 <p className="text-xs text-slate-200 font-medium leading-normal break-words">
                                   {notif.remarks}
                                 </p>
-                                <div className="flex items-center gap-1 text-[10px] text-slate-500">
+                                <div className="flex items-center gap-1 text-[10px] text-slate-400">
                                   <Clock className="w-3 h-3" />
                                   <span>{getRelativeTime(notif.timestamp)}</span>
                                 </div>
@@ -225,13 +225,13 @@ export default function DashboardLayout({
                       )}
                     </div>
 
-                    <div className="p-3 bg-slate-950/80 border-t border-white/10 text-center">
+                    <div className="p-3 bg-slate-950/60 border-t border-white/10 text-center">
                       <button
                         onClick={() => {
                           markNotificationsAsRead();
                           setNotificationsOpen(false);
                         }}
-                        className="text-[11px] font-semibold text-slate-400 hover:text-white transition-colors cursor-pointer w-full"
+                        className="text-[11px] font-semibold text-sky-300 hover:text-sky-200 transition-colors cursor-pointer w-full"
                       >
                         ทำเครื่องหมายว่าอ่านแล้วทั้งหมด
                       </button>
@@ -240,18 +240,18 @@ export default function DashboardLayout({
                 </>
               )}
             </div>
-            <div className="h-6 w-px bg-slate-700 mx-2"></div>
+            <div className="h-6 w-px bg-white/10 mx-2"></div>
             <div className="flex items-center gap-3">
               {userSession && (
                 <div className="text-right hidden sm:block">
                   <p className="text-sm font-semibold text-white leading-none mb-1">{userSession.fullName}</p>
-                  <p className="text-xs text-emerald-400 leading-none">{userSession.role}</p>
+                  <p className="text-xs text-emerald-300 leading-none font-medium">{userSession.role}</p>
                 </div>
               )}
-              <div className="w-9 h-9 rounded-full bg-slate-800/80 border border-white/10 flex items-center justify-center text-slate-300">
+              <div className="w-9 h-9 rounded-full bg-sky-500/15 border border-sky-400/30 flex items-center justify-center text-sky-300 shadow-sm shadow-sky-500/20">
                 <User className="w-5 h-5" />
               </div>
-              <button onClick={logout} className="ml-2 text-slate-400 hover:text-rose-400 transition-colors p-2 rounded-lg hover:bg-slate-800/80 cursor-pointer">
+              <button onClick={logout} className="ml-2 text-slate-400 hover:text-rose-300 transition-colors p-2 rounded-lg hover:bg-rose-500/10 cursor-pointer">
                 <LogOut className="w-5 h-5" />
               </button>
             </div>

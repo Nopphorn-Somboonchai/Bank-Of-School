@@ -199,23 +199,23 @@ export default function StudentsMainContent({ showToast, userSession }: Students
         </div>
         <button 
           onClick={handleOpenAdd}
-          className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 shadow-lg shadow-emerald-950/20 active:scale-95 cursor-pointer animate-fadeIn"
+          className="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 shadow-lg shadow-sky-500/25 active:scale-95 cursor-pointer animate-fadeIn"
         >
           <UserPlus className="w-4 h-4" /> เพิ่มนักเรียนใหม่
         </button>
       </div>
 
       {/* Filters and Search Bar section */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Search */}
         <div className="relative w-full md:w-96">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input 
             type="text" 
             placeholder="ค้นหาด้วย ชื่อ, รหัสนักเรียน หรือ ID..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors focus:ring-1 focus:ring-emerald-500"
+            className="w-full bg-slate-950/40 border border-white/15 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-400 transition-colors focus:ring-1 focus:ring-sky-400/30 backdrop-blur-md"
           />
         </div>
 
@@ -223,11 +223,11 @@ export default function StudentsMainContent({ showToast, userSession }: Students
         <div className="flex items-center gap-4 w-full md:w-auto justify-end flex-wrap">
           {/* Class Filter */}
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-slate-500" />
+            <Filter className="w-4 h-4 text-sky-400" />
             <select
               value={classFilter}
               onChange={(e) => setClassFilter(e.target.value)}
-              className="bg-slate-950/80 border border-slate-700/60 text-slate-200 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-emerald-500 cursor-pointer"
+              className="bg-slate-950/40 border border-white/15 text-slate-100 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-sky-400 cursor-pointer backdrop-blur-md"
             >
               {classList.map(cls => (
                 <option key={cls} value={cls}>{cls === 'All' ? 'ทุกระดับชั้น' : `ชั้น ${cls}`}</option>
@@ -236,12 +236,12 @@ export default function StudentsMainContent({ showToast, userSession }: Students
           </div>
 
           {/* Hide Inactive Toggle */}
-          <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-slate-400 hover:text-slate-200">
+          <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-slate-300 hover:text-white">
             <input 
               type="checkbox" 
               checked={hideInactive} 
               onChange={(e) => setHideInactive(e.target.checked)}
-              className="rounded border-slate-700 bg-slate-950/80 text-emerald-600 focus:ring-0 focus:ring-offset-0 cursor-pointer w-4 h-4"
+              className="rounded border-white/20 bg-slate-950/40 text-emerald-500 focus:ring-0 focus:ring-offset-0 cursor-pointer w-4 h-4"
             />
             ซ่อนสถานะ Inactive
           </label>
@@ -249,20 +249,20 @@ export default function StudentsMainContent({ showToast, userSession }: Students
       </div>
 
       {/* Main Table section */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+      <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl overflow-hidden shadow-xl">
         {loading ? (
           <div className="p-8">
             <TableSkeleton />
           </div>
         ) : filteredStudents.length === 0 ? (
-          <div className="p-20 text-center text-slate-500 space-y-2">
+          <div className="p-20 text-center text-slate-400 space-y-2">
             <p className="text-lg font-medium">ไม่พบข้อมูลนักเรียน</p>
-            <p className="text-xs text-slate-600">กรุณาลองเปลี่ยนคำค้นหา หรือกรองระดับชั้นใหม่</p>
+            <p className="text-xs text-slate-500">กรุณาลองเปลี่ยนคำค้นหา หรือกรองระดับชั้นใหม่</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-950/40 text-slate-400 text-xs uppercase border-b border-slate-800">
+              <thead className="bg-slate-950/40 text-slate-200 text-xs uppercase border-b border-white/10">
                 <tr>
                   <th className="px-6 py-4 font-medium">ID ระบบ</th>
                   <th className="px-6 py-4 font-medium">รหัสประจำตัว</th>
@@ -275,7 +275,7 @@ export default function StudentsMainContent({ showToast, userSession }: Students
                   <th className="px-6 py-4 font-medium text-center">จัดการ</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/40">
+              <tbody className="divide-y divide-white/5">
                 {filteredStudents.map((student) => {
                   const account = accounts[student.studentId];
                   return (
@@ -421,19 +421,19 @@ export default function StudentsMainContent({ showToast, userSession }: Students
               </div>
 
               {/* Actions Footer */}
-              <div className="px-6 py-4 bg-slate-950/30 border-t border-slate-800 flex justify-end gap-3">
+              <div className="px-6 py-4 bg-slate-950/40 border-t border-white/10 flex justify-end gap-3">
                 <button
                   type="button"
                   disabled={submitting}
                   onClick={() => setIsFormOpen(false)}
-                  className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white transition-all bg-slate-800 rounded-lg hover:bg-slate-750 cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-slate-300 hover:text-white transition-all bg-white/10 rounded-lg hover:bg-white/15 border border-white/10 cursor-pointer"
                 >
                   ยกเลิก
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 transition-all shadow-md disabled:opacity-50 cursor-pointer"
+                  className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-emerald-500/25 disabled:opacity-50 cursor-pointer"
                 >
                   {submitting && <RefreshCw className="w-3 h-3 animate-spin" />}
                   <span>{formMode === 'create' ? 'เพิ่มนักเรียน' : 'บันทึกการแก้ไข'}</span>

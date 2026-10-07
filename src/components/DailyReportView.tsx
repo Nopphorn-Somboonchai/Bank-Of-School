@@ -231,13 +231,13 @@ export default function DailyReportView({
       `}</style>
 
       {/* Screen Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg no-print">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-5 shadow-lg no-print">
         <div className="flex items-center gap-3">
-          <div className="bg-blue-500/10 p-2.5 rounded-xl text-blue-400">
+          <div className="bg-sky-500/15 p-2.5 rounded-xl text-sky-400">
             <Calendar className="w-5 h-5" />
           </div>
           <div>
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">เลือกวันที่เรียกรายงาน</label>
+            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">เลือกวันที่เรียกรายงาน</label>
             <DatePicker
               value={reportDate}
               onChange={setReportDate}
@@ -249,7 +249,7 @@ export default function DailyReportView({
           <button
             type="button"
             onClick={handlePrint}
-            className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+            className="bg-slate-950/40 hover:bg-white/10 border border-white/15 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
           >
             <Printer className="w-4 h-4 text-slate-300" />
             <span>พิมพ์รายงาน</span>
@@ -258,7 +258,7 @@ export default function DailyReportView({
           <button
             type="button"
             onClick={handleExport}
-            className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-md shadow-blue-900/15"
+            className="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-md shadow-sky-500/25"
           >
             <Download className="w-4 h-4" />
             <span>ส่งออก Excel/CSV</span>
@@ -285,39 +285,39 @@ export default function DailyReportView({
       {/* Summary Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 print-cards-grid">
         {/* Deposits Summary */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-md flex items-center gap-4 print-card-box">
-          <div className="bg-emerald-500/10 p-3 rounded-2xl text-emerald-400 no-print">
+        <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-5 shadow-md flex items-center gap-4 print-card-box">
+          <div className="bg-emerald-500/15 p-3 rounded-2xl text-emerald-400 no-print">
             <TrendingUp className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block print-card-title">ยอดเงินฝากรวม (Total Deposits)</span>
-            <span className="text-2xl font-black text-emerald-400 font-mono mt-1 block print-text-green print-card-value">
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block print-card-title">ยอดเงินฝากรวม (Total Deposits)</span>
+            <span className="text-2xl font-black text-emerald-300 font-mono mt-1 block print-text-green print-card-value">
               ฿{totalDeposits.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
         </div>
 
         {/* Withdrawals Summary */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-md flex items-center gap-4 print-card-box">
-          <div className="bg-rose-500/10 p-3 rounded-2xl text-rose-400 no-print">
+        <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-5 shadow-md flex items-center gap-4 print-card-box">
+          <div className="bg-rose-500/15 p-3 rounded-2xl text-rose-400 no-print">
             <TrendingDown className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block print-card-title">ยอดเงินถอนรวม (Total Withdrawals)</span>
-            <span className="text-2xl font-black text-rose-400 font-mono mt-1 block print-text-red print-card-value">
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block print-card-title">ยอดเงินถอนรวม (Total Withdrawals)</span>
+            <span className="text-2xl font-black text-rose-300 font-mono mt-1 block print-text-red print-card-value">
               ฿{totalWithdrawals.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
         </div>
 
         {/* Net Cash Flow (Reconciliation) */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-md flex items-center gap-4 print-card-box">
-          <div className="bg-blue-500/10 p-3 rounded-2xl text-blue-400 no-print">
+        <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-5 shadow-md flex items-center gap-4 print-card-box">
+          <div className="bg-sky-500/15 p-3 rounded-2xl text-sky-400 no-print">
             <Clock className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block print-card-title">ยอดเงินสดสุทธิในลิ้นชัก (Net Cash Flow)</span>
-            <span className={`text-2xl font-black font-mono mt-1 block print-card-value ${netCashFlow >= 0 ? 'text-blue-400 print-text-blue' : 'text-rose-400 print-text-red'}`}>
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block print-card-title">ยอดเงินสดสุทธิในลิ้นชัก (Net Cash Flow)</span>
+            <span className={`text-2xl font-black font-mono mt-1 block print-card-value ${netCashFlow >= 0 ? 'text-sky-300 print-text-blue' : 'text-rose-300 print-text-red'}`}>
               {netCashFlow >= 0 ? '+' : ''}฿{netCashFlow.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
@@ -325,9 +325,9 @@ export default function DailyReportView({
       </div>
 
       {/* Informative tips box */}
-      <div className="bg-slate-950/40 border border-slate-800 rounded-xl p-4 text-xs text-slate-400 space-y-1 no-print">
-        <p className="font-bold text-slate-300 flex items-center gap-1.5">
-          <AlertCircle className="w-4 h-4 text-blue-400" />
+      <div className="bg-sky-500/10 border border-sky-400/25 rounded-2xl p-4 text-xs text-slate-300 space-y-1 no-print backdrop-blur-md">
+        <p className="font-bold text-sky-300 flex items-center gap-1.5">
+          <AlertCircle className="w-4 h-4 text-sky-400" />
           คำแนะนำสำหรับการตรวจสอบยอดเงินสด (Cash drawer check):
         </p>
         <p>• ยอดเงินฝากเพิ่มเงินสดเข้ากระปุก/ลิ้นชัก ยอดเงินถอนนำเงินสดออกจากลิ้นชัก</p>
@@ -336,38 +336,38 @@ export default function DailyReportView({
       </div>
 
       {/* Transactions Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center no-print">
+      <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl overflow-hidden shadow-xl">
+        <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center no-print">
           <h3 className="text-sm font-bold text-white">รายละเอียดรายการธุรกรรมประจำวัน ({transactions.length} รายการ)</h3>
         </div>
 
         {loading ? (
-          <div className="p-16 text-center text-slate-500 flex flex-col items-center gap-2">
-            <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
+          <div className="p-16 text-center text-slate-400 flex flex-col items-center gap-2">
+            <RefreshCw className="w-8 h-8 animate-spin text-sky-400" />
             <span className="text-sm">กำลังค้นหาข้อมูลธุรกรรม...</span>
           </div>
         ) : transactions.length === 0 ? (
-          <div className="p-16 text-center text-slate-500">
-            <Calendar className="w-12 h-12 text-slate-700 mx-auto mb-3" />
+          <div className="p-16 text-center text-slate-400">
+            <Calendar className="w-12 h-12 text-slate-600 mx-auto mb-3" />
             <p className="text-sm font-semibold">ไม่มีข้อมูลการทำรายการในวันที่เลือก</p>
-            <p className="text-xs text-slate-600 mt-1">ยังไม่มีคุณครูทำรายการฝากหรือถอนเงินในระบบของวันนี้</p>
+            <p className="text-xs text-slate-500 mt-1">ยังไม่มีคุณครูทำรายการฝากหรือถอนเงินในระบบของวันนี้</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse print-table">
               <thead>
-                <tr className="bg-slate-950/40 border-b border-slate-800">
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">เวลา</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider">เลขที่อ้างอิง</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider">ชื่อ-นามสกุล</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">ชั้นเรียน</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">ประเภท</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">จำนวนเงิน</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">สถานะ</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 tracking-wider text-center no-print">ครูผู้บันทึก</th>
+                <tr className="bg-slate-950/40 border-b border-white/10">
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider text-center">เวลา</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider">เลขที่อ้างอิง</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider">ชื่อ-นามสกุล</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider text-center">ชั้นเรียน</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider text-center">ประเภท</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider text-right">จำนวนเงิน</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider text-center">สถานะ</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 tracking-wider text-center no-print">ครูผู้บันทึก</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-white/5">
                 {transactions.map((tx) => {
                   const student = allStudentsMap[tx.studentId];
                   const isVoid = tx.status === 'Void';

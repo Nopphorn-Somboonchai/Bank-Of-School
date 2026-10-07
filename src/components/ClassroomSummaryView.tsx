@@ -228,13 +228,13 @@ export default function ClassroomSummaryView({
       `}</style>
 
       {/* Screen Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg no-print">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-5 shadow-lg no-print">
         <div className="flex items-center gap-3">
-          <div className="bg-indigo-500/10 p-2.5 rounded-xl text-indigo-400">
+          <div className="bg-sky-500/15 p-2.5 rounded-xl text-sky-400">
             <Building className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">รายงานสรุปผลชั้นเรียน</span>
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block">รายงานสรุปผลชั้นเรียน</span>
             <span className="text-sm font-extrabold text-white mt-1 block">วิเคราะห์ยอดออมสะสมแยกตามห้องเรียน</span>
           </div>
         </div>
@@ -243,7 +243,7 @@ export default function ClassroomSummaryView({
           <button
             type="button"
             onClick={handlePrint}
-            className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+            className="bg-slate-950/40 hover:bg-white/10 border border-white/15 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
           >
             <Printer className="w-4 h-4 text-slate-300" />
             <span>พิมพ์รายงาน</span>
@@ -252,7 +252,7 @@ export default function ClassroomSummaryView({
           <button
             type="button"
             onClick={handleExport}
-            className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-md shadow-blue-900/15"
+            className="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-md shadow-sky-500/25"
           >
             <Download className="w-4 h-4" />
             <span>ส่งออก Excel/CSV</span>
@@ -279,45 +279,45 @@ export default function ClassroomSummaryView({
       {/* Aggregated Highlights Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 print-cards-grid">
         {/* Total School Savings */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-md flex items-center gap-4 print-card-box">
-          <div className="bg-indigo-500/10 p-3 rounded-2xl text-indigo-400 no-print">
+        <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-5 shadow-md flex items-center gap-4 print-card-box">
+          <div className="bg-sky-500/15 p-3 rounded-2xl text-sky-400 no-print">
             <TrendingUp className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block print-card-title">ยอดเงินออมสะสมทั้งโรงเรียน</span>
-            <span className="text-2xl font-black text-indigo-400 font-mono mt-1 block print-text-blue print-card-value">
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block print-card-title">ยอดเงินออมสะสมทั้งโรงเรียน</span>
+            <span className="text-2xl font-black text-sky-300 font-mono mt-1 block print-text-blue print-card-value">
               ฿{totals.totalSavings.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
         </div>
 
         {/* Top Savings Classroom */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-md flex items-center gap-4 print-card-box">
-          <div className="bg-emerald-500/10 p-3 rounded-2xl text-emerald-400 no-print">
+        <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-5 shadow-md flex items-center gap-4 print-card-box">
+          <div className="bg-emerald-500/15 p-3 rounded-2xl text-emerald-400 no-print">
             <Building className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block print-card-title">ห้องเรียนที่ยอดออมสูงสุด</span>
-            <span className="text-2xl font-black text-emerald-400 mt-1 block print-text-green print-card-value">
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block print-card-title">ห้องเรียนที่ยอดออมสูงสุด</span>
+            <span className="text-2xl font-black text-emerald-300 mt-1 block print-text-green print-card-value">
               ชั้น {totals.topSavingsClassName}
             </span>
-            <span className="text-[10px] text-slate-500 block font-mono print:hidden">
+            <span className="text-[10px] text-slate-400 block font-mono print:hidden">
               (สะสม ฿{totals.topSavingsClassAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })})
             </span>
           </div>
         </div>
 
         {/* Top Average Savings Classroom */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-md flex items-center gap-4 print-card-box">
-          <div className="bg-amber-500/10 p-3 rounded-2xl text-amber-400 no-print">
+        <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-5 shadow-md flex items-center gap-4 print-card-box">
+          <div className="bg-teal-500/15 p-3 rounded-2xl text-teal-400 no-print">
             <Users className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block print-card-title">ห้องเรียนที่ยอดออมเฉลี่ยสูงสุด</span>
-            <span className="text-2xl font-black text-amber-400 mt-1 block print-text-blue print-card-value">
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block print-card-title">ห้องเรียนที่ยอดออมเฉลี่ยสูงสุด</span>
+            <span className="text-2xl font-black text-teal-300 mt-1 block print-text-blue print-card-value">
               ชั้น {totals.topAvgClassName}
             </span>
-            <span className="text-[10px] text-slate-500 block font-mono print:hidden">
+            <span className="text-[10px] text-slate-400 block font-mono print:hidden">
               (เฉลี่ย ฿{totals.topAvgClassAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}/คน)
             </span>
           </div>
@@ -325,32 +325,32 @@ export default function ClassroomSummaryView({
       </div>
 
       {/* Classroom Summary Leaderboard Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center no-print">
+      <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl overflow-hidden shadow-xl">
+        <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center no-print">
           <h3 className="text-sm font-bold text-white">ตารางสรุปผลงานและยอดออมรายห้องเรียน ({summariesList.length} ห้องเรียน)</h3>
         </div>
 
         {summariesList.length === 0 ? (
-          <div className="p-16 text-center text-slate-500">
-            <Building className="w-12 h-12 text-slate-700 mx-auto mb-3" />
+          <div className="p-16 text-center text-slate-400">
+            <Building className="w-12 h-12 text-slate-600 mx-auto mb-3" />
             <p className="text-sm font-semibold">ไม่มีข้อมูลห้องเรียน</p>
-            <p className="text-xs text-slate-600 mt-1">กรุณาเพิ่มข้อมูลนักเรียนและระบุห้องเรียนในระบบ</p>
+            <p className="text-xs text-slate-500 mt-1">กรุณาเพิ่มข้อมูลนักเรียนและระบุห้องเรียนในระบบ</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse print-table">
               <thead>
-                <tr className="bg-slate-950/40 border-b border-slate-800">
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center w-20">อันดับ</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider">ระดับชั้น/ห้องเรียน</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">นักเรียนทั้งหมด (คน)</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">เปิดบัญชีแล้ว (บัญชี)</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 tracking-wider text-right">ยอดออมสะสมรวม</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 tracking-wider text-right">ค่าเฉลี่ยต่อคน</th>
-                  <th className="px-6 py-3.5 text-xs font-bold text-slate-400 tracking-wider text-right">สัดส่วนการออม</th>
+                <tr className="bg-slate-950/40 border-b border-white/10">
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider text-center w-20">อันดับ</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider">ระดับชั้น/ห้องเรียน</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider text-center">นักเรียนทั้งหมด (คน)</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider text-center">เปิดบัญชีแล้ว (บัญชี)</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 tracking-wider text-right">ยอดออมสะสมรวม</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 tracking-wider text-right">ค่าเฉลี่ยต่อคน</th>
+                  <th className="px-6 py-3.5 text-xs font-bold text-slate-300 tracking-wider text-right">สัดส่วนการออม</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-white/5">
                 {summariesList.map((item) => {
                   const percentage = totals.totalSavings > 0 ? (item.totalSavings / totals.totalSavings) * 100 : 0;
                   const isTopRank = item.rank === 1;

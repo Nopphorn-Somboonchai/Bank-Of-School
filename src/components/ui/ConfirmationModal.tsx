@@ -35,14 +35,14 @@ export function ConfirmationModal({
   };
 
   const buttonColors = {
-    emerald: 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-950/20',
-    rose: 'bg-rose-600 hover:bg-rose-505 text-white shadow-rose-950/20',
-    indigo: 'bg-indigo-600 hover:bg-indigo-505 text-white shadow-indigo-950/20'
+    emerald: 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white shadow-lg shadow-emerald-500/25',
+    rose: 'bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-400 hover:to-pink-400 text-white shadow-lg shadow-rose-500/25',
+    indigo: 'bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white shadow-lg shadow-sky-500/25'
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-scaleUp">
+    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+      <div className="bg-slate-900/85 backdrop-blur-2xl border border-white/20 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-scaleUp">
         {/* Header */}
         <div className={`border-b px-6 py-4 flex items-center justify-between ${headerColors[themeColor]}`}>
           <h3 className="font-extrabold text-white text-sm">{title}</h3>
@@ -69,12 +69,12 @@ export function ConfirmationModal({
         </div>
 
         {/* Actions */}
-        <div className="px-6 py-4 bg-slate-950/30 border-t border-slate-800 flex justify-end gap-3">
+        <div className="px-6 py-4 bg-slate-950/40 border-t border-white/10 flex justify-end gap-3">
           <button
             type="button"
             disabled={submitting}
             onClick={onClose}
-            className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white bg-slate-800 rounded-lg hover:bg-slate-750 cursor-pointer disabled:opacity-50"
+            className="px-4 py-2 text-xs font-bold text-slate-300 hover:text-white bg-white/10 rounded-lg hover:bg-white/15 border border-white/10 cursor-pointer disabled:opacity-50 transition-colors"
           >
             {cancelText}
           </button>

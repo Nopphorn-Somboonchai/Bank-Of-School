@@ -23,13 +23,13 @@ const MetricCard = ({
   colorClass: string;
   trendText: string;
 }) => (
-  <div className="bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-lg shadow-sky-950/20 hover:border-emerald-500/30 transition-all animate-fadeIn">
+  <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-5 shadow-lg shadow-sky-950/20 hover:border-sky-400/40 hover:bg-slate-900/45 transition-all animate-fadeIn">
     <div className="flex justify-between items-start">
       <div>
-        <p className="text-sm text-slate-300 font-medium mb-1">{title}</p>
+        <p className="text-sm text-slate-200 font-medium mb-1">{title}</p>
         <h3 className="text-2xl font-bold text-white mb-2">{value}</h3>
-        <p className={`text-xs flex items-center gap-1 ${trendText.includes('+') ? 'text-emerald-400' : 'text-slate-400'}`}>
-          {trendText.includes('+') ? <TrendingUp className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+        <p className={`text-xs flex items-center gap-1 ${trendText.includes('+') ? 'text-emerald-300' : 'text-sky-300'}`}>
+          {trendText.includes('+') ? <TrendingUp className="w-3 h-3 text-emerald-400" /> : <Clock className="w-3 h-3 text-sky-400" />}
           {trendText}
         </p>
       </div>
@@ -211,10 +211,10 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
             type="button"
             onClick={handleRefresh}
             disabled={refreshing}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 hover:text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95"
+            className="bg-slate-950/40 hover:bg-sky-500/20 text-slate-100 border border-white/15 hover:border-sky-400/40 px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95 backdrop-blur-md shadow-sm"
             title="รีเฟรชข้อมูลแดชบอร์ดล่าสุด"
           >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 text-sky-400 ${refreshing ? 'animate-spin' : ''}`} />
             รีเฟรช
           </button>
         </div>
@@ -225,25 +225,25 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
         <MetricCard
           title="ยอดเงินออมรวม (Total Savings)"
           value={`฿${(summary?.totalSavings || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
-          icon={Building} colorClass="bg-blue-500/10 text-blue-400 border border-blue-500/20"
+          icon={Building} colorClass="bg-sky-500/20 text-sky-300 border border-sky-400/30 shadow-sm shadow-sky-500/20"
           trendText="อัปเดตล่าสุดเรียลไทม์"
         />
         <MetricCard
           title="นักเรียนในระบบ (Students)"
           value={(summary?.totalStudents || 0).toLocaleString()}
-          icon={Users} colorClass="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
+          icon={Users} colorClass="bg-teal-500/20 text-teal-300 border border-teal-400/30 shadow-sm shadow-teal-500/20"
           trendText="เฉพาะนักเรียนไม่รวมที่ลบ"
         />
         <MetricCard
           title="รายการฝากวันนี้ (Today Deposits)"
           value={`฿${(summary?.todayDeposits || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
-          icon={ArrowDownToLine} colorClass="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+          icon={ArrowDownToLine} colorClass="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 shadow-sm shadow-emerald-500/20"
           trendText="ออมเพิ่มวันนี้"
         />
         <MetricCard
           title="รายการถอนวันนี้ (Today Withdrawals)"
           value={`฿${(summary?.todayWithdrawals || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
-          icon={ArrowUpFromLine} colorClass="bg-rose-500/10 text-rose-400 border border-rose-500/20"
+          icon={ArrowUpFromLine} colorClass="bg-rose-500/20 text-rose-300 border border-rose-400/30 shadow-sm shadow-rose-500/20"
           trendText="ถอนออกวันนี้"
         />
       </div>
@@ -252,10 +252,10 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* custom simulated weekly bar chart */}
-        <div className="lg:col-span-2 bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-lg shadow-sky-950/20 flex flex-col justify-between h-[340px]">
+        <div className="lg:col-span-2 bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-6 shadow-lg shadow-sky-950/20 flex flex-col justify-between h-[340px]">
           <div>
             <h3 className="font-semibold text-white flex items-center gap-2 mb-1">
-              <TrendingUp className="w-5 h-5 text-emerald-400" />
+              <TrendingUp className="w-5 h-5 text-emerald-300" />
               แนวโน้มการออมและการถอนในรอบสัปดาห์ (Weekly Savings Trend)
             </h3>
             <p className="text-xs text-slate-300">เปรียบเทียบยอดฝากและยอดถอนสะสมย้อนหลัง 7 วันในระบบ</p>
@@ -270,13 +270,13 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
                 <div key={data.dateStr} className="flex-1 flex flex-col items-center group relative">
 
                   {/* Tooltip */}
-                  <div className="absolute bottom-full mb-2 bg-slate-950/90 border border-white/15 rounded-xl p-2.5 shadow-2xl text-[10px] font-medium pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 w-36 -translate-x-1/2 left-1/2 backdrop-blur-md">
-                    <p className="text-slate-300 font-bold text-center border-b border-white/10 pb-1 mb-1.5">{data.dateLabel} {data.isToday ? '(วันนี้)' : ''}</p>
-                    <div className="flex justify-between items-center text-emerald-400 font-bold mb-0.5">
+                  <div className="absolute bottom-full mb-2 bg-slate-950/80 border border-white/20 rounded-xl p-2.5 shadow-2xl text-[10px] font-medium pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 w-36 -translate-x-1/2 left-1/2 backdrop-blur-md">
+                    <p className="text-slate-200 font-bold text-center border-b border-white/10 pb-1 mb-1.5">{data.dateLabel} {data.isToday ? '(วันนี้)' : ''}</p>
+                    <div className="flex justify-between items-center text-emerald-300 font-bold mb-0.5">
                       <span>ฝาก:</span>
                       <span>฿{data.deposits.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                     </div>
-                    <div className="flex justify-between items-center text-rose-400 font-bold">
+                    <div className="flex justify-between items-center text-rose-300 font-bold">
                       <span>ถอน:</span>
                       <span>฿{data.withdrawals.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                     </div>
@@ -285,18 +285,18 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
                   {/* Vertical Bars */}
                   <div className="w-full flex items-end justify-center gap-1 sm:gap-1.5 h-36">
                     <div
-                      className="w-2.5 sm:w-3.5 bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-sm hover:brightness-110 transition-all duration-500 ease-out cursor-pointer"
+                      className="w-2.5 sm:w-3.5 bg-gradient-to-t from-emerald-500 to-teal-300 rounded-t-sm hover:brightness-110 shadow-sm shadow-emerald-500/30 transition-all duration-500 ease-out cursor-pointer"
                       style={{ height: `${Math.max(2, depHeight)}%` }}
                     />
                     <div
-                      className="w-2.5 sm:w-3.5 bg-gradient-to-t from-rose-600 to-rose-400 rounded-t-sm hover:brightness-110 transition-all duration-500 ease-out cursor-pointer"
+                      className="w-2.5 sm:w-3.5 bg-gradient-to-t from-rose-500 to-rose-300 rounded-t-sm hover:brightness-110 shadow-sm shadow-rose-500/30 transition-all duration-500 ease-out cursor-pointer"
                       style={{ height: `${Math.max(2, wdHeight)}%` }}
                     />
                   </div>
 
                   {/* Axis Label */}
                   <div className="mt-2 text-[10px] text-center">
-                    <span className={`block font-semibold ${data.isToday ? 'text-emerald-400' : 'text-slate-300'}`}>
+                    <span className={`block font-semibold ${data.isToday ? 'text-emerald-300' : 'text-slate-300'}`}>
                       {data.dayLabel}
                     </span>
                     <span className="block text-[8px] text-slate-400 mt-0.5">
@@ -310,35 +310,35 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
 
           <div className="flex items-center gap-4 text-xs mt-4 justify-center">
             <div className="flex items-center gap-1.5 text-slate-300">
-              <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block"></span>
+              <span className="w-2.5 h-2.5 bg-emerald-400 rounded-full inline-block shadow-sm shadow-emerald-400/40"></span>
               <span>ยอดฝาก (Deposits)</span>
             </div>
             <div className="flex items-center gap-1.5 text-slate-300">
-              <span className="w-2.5 h-2.5 bg-rose-500 rounded-full inline-block"></span>
+              <span className="w-2.5 h-2.5 bg-rose-400 rounded-full inline-block shadow-sm shadow-rose-400/40"></span>
               <span>ยอดถอน (Withdrawals)</span>
             </div>
           </div>
         </div>
 
         {/* System Status on Right Column */}
-        <div className="bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-lg shadow-sky-950/20 flex flex-col justify-between h-[340px]">
+        <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-5 shadow-lg shadow-sky-950/20 flex flex-col justify-between h-[340px]">
           <div>
             <h3 className="font-semibold text-white mb-4">สถานะระบบ (System Status)</h3>
 
             <div className="space-y-4">
-              <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 flex items-start gap-3 backdrop-blur-md">
-                <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <div className="p-4 rounded-xl border border-emerald-400/30 bg-emerald-500/15 flex items-start gap-3 backdrop-blur-md">
+                <CheckCircle className="w-5 h-5 text-emerald-300 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-emerald-400">Database Connected</p>
-                  <p className="text-xs text-slate-300 mt-1">เชื่อมต่อข้อมูลแบบเรียลไทม์กับ Firestore เรียบร้อย</p>
+                  <p className="text-sm font-semibold text-emerald-300">Database Connected</p>
+                  <p className="text-xs text-slate-200 mt-1">เชื่อมต่อข้อมูลแบบเรียลไทม์กับ Firestore เรียบร้อย</p>
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl border border-sky-500/30 bg-sky-500/10 flex items-start gap-3 backdrop-blur-md">
-                <Shield className="w-5 h-5 text-sky-400 shrink-0 mt-0.5" />
+              <div className="p-4 rounded-xl border border-sky-400/30 bg-sky-500/15 flex items-start gap-3 backdrop-blur-md">
+                <Shield className="w-5 h-5 text-sky-300 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-sky-400">Secure Session Active</p>
-                  <p className="text-xs text-slate-300 mt-1">ใช้งานโดย: {userSession.fullName}</p>
+                  <p className="text-sm font-semibold text-sky-300">Secure Session Active</p>
+                  <p className="text-xs text-slate-200 mt-1">ใช้งานโดย: {userSession.fullName}</p>
                 </div>
               </div>
             </div>
@@ -347,24 +347,24 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
       </div>
 
       {/* Recent Transactions Table */}
-      <div className="bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-lg shadow-sky-950/20 font-sans">
-        <div className="p-5 border-b border-slate-800 flex justify-between items-center">
+      <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl overflow-hidden shadow-lg shadow-sky-950/20 font-sans">
+        <div className="p-5 border-b border-white/10 flex justify-between items-center bg-slate-950/30">
           <h3 className="font-semibold text-white flex items-center gap-2">
-            <Clock className="w-4 h-4 text-slate-400" />
+            <Clock className="w-4 h-4 text-sky-300" />
             รายการทำธุรกรรมล่าสุด (Recent Transactions)
           </h3>
-          <span className="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full border border-slate-700">
+          <span className="text-xs bg-sky-500/15 text-sky-300 px-2.5 py-1 rounded-full border border-sky-400/30 font-medium">
             แสดง {recentTransactions.length} รายการล่าสุด
           </span>
         </div>
         <div className="overflow-x-auto">
           {recentTransactions.length === 0 ? (
-            <div className="p-8 text-center text-slate-500 text-sm">
+            <div className="p-8 text-center text-slate-400 text-sm">
               ยังไม่มีการบันทึกรายการธุรกรรมใด ๆ ในระบบ
             </div>
           ) : (
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-950/50 text-slate-400 text-xs uppercase">
+              <thead className="bg-slate-950/40 text-slate-200 text-xs uppercase border-b border-white/10">
                 <tr>
                   <th className="px-5 py-3 font-medium">Ref No.</th>
                   <th className="px-5 py-3 font-medium">นักเรียน</th>
@@ -373,28 +373,28 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
                   <th className="px-5 py-3 font-medium text-center">วันเวลาทำรายการ</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/50">
+              <tbody className="divide-y divide-white/5">
                 {recentTransactions.map((tx) => {
                   const isVoid = tx.status === 'Void';
                   const studentName = studentNames[tx.studentId] || 'กำลังโหลดชื่อ...';
                   return (
-                    <tr key={tx.id} className={`hover:bg-slate-800/50 transition-colors ${isVoid ? 'opacity-40 line-through' : ''}`}>
-                      <td className="px-5 py-3 text-slate-300 font-mono text-xs font-semibold">{tx.referenceNumber}</td>
-                      <td className="px-5 py-3 font-medium text-slate-205">{studentName}</td>
+                    <tr key={tx.id} className={`hover:bg-white/5 transition-colors ${isVoid ? 'opacity-40 line-through' : ''}`}>
+                      <td className="px-5 py-3 text-slate-200 font-mono text-xs font-semibold">{tx.referenceNumber}</td>
+                      <td className="px-5 py-3 font-medium text-slate-100">{studentName}</td>
                       <td className="px-5 py-3">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${isVoid ? 'bg-slate-950 text-slate-500 border-slate-800' :
-                          tx.transactionType === 'Deposit' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${isVoid ? 'bg-slate-950 text-slate-500 border-white/10' :
+                          tx.transactionType === 'Deposit' ? 'bg-emerald-500/15 text-emerald-300 border-emerald-400/30' : 'bg-rose-500/15 text-rose-300 border-rose-400/30'
                           }`}>
                           {tx.transactionType === 'Deposit' ? <ArrowDownToLine className="w-3 h-3" /> : <ArrowUpFromLine className="w-3 h-3" />}
                           {tx.transactionType}
                         </span>
                       </td>
                       <td className={`px-5 py-3 text-right font-bold font-mono ${isVoid ? 'text-slate-500' :
-                        tx.transactionType === 'Deposit' ? 'text-emerald-400' : 'text-rose-400'
+                        tx.transactionType === 'Deposit' ? 'text-emerald-300' : 'text-rose-300'
                         }`}>
                         {isVoid ? '' : tx.transactionType === 'Deposit' ? '+' : '-'}฿{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
-                      <td className="px-5 py-3 text-center text-slate-400 text-xs font-mono">
+                      <td className="px-5 py-3 text-center text-slate-300 text-xs font-mono">
                         {new Date(tx.createdAt).toLocaleString('th-TH', {
                           month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                         })}

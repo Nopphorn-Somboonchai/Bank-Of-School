@@ -61,7 +61,7 @@ export function StudentSelector({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+    <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-6 shadow-xl space-y-4">
       <h3 className="text-md font-bold text-white flex items-center gap-2">
         <Search className={`w-4 h-4 ${activeIconColors[themeColor]}`} />
         1. ค้นหาและเลือกรายชื่อนักเรียน
@@ -69,26 +69,26 @@ export function StudentSelector({
       
       {/* Search Input */}
       <div className="relative">
-        <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+        <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
         <input 
           type="text" 
           placeholder="พิมพ์ชื่อนักเรียน, รหัสประจำตัว หรือ ID ระบบ..." 
           value={searchQuery}
           disabled={submitting}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className={`w-full bg-slate-950/80 border border-slate-700/60 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-200 focus:outline-none transition-colors focus:ring-1 disabled:opacity-50 ${borderFocusClasses[themeColor]}`}
+          className={`w-full bg-slate-950/40 border border-white/15 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-100 placeholder-slate-400 focus:outline-none transition-colors focus:ring-1 disabled:opacity-50 ${borderFocusClasses[themeColor]}`}
         />
       </div>
 
       {/* Students List Box */}
-      <div className="border border-slate-800 bg-slate-950/50 rounded-xl overflow-hidden max-h-[350px] overflow-y-auto divide-y divide-slate-850">
+      <div className="border border-white/10 bg-slate-950/30 rounded-xl overflow-hidden max-h-[350px] overflow-y-auto divide-y divide-white/5">
         {loading ? (
-          <div className="p-8 text-center text-slate-500 flex flex-col items-center gap-2">
+          <div className="p-8 text-center text-slate-400 flex flex-col items-center gap-2">
             <RefreshCw className={`w-6 h-6 animate-spin ${activeIconColors[themeColor]}`} />
             <span className="text-xs">กำลังโหลดรายชื่อนักเรียน...</span>
           </div>
         ) : filteredStudents.length === 0 ? (
-          <div className="p-8 text-center text-slate-500">
+          <div className="p-8 text-center text-slate-400">
             <span className="text-sm">ไม่พบนักเรียนตามเงื่อนไขการค้นหา</span>
           </div>
         ) : (
@@ -101,7 +101,7 @@ export function StudentSelector({
                 type="button"
                 disabled={submitting}
                 onClick={() => onSelectStudent(student)}
-                className={`w-full text-left px-5 py-3.5 transition-all flex items-center justify-between hover:bg-slate-800/30 ${
+                className={`w-full text-left px-5 py-3.5 transition-all flex items-center justify-between hover:bg-white/5 ${
                   isSelected ? selectedBorderClasses[themeColor] : ''
                 }`}
               >

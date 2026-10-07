@@ -151,48 +151,48 @@ export default function DepositMainContent({ showToast, userSession }: DepositMa
           
           {/* Student Profile Card (if selected) */}
           {selectedStudent ? (
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl animate-scaleUp">
-              <div className="bg-emerald-600/10 border-b border-emerald-500/20 px-6 py-4 flex items-center justify-between">
-                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">บัญชีที่เลือก</span>
-                <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">Active</span>
+            <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl overflow-hidden shadow-xl animate-scaleUp">
+              <div className="bg-emerald-500/15 border-b border-emerald-400/20 px-6 py-4 flex items-center justify-between">
+                <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider">บัญชีที่เลือก</span>
+                <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-400/30 font-medium">Active</span>
               </div>
               <div className="p-6 space-y-4">
                 <div>
-                  <h4 className="text-xs font-semibold text-slate-500 uppercase">ชื่อ-นามสกุล</h4>
+                  <h4 className="text-xs font-semibold text-slate-400 uppercase">ชื่อ-นามสกุล</h4>
                   <p className="text-lg font-bold text-white mt-0.5">{selectedStudent.fullName}</p>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h4 className="text-xs font-semibold text-slate-500 uppercase">ชั้นเรียน</h4>
-                    <p className="text-sm font-semibold text-slate-200 mt-0.5">ชั้น {selectedStudent.classRoom}</p>
+                    <h4 className="text-xs font-semibold text-slate-400 uppercase">ชั้นเรียน</h4>
+                    <p className="text-sm font-semibold text-slate-100 mt-0.5">ชั้น {selectedStudent.classRoom}</p>
                   </div>
                   <div>
-                    <h4 className="text-xs font-semibold text-slate-500 uppercase">เลขบัญชีออมทรัพย์</h4>
-                    <p className="text-sm font-semibold text-slate-200 mt-0.5 font-mono">
+                    <h4 className="text-xs font-semibold text-slate-400 uppercase">เลขบัญชีออมทรัพย์</h4>
+                    <p className="text-sm font-semibold text-slate-100 mt-0.5 font-mono">
                       {selectedAccount ? selectedAccount.accountNumber : 'ไม่มีบัญชี'}
                     </p>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800">
-                  <h4 className="text-xs font-semibold text-slate-500 uppercase">ยอดเงินปัจจุบัน</h4>
-                  <p className="text-2xl font-extrabold text-emerald-400 font-mono mt-1">
+                <div className="pt-4 border-t border-white/10">
+                  <h4 className="text-xs font-semibold text-slate-400 uppercase">ยอดเงินปัจจุบัน</h4>
+                  <p className="text-2xl font-extrabold text-emerald-300 font-mono mt-1">
                     ฿{selectedAccount ? selectedAccount.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
                   </p>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center text-slate-500 space-y-2 py-12 shadow-xl">
+            <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-6 text-center text-slate-400 space-y-2 py-12 shadow-xl">
               <span className="text-4xl block">👤</span>
-              <p className="text-sm font-medium text-slate-400">กรุณาเลือกนักเรียนทางซ้ายมือ</p>
-              <p className="text-xs text-slate-600">เพื่อเริ่มกรอกยอดทำรายการฝากเงิน</p>
+              <p className="text-sm font-medium text-slate-300">กรุณาเลือกนักเรียนทางซ้ายมือ</p>
+              <p className="text-xs text-slate-400">เพื่อเริ่มกรอกยอดทำรายการฝากเงิน</p>
             </div>
           )}
 
           {/* Form */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-6 shadow-xl space-y-4">
             <h3 className="text-md font-bold text-white flex items-center gap-2">
               💵
               2. ระบุจำนวนเงินฝาก
@@ -200,9 +200,9 @@ export default function DepositMainContent({ showToast, userSession }: DepositMa
             
             <form onSubmit={handleOpenConfirm} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-400 uppercase">จำนวนเงิน (บาท)</label>
+                <label className="text-xs font-semibold text-slate-300 uppercase">จำนวนเงิน (บาท)</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 font-bold text-sm">฿</span>
+                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-emerald-400 font-bold text-sm">฿</span>
                   <input
                     type="number"
                     step="0.01"
@@ -211,7 +211,7 @@ export default function DepositMainContent({ showToast, userSession }: DepositMa
                     disabled={!selectedStudent || submitting}
                     value={amount}
                     onChange={handleAmountChange}
-                    className="w-full bg-slate-950/80 border border-slate-700/60 rounded-xl py-3 pl-8 pr-4 text-emerald-400 text-lg font-bold font-mono placeholder-slate-750 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-slate-950/40 border border-white/15 rounded-xl py-3 pl-8 pr-4 text-emerald-300 text-lg font-bold font-mono placeholder-slate-500 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-md transition-all"
                   />
                 </div>
                 {validationError && (
@@ -225,7 +225,7 @@ export default function DepositMainContent({ showToast, userSession }: DepositMa
               <button
                 type="submit"
                 disabled={!selectedStudent || submitting || !!validationError || !amount}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-950/20 active:scale-95 transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+                className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
               >
                 <span>ทำรายการฝากเงิน</span>
               </button>
