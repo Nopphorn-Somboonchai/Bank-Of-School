@@ -325,14 +325,38 @@ export default function DailyReportView({
       </div>
 
       {/* Informative tips box */}
-      <div className="bg-sky-500/10 border border-sky-400/25 rounded-2xl p-4 text-xs text-slate-300 space-y-1 no-print backdrop-blur-md">
-        <p className="font-bold text-sky-300 flex items-center gap-1.5">
-          <AlertCircle className="w-4 h-4 text-sky-400" />
+      <div className="bg-slate-950/80 backdrop-blur-xl border border-sky-400/40 rounded-2xl p-4.5 text-xs shadow-xl shadow-black/30 space-y-2.5 no-print">
+        <p className="font-bold text-sky-300 text-sm flex items-center gap-2 drop-shadow-sm">
+          <span className="p-1 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-400/30">
+            <AlertCircle className="w-4 h-4" />
+          </span>
           คำแนะนำสำหรับการตรวจสอบยอดเงินสด (Cash drawer check):
         </p>
-        <p>• ยอดเงินฝากเพิ่มเงินสดเข้ากระปุก/ลิ้นชัก ยอดเงินถอนนำเงินสดออกจากลิ้นชัก</p>
-        <p>• ยอดเงินสดสุทธิในลิ้นชักวันนี้ควรเพิ่มขึ้น/ลดลงตรงกับยอดเงินสดสุทธิ (Net Cash Flow) ข้างต้น</p>
-        <p>• รายการที่ถูกยกเลิก (Void) จะแสดงอยู่ในตารางสำหรับเก็บประวัติการตรวจสอบ แต่ยอดเงินจะถูกหักออกไม่นำมารวมในสรุปยอดเงินสด</p>
+        <div className="space-y-1.5 pl-7 text-slate-100 font-medium leading-relaxed">
+          <p className="flex items-start gap-2">
+            <span className="text-sky-400 font-bold select-none">•</span>
+            <span>
+              <strong className="text-emerald-300 font-semibold">ยอดเงินฝาก:</strong> เพิ่มเงินสดเข้ากระปุก/ลิ้นชัก
+              <span className="mx-2 text-slate-400">|</span>
+              <strong className="text-rose-300 font-semibold">ยอดเงินถอน:</strong> นำเงินสดออกจากลิ้นชัก
+            </span>
+          </p>
+          <p className="flex items-start gap-2">
+            <span className="text-sky-400 font-bold select-none">•</span>
+            <span>
+              ยอดเงินสดสุทธิในลิ้นชักวันนี้ควรเพิ่มขึ้น/ลดลงตรงกับ{" "}
+              <strong className="text-sky-300 font-semibold">ยอดเงินสดสุทธิ (Net Cash Flow)</strong> ข้างต้น
+            </span>
+          </p>
+          <p className="flex items-start gap-2">
+            <span className="text-sky-400 font-bold select-none">•</span>
+            <span>
+              รายการที่ถูกยกเลิก{" "}
+              <strong className="text-amber-300 font-semibold">(Void)</strong>{" "}
+              จะแสดงอยู่ในตารางสำหรับเก็บประวัติการตรวจสอบ แต่ยอดเงินจะถูกหักออกไม่นำมารวมในสรุปยอดเงินสด
+            </span>
+          </p>
+        </div>
       </div>
 
       {/* Transactions Table */}

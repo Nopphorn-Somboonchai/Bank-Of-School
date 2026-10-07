@@ -278,26 +278,26 @@ export default function StudentLedgerView({
           {/* Col 1: Student Details */}
           <div className="space-y-3 print:space-y-1">
             <div className="flex justify-between md:block">
-              <span className="text-xs font-semibold text-slate-500 uppercase block">เลขประจำตัวนักเรียน</span>
-              <span className="text-sm font-bold text-slate-200 mt-0.5 print:text-slate-900 font-mono">{student.studentNumber}</span>
+              <span className="text-xs font-semibold text-slate-400 uppercase block">เลขประจำตัวนักเรียน</span>
+              <span className="text-sm font-bold text-slate-100 mt-0.5 print:text-slate-900 font-mono">{student.studentNumber}</span>
             </div>
             <div className="flex justify-between md:block">
-              <span className="text-xs font-semibold text-slate-500 uppercase block">ระดับชั้นเรียน</span>
-              <span className="text-sm font-bold text-slate-200 mt-0.5 print:text-slate-900">ชั้น {student.classRoom}</span>
+              <span className="text-xs font-semibold text-slate-400 uppercase block">ระดับชั้นเรียน</span>
+              <span className="text-sm font-bold text-slate-100 mt-0.5 print:text-slate-900">ชั้น {student.classRoom}</span>
             </div>
           </div>
 
           {/* Col 2: Account Details */}
           <div className="space-y-3 print:space-y-1">
             <div className="flex justify-between md:block">
-              <span className="text-xs font-semibold text-slate-500 uppercase block">เลขที่บัญชีออมทรัพย์</span>
-              <span className="text-sm font-bold text-slate-200 mt-0.5 print:text-slate-900 font-mono">
+              <span className="text-xs font-semibold text-slate-400 uppercase block">เลขที่บัญชีออมทรัพย์</span>
+              <span className="text-sm font-bold text-slate-100 mt-0.5 print:text-slate-900 font-mono">
                 {account ? account.accountNumber : "ไม่มีข้อมูลบัญชี"}
               </span>
             </div>
             <div className="flex justify-between md:block">
-              <span className="text-xs font-semibold text-slate-500 uppercase block">วันเปิดบัญชี</span>
-              <span className="text-sm font-bold text-slate-200 mt-0.5 print:text-slate-900">
+              <span className="text-xs font-semibold text-slate-400 uppercase block">วันเปิดบัญชี</span>
+              <span className="text-sm font-bold text-slate-100 mt-0.5 print:text-slate-900">
                 {account ? new Date(account.createdAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : "-"}
               </span>
             </div>
