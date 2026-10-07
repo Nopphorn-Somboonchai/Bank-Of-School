@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Shield, Menu, LayoutDashboard, Users,
   ArrowDownToLine, ArrowUpFromLine, FileText, Settings,
@@ -27,6 +27,22 @@ export default function DashboardLayout({
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const { notifications, unreadCount, markNotificationsAsRead } = useAuditLogs();
   const { userSession, logout } = useAuthRole();
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setNotificationsOpen(false);
+      }
+    };
+
+    if (notificationsOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [notificationsOpen]);
 
   const getRelativeTime = (isoString: string) => {
     const diffMs = Date.now() - new Date(isoString).getTime();
@@ -93,9 +109,9 @@ export default function DashboardLayout({
       <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} flex-shrink-0 bg-slate-950/35 backdrop-blur-xl border-r border-white/15 flex flex-col transition-all duration-300`}>
         <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
           {sidebarOpen && (
-            <div className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-teal-300 to-emerald-400 font-extrabold text-lg">
-              <Shield className="w-6 h-6 text-emerald-400" />
-              <span>Bank of School</span>
+            <div className="flex items-center gap-2 font-extrabold text-lg select-none">
+              <Shield className="w-6 h-6 text-emerald-400 drop-shadow-[0_2px_4px_rgba(16,185,129,0.35)]" />
+              <span className="text-embossed-3d">Bank of School</span>
             </div>
           )}
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-white/10 text-slate-300 mx-auto cursor-pointer transition-colors">
@@ -151,11 +167,11 @@ export default function DashboardLayout({
       <div className="flex-1 flex flex-col min-w-0">
 
         {/* Top Navbar */}
-        <header className="h-16 flex items-center justify-between px-6 bg-slate-950/35 backdrop-blur-xl border-b border-white/15 shrink-0">
+        <header className="relative z-40 h-16 flex items-center justify-between px-6 bg-slate-950/35 backdrop-blur-xl border-b border-white/15 shrink-0">
           <div className="flex-1"></div>
 
           <div className="flex items-center gap-4">
-            <div className="relative">
+            <div ref={notificationRef} className="relative z-50">
               <button
                 onClick={() => {
                   setNotificationsOpen(!notificationsOpen);
@@ -177,7 +193,7 @@ export default function DashboardLayout({
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setNotificationsOpen(false)}></div>
 
-                  <div className="absolute right-0 mt-2 w-80 max-h-[480px] bg-slate-950/80 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl shadow-sky-950/40 z-50 flex flex-col overflow-hidden animate-fadeIn">
+                  <div className="absolute right-0 mt-2 w-80 max-h-[480px] bg-slate-950/90 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl shadow-sky-950/40 z-50 flex flex-col overflow-hidden animate-fadeIn">
                     <div className="p-4 border-b border-white/10 flex justify-between items-center bg-slate-950/50">
                       <h4 className="text-sm font-bold text-white flex items-center gap-2">
                         <Activity className="w-4 h-4 text-emerald-400" />
