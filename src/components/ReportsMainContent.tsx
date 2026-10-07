@@ -105,23 +105,23 @@ export default function ReportsMainContent({ showToast, userSession }: ReportsMa
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="no-print">
-        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+      <div className="glass-header-banner rounded-2xl p-5 shadow-lg no-print">
+        <h2 className="text-2xl font-black text-white flex items-center gap-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
           <FileText className="w-7 h-7 text-sky-400" />
           ระบบรายงานสรุปผล (Reports Summary Dashboard)
         </h2>
-        <p className="text-sm text-slate-300 mt-1">เลือกประเภทรายงานที่ต้องการตรวจสอบ พิมพ์รายงาน และส่งออกข้อมูลเป็นไฟล์ Excel/CSV</p>
+        <p className="text-sm text-slate-100 font-medium mt-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">เลือกประเภทรายงานที่ต้องการตรวจสอบ พิมพ์รายงาน และส่งออกข้อมูลเป็นไฟล์ Excel/CSV</p>
       </div>
 
       {/* Tabs Selector */}
-      <div className="flex border-b border-white/10 gap-2 no-print">
+      <div className="flex bg-slate-950/40 p-1.5 rounded-2xl border border-white/15 gap-2 backdrop-blur-md no-print flex-wrap">
         <button
           type="button"
           onClick={() => setReportsTab('individual')}
-          className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
             reportsTab === 'individual'
-              ? 'border-sky-400 text-sky-300'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md shadow-sky-500/25'
+              : 'text-slate-300 hover:text-white hover:bg-white/5'
           }`}
         >
           <User className="w-4 h-4" />
@@ -130,10 +130,10 @@ export default function ReportsMainContent({ showToast, userSession }: ReportsMa
         <button
           type="button"
           onClick={() => setReportsTab('daily')}
-          className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
             reportsTab === 'daily'
-              ? 'border-sky-400 text-sky-300'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md shadow-sky-500/25'
+              : 'text-slate-300 hover:text-white hover:bg-white/5'
           }`}
         >
           <Calendar className="w-4 h-4" />
@@ -142,10 +142,10 @@ export default function ReportsMainContent({ showToast, userSession }: ReportsMa
         <button
           type="button"
           onClick={() => setReportsTab('classroom')}
-          className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
             reportsTab === 'classroom'
-              ? 'border-sky-400 text-sky-300'
-              : 'border-transparent text-slate-400 hover:text-slate-200'
+              ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md shadow-sky-500/25'
+              : 'text-slate-300 hover:text-white hover:bg-white/5'
           }`}
         >
           <Building className="w-4 h-4" />

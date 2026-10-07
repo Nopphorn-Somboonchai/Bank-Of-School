@@ -145,20 +145,20 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between gap-4 bg-slate-950 border border-slate-700/80 rounded-lg px-3.5 py-1.5 text-sm font-bold text-white focus:outline-none focus:border-blue-500 mt-1 cursor-pointer min-w-[190px] text-left hover:border-slate-600 transition-all select-none"
+        className="flex items-center justify-between gap-4 bg-slate-950/40 backdrop-blur-md border border-white/15 rounded-xl px-3.5 py-1.5 text-sm font-bold text-white focus:outline-none focus:border-sky-400 mt-1 cursor-pointer min-w-[190px] text-left hover:border-sky-400/50 hover:bg-white/5 transition-all select-none shadow-sm"
       >
         <span className="text-white text-base tracking-wide font-extrabold">{formattedDisplay}</span>
-        <Calendar className="w-4 h-4 text-slate-500 shrink-0" />
+        <Calendar className="w-4 h-4 text-sky-400 shrink-0" />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 mt-2 w-80 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-4 z-50 animate-scaleUp text-slate-100 font-sans">
+        <div className="absolute left-0 mt-2 w-80 bg-slate-900/90 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl p-4 z-50 animate-scaleUp text-slate-100 font-sans">
           {/* Header Controls: Month & Year Selector */}
           <div className="flex items-center justify-between gap-1 mb-3">
             <button
               type="button"
               onClick={handlePrevMonth}
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-white/10 rounded-lg text-slate-300 hover:text-white transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-4.5 h-4.5" />
             </button>
@@ -168,7 +168,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
               <select
                 value={month}
                 onChange={(e) => handleMonthChange(parseInt(e.target.value))}
-                className="bg-slate-950 border border-slate-800 text-xs font-semibold text-slate-200 rounded px-1.5 py-1 focus:outline-none focus:border-blue-500 cursor-pointer"
+                className="bg-slate-950/50 border border-white/15 text-xs font-semibold text-slate-100 rounded-lg px-2 py-1 focus:outline-none focus:border-sky-400 cursor-pointer"
               >
                 {monthsFullThai.map((m, idx) => (
                   <option key={idx} value={idx}>{m}</option>
@@ -179,7 +179,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
               <select
                 value={year}
                 onChange={(e) => handleYearChange(parseInt(e.target.value))}
-                className="bg-slate-950 border border-slate-800 text-xs font-semibold text-slate-200 rounded px-1.5 py-1 focus:outline-none focus:border-blue-500 cursor-pointer"
+                className="bg-slate-950/50 border border-white/15 text-xs font-semibold text-slate-100 rounded-lg px-2 py-1 focus:outline-none focus:border-sky-400 cursor-pointer"
               >
                 {years.map((y) => (
                   <option key={y} value={y}>พ.ศ. {y + 543} ({y})</option>
@@ -190,7 +190,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
             <button
               type="button"
               onClick={handleNextMonth}
-              className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-white/10 rounded-lg text-slate-300 hover:text-white transition-colors cursor-pointer"
             >
               <ChevronRight className="w-4.5 h-4.5" />
             </button>
@@ -198,7 +198,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
 
           {/* Weekdays */}
           <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 mb-1">
-            <span className="text-rose-500">อา</span>
+            <span className="text-rose-400">อา</span>
             <span>จ</span>
             <span>อ</span>
             <span>พ</span>
@@ -223,13 +223,13 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
               let btnClass = "w-9 h-9 flex items-center justify-center text-xs font-semibold rounded-lg transition-colors cursor-pointer ";
               
               if (!item.isCurrentMonth) {
-                btnClass += "text-slate-650 hover:bg-slate-800 hover:text-slate-400";
+                btnClass += "text-slate-600 hover:bg-white/5 hover:text-slate-400";
               } else if (isSelected) {
-                btnClass += "bg-blue-600 text-white font-extrabold shadow-md shadow-blue-900/30";
+                btnClass += "bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-extrabold shadow-md shadow-sky-500/30";
               } else if (isToday) {
-                btnClass += "border border-blue-500/50 text-blue-400 font-bold hover:bg-slate-800";
+                btnClass += "border border-sky-400/50 text-sky-300 font-bold hover:bg-white/10";
               } else {
-                btnClass += "text-slate-300 hover:bg-slate-800 hover:text-white";
+                btnClass += "text-slate-200 hover:bg-white/10 hover:text-white";
               }
 
               return (
@@ -260,7 +260,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
           </div>
           
           {/* Quick Select Today */}
-          <div className="border-t border-slate-800/80 mt-3 pt-2 flex justify-end">
+          <div className="border-t border-white/10 mt-3 pt-2 flex justify-end">
             <button
               type="button"
               onClick={() => {
@@ -268,7 +268,7 @@ export default function DatePicker({ value, onChange }: DatePickerProps) {
                 onChange(todayStr);
                 setIsOpen(false);
               }}
-              className="text-[11px] font-bold text-blue-400 hover:text-blue-300 px-2 py-1 rounded hover:bg-blue-950/30 cursor-pointer"
+              className="text-[11px] font-bold text-sky-400 hover:text-sky-300 px-2 py-1 rounded hover:bg-sky-500/15 cursor-pointer"
             >
               เลือกวันนี้ (Today)
             </button>

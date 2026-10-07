@@ -532,16 +532,16 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
       <div className="flex-1 flex flex-col no-print overflow-hidden">
         {/* Header */}
         {!embedded && (
-          <header className="h-16 flex items-center justify-between px-6 bg-slate-900 border-b border-slate-800 shrink-0">
+          <header className="h-16 flex items-center justify-between px-6 bg-slate-950/40 backdrop-blur-md border-b border-white/15 shrink-0">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-indigo-400 font-bold text-lg">
+              <div className="flex items-center gap-2 text-sky-400 font-bold text-lg">
                 <Activity className="w-5 h-5 animate-pulse" />
                 <span>Pre-flight Checklist & QA Auditing</span>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <span className={`text-xs px-3 py-1.5 rounded-full border flex items-center gap-2 ${
-                isEmulator ? 'text-slate-400 bg-slate-800 border-slate-700' : 'text-amber-400 bg-amber-950/60 border-amber-500/30'
+                isEmulator ? 'text-slate-300 bg-slate-950/40 border-white/15' : 'text-amber-400 bg-amber-950/60 border-amber-500/30'
               }`}>
                 <Server className="w-3 h-3" /> Environment: {isEmulator ? 'Local (Emulator)' : 'Live / Production'}
               </span>
@@ -553,17 +553,17 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
         <main className="flex-1 overflow-hidden flex flex-col md:flex-row">
           
           {/* Left Panel - Test Suites */}
-          <div className="flex-1 p-6 overflow-y-auto border-r border-slate-800">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+          <div className="flex-1 p-6 overflow-y-auto border-r border-white/10">
+            <div className="glass-header-banner rounded-2xl p-5 shadow-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-white">ทดสอบความสมบูรณ์ปลอดภัย (Quality & Security Audit)</h2>
-                <p className="text-sm text-slate-400 mt-1">โมดูลการประเมินความสมบูรณ์แบบอัตโนมัติของคณิตศาสตร์ธุรกรรมและ Security Rules</p>
+                <h2 className="text-2xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">ทดสอบความสมบูรณ์ปลอดภัย (Quality & Security Audit)</h2>
+                <p className="text-sm text-slate-100 font-medium mt-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">โมดูลการประเมินความสมบูรณ์แบบอัตโนมัติของคณิตศาสตร์ธุรกรรมและ Security Rules</p>
               </div>
               <div className="flex items-center gap-2">
                 {testExecuted && !isRunning && (
                   <button 
                     onClick={() => setShowReport(true)}
-                    className="bg-slate-800 hover:bg-slate-700 text-indigo-400 px-4 py-2.5 rounded-xl text-sm font-bold border border-indigo-500/30 transition-all flex items-center gap-2 cursor-pointer"
+                    className="bg-slate-950/40 hover:bg-white/10 text-sky-300 px-4 py-2.5 rounded-xl text-sm font-bold border border-white/15 transition-all flex items-center gap-2 cursor-pointer"
                   >
                     <Award className="w-4 h-4" /> ใบรับรองความปลอดภัย
                   </button>
@@ -572,7 +572,7 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
                   onClick={runAllTests} 
                   disabled={isRunning || !isEmulator}
                   title={!isEmulator ? "สามารถรันได้เฉพาะเมื่อเปิดใช้งาน Firestore Emulator เท่านั้น" : undefined}
-                  className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-indigo-900/20 transition-all flex items-center gap-2 cursor-pointer"
+                  className="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 disabled:opacity-50 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-sky-500/25 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   {isRunning ? (
                     <><RefreshCw className="w-4 h-4 animate-spin" /> กำลังตรวจสอบระบบ...</>
@@ -584,7 +584,7 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
             </div>
 
             {!isEmulator && (
-              <div className="mb-6 bg-amber-950/40 border border-amber-500/40 rounded-2xl p-4 flex items-start gap-3 text-amber-200">
+              <div className="mb-6 bg-amber-950/40 border border-amber-500/40 rounded-2xl p-4 flex items-start gap-3 text-amber-200 backdrop-blur-md">
                 <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <div className="text-xs space-y-1">
                   <p className="font-bold text-amber-300">แจ้งเตือนความปลอดภัย: ปิดการทำงานบนฐานข้อมูลจริง</p>
@@ -596,29 +596,29 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
             )}
 
             {/* Overall Progress */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-8">
+            <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-5 mb-8 shadow-lg">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-slate-300">อัตราความสำเร็จของผลการทดสอบ (Test Success Rate)</span>
-                <span className="text-sm font-bold text-indigo-400">{progress}%</span>
+                <span className="text-sm font-semibold text-slate-200">อัตราความสำเร็จของผลการทดสอบ (Test Success Rate)</span>
+                <span className="text-sm font-extrabold text-sky-400">{progress}%</span>
               </div>
-              <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+              <div className="w-full h-2.5 bg-slate-950/60 rounded-full overflow-hidden border border-white/10">
                 <div 
-                  className="h-full bg-indigo-500 rounded-full transition-all duration-300 ease-out relative overflow-hidden"
+                  className="h-full bg-gradient-to-r from-sky-500 to-emerald-400 rounded-full transition-all duration-300 ease-out relative overflow-hidden"
                   style={{ width: `${progress}%` }}
                 >
                   <div className="absolute inset-0 bg-white/20 w-full animate-shimmer" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)', transform: 'skewX(-20deg)' }}></div>
                 </div>
               </div>
-              <div className="flex gap-6 mt-4 pt-4 border-t border-slate-800/80 text-xs">
-                <div className="flex items-center gap-1.5 text-slate-400">
-                  <Database className="w-4 h-4" /> ทดสอบทั้งหมด: <strong className="text-white">{totalTests}</strong> รายการ
+              <div className="flex gap-6 mt-4 pt-4 border-t border-white/10 text-xs">
+                <div className="flex items-center gap-1.5 text-slate-300 font-medium">
+                  <Database className="w-4 h-4 text-sky-400" /> ทดสอบทั้งหมด: <strong className="text-white">{totalTests}</strong> รายการ
                 </div>
-                <div className="flex items-center gap-1.5 text-emerald-400">
-                  <CheckCircle className="w-4 h-4" /> ผ่านเกณฑ์: <strong className="text-white">{passedTests}</strong> รายการ
+                <div className="flex items-center gap-1.5 text-emerald-300 font-medium">
+                  <CheckCircle className="w-4 h-4 text-emerald-400" /> ผ่านเกณฑ์: <strong className="text-white">{passedTests}</strong> รายการ
                 </div>
                 {failedTests > 0 && (
-                  <div className="flex items-center gap-1.5 text-rose-400">
-                    <XCircle className="w-4 h-4 animate-pulse" /> ไม่ผ่าน: <strong className="text-white">{failedTests}</strong> รายการ
+                  <div className="flex items-center gap-1.5 text-rose-300 font-medium">
+                    <XCircle className="w-4 h-4 text-rose-400 animate-pulse" /> ไม่ผ่าน: <strong className="text-white">{failedTests}</strong> รายการ
                   </div>
                 )}
               </div>
@@ -627,25 +627,25 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
             {/* Test Suites List */}
             <div className="space-y-6">
               {suites.map((suite) => (
-                <div key={suite.id} className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-                  <div className="bg-slate-800/30 px-5 py-3 border-b border-slate-800 flex items-center gap-3">
+                <div key={suite.id} className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl overflow-hidden shadow-lg">
+                  <div className="bg-slate-950/30 px-5 py-3 border-b border-white/10 flex items-center gap-3">
                     {suite.icon}
-                    <h3 className="font-bold text-slate-200">{suite.name}</h3>
+                    <h3 className="font-bold text-white">{suite.name}</h3>
                   </div>
-                  <div className="divide-y divide-slate-800/50">
+                  <div className="divide-y divide-white/10">
                     {suite.tests.map((test) => (
-                      <div key={test.id} className="px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-slate-800/20 transition-colors">
+                      <div key={test.id} className="px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-white/5 transition-colors">
                         <div>
                           <div className="flex items-center gap-2">
-                            {test.status === 'pending' && <Clock className="w-4 h-4 text-slate-600" />}
-                            {test.status === 'running' && <RefreshCw className="w-4 h-4 text-indigo-400 animate-spin" />}
-                            {test.status === 'passed' && <CheckCircle className="w-4 h-4 text-emerald-500" />}
-                            {test.status === 'failed' && <XCircle className="w-4 h-4 text-rose-500" />}
-                            <span className={`text-sm font-semibold ${test.status === 'passed' ? 'text-slate-200' : test.status === 'running' ? 'text-indigo-300' : 'text-slate-400'}`}>
+                            {test.status === 'pending' && <Clock className="w-4 h-4 text-slate-500" />}
+                            {test.status === 'running' && <RefreshCw className="w-4 h-4 text-sky-400 animate-spin" />}
+                            {test.status === 'passed' && <CheckCircle className="w-4 h-4 text-emerald-400" />}
+                            {test.status === 'failed' && <XCircle className="w-4 h-4 text-rose-400" />}
+                            <span className={`text-sm font-semibold ${test.status === 'passed' ? 'text-white' : test.status === 'running' ? 'text-sky-300' : 'text-slate-300'}`}>
                               {test.name}
                             </span>
                           </div>
-                          <p className="text-xs text-slate-500 mt-1 pl-6">{test.description}</p>
+                          <p className="text-xs text-slate-400 mt-1 pl-6">{test.description}</p>
                         </div>
                         <span className={`text-[10px] self-start sm:self-center uppercase font-bold tracking-wider px-2.5 py-1 rounded-md ${
                           test.status === 'passed' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
@@ -664,30 +664,30 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
           </div>
 
           {/* Right Panel - Terminal/Logs */}
-          <div className="md:w-96 bg-[#0A0F1C] flex flex-col border-t md:border-t-0 md:border-l border-slate-800">
-            <div className="px-4 py-3 border-b border-slate-800 flex items-center justify-between bg-slate-900 shrink-0">
+          <div className="md:w-96 bg-slate-950/50 backdrop-blur-md flex flex-col border-t md:border-t-0 md:border-l border-white/15">
+            <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-slate-950/40 shrink-0">
               <div className="flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-slate-400" />
-                <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Audit logs output</span>
+                <Terminal className="w-4 h-4 text-sky-400" />
+                <span className="text-xs font-semibold text-slate-200 uppercase tracking-wider">Audit logs output</span>
               </div>
               <button 
                 onClick={() => setLogs([])}
-                className="text-[10px] text-slate-500 hover:text-slate-300 font-semibold px-2 py-0.5 border border-slate-800 rounded bg-slate-950 cursor-pointer"
+                className="text-[10px] text-slate-300 hover:text-white font-semibold px-2 py-0.5 border border-white/15 rounded bg-slate-900/60 cursor-pointer transition-colors"
               >
                 Clear Console
               </button>
             </div>
             <div className="flex-1 p-4 font-mono text-[11px] overflow-y-auto space-y-2.5 scrollbar-thin">
               {logs.length === 0 ? (
-                <div className="text-slate-600 italic">กดเริ่มปุ่มรันทดสอบระบบเพื่อดูผลวิเคราะห์ข้อมูลสด...</div>
+                <div className="text-slate-400 italic">กดเริ่มปุ่มรันทดสอบระบบเพื่อดูผลวิเคราะห์ข้อมูลสด...</div>
               ) : (
                 logs.map((log, idx) => (
                   <div key={idx} className={`flex gap-2 leading-relaxed ${
-                    log.type === 'success' ? 'text-emerald-400' :
-                    log.type === 'system' ? 'text-indigo-400 font-bold' :
-                    log.type === 'error' ? 'text-rose-400 border-l border-rose-500/30 pl-1.5' : 'text-slate-400'
+                    log.type === 'success' ? 'text-emerald-300' :
+                    log.type === 'system' ? 'text-sky-300 font-bold' :
+                    log.type === 'error' ? 'text-rose-400 border-l border-rose-500/30 pl-1.5' : 'text-slate-300'
                   }`}>
-                    <span className="text-slate-600 shrink-0">[{log.time}]</span>
+                    <span className="text-slate-500 shrink-0">[{log.time}]</span>
                     <span className="whitespace-pre-wrap">{log.message}</span>
                   </div>
                 ))
@@ -700,23 +700,23 @@ export default function SystemTestingPage({ embedded = false }: { embedded?: boo
 
       {/* Compliance Report Modal overlay */}
       {showReport && (
-        <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto no-print">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-            <div className="px-6 py-4 bg-slate-800/50 border-b border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-indigo-400 font-bold">
-                <Award className="w-5 h-5" />
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto no-print">
+          <div className="bg-slate-900/90 backdrop-blur-2xl border border-white/20 w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 bg-slate-950/40 border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sky-300 font-bold">
+                <Award className="w-5 h-5 text-sky-400" />
                 <span>รายงานใบรับรองความปลอดภัย (Security Compliance Report)</span>
               </div>
               <div className="flex items-center gap-2">
                 <button 
                   onClick={handlePrint}
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer shadow-md shadow-sky-500/25"
                 >
                   <Printer className="w-3.5 h-3.5" /> สั่งพิมพ์ / บันทึก PDF
                 </button>
                 <button 
                   onClick={() => setShowReport(false)}
-                  className="bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white px-3 py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                  className="bg-slate-950/40 hover:bg-white/10 border border-white/15 text-slate-200 hover:text-white px-3 py-2 rounded-xl text-xs transition-colors cursor-pointer"
                 >
                   ปิดหน้าต่าง
                 </button>

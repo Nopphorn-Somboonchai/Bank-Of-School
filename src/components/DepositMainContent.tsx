@@ -122,12 +122,12 @@ export default function DepositMainContent({ showToast, userSession }: DepositMa
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-fadeIn">
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+      <div className="glass-header-banner rounded-2xl p-5 shadow-lg">
+        <h2 className="text-2xl font-black text-white flex items-center gap-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
           <ArrowDownToLine className="w-7 h-7 text-emerald-400" />
           ทำรายการฝากเงิน (Deposit)
         </h2>
-        <p className="text-sm text-slate-400 mt-1">ทำรายการฝากเงินเข้าบัญชีออมทรัพย์ของนักเรียนอย่างปลอดภัย</p>
+        <p className="text-sm text-slate-100 font-medium mt-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">ทำรายการฝากเงินเข้าบัญชีออมทรัพย์ของนักเรียนอย่างปลอดภัย</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">

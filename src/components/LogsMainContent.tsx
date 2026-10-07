@@ -155,13 +155,13 @@ export default function LogsMainContent({ showToast, userSession, embedded = fal
     <div className="space-y-6">
       {/* Title & Description */}
       {!embedded && (
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="glass-header-banner rounded-2xl p-5 shadow-lg flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-black text-white flex items-center gap-2">
+            <h2 className="text-2xl font-black text-white flex items-center gap-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
               <Clock className="w-7 h-7 text-emerald-400" />
               <span>บันทึกประวัติกิจกรรมระบบ (System Logs)</span>
             </h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-sm text-slate-100 font-medium mt-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
               แสดงประวัติการเปลี่ยนแปลงข้อมูล การเข้าใช้งานระบบ และพฤติกรรมต่างๆ ของผู้ใช้เพื่อความปลอดภัยและความโปร่งใสสูงสุด
             </p>
           </div>
@@ -169,16 +169,16 @@ export default function LogsMainContent({ showToast, userSession, embedded = fal
       )}
 
       {/* Filter panel */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+      <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl p-5 shadow-lg space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
           {/* Teacher Selector */}
           <div>
-            <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 font-sans">คุณครูผู้ทำรายการ</label>
+            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5 font-sans">คุณครูผู้ทำรายการ</label>
             <select
               value={teacherFilter}
               onChange={(e) => setTeacherFilter(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-all cursor-pointer font-sans"
+              className="w-full bg-slate-950/40 border border-white/15 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-400 transition-all cursor-pointer font-sans backdrop-blur-md"
             >
               <option value="">ทั้งหมด (All Teachers)</option>
               {teachers.map((t) => (
@@ -189,11 +189,11 @@ export default function LogsMainContent({ showToast, userSession, embedded = fal
 
           {/* Action Type Selector */}
           <div>
-            <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 font-sans">ประเภทการกระทำ</label>
+            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5 font-sans">ประเภทการกระทำ</label>
             <select
               value={actionTypeFilter}
               onChange={(e) => setActionTypeFilter(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-all cursor-pointer font-sans"
+              className="w-full bg-slate-950/40 border border-white/15 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-400 transition-all cursor-pointer font-sans backdrop-blur-md"
             >
               <option value="">ทั้งหมด (All Actions)</option>
               {Object.keys(actionTranslations).map((key) => (
@@ -204,70 +204,70 @@ export default function LogsMainContent({ showToast, userSession, embedded = fal
 
           {/* Start Date */}
           <div>
-            <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 font-sans">ตั้งแต่วันที่</label>
+            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5 font-sans">ตั้งแต่วันที่</label>
             <input
               type="date"
               value={startDateFilter}
               onChange={(e) => setStartDateFilter(e.target.value)}
-              className="w-full bg-slate-955 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-all cursor-pointer [color-scheme:dark] font-sans"
+              className="w-full bg-slate-950/40 border border-white/15 rounded-xl px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-sky-400 transition-all cursor-pointer [color-scheme:dark] font-sans backdrop-blur-md"
             />
           </div>
 
           {/* End Date */}
           <div>
-            <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 font-sans">ถึงวันที่</label>
+            <label className="block text-xs font-bold text-slate-300 uppercase mb-1.5 font-sans">ถึงวันที่</label>
             <input
               type="date"
               value={endDateFilter}
               onChange={(e) => setEndDateFilter(e.target.value)}
-              className="w-full bg-slate-955 border border-slate-800 rounded-xl px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-all cursor-pointer [color-scheme:dark] font-sans"
+              className="w-full bg-slate-950/40 border border-white/15 rounded-xl px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-sky-400 transition-all cursor-pointer [color-scheme:dark] font-sans backdrop-blur-md"
             />
           </div>
 
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-slate-850">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-white/10">
           {/* Search bar */}
           <div className="relative w-full sm:max-w-md">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               placeholder="ค้นหาข้อความอ้างอิง, รายละเอียดคำอธิบาย..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 pl-10 pr-4 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-all font-sans"
+              className="w-full bg-slate-950/40 border border-white/15 rounded-xl py-2 pl-10 pr-4 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-400 transition-all font-sans backdrop-blur-md"
             />
           </div>
 
           <button
             type="button"
             onClick={handleClearFilters}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-750 text-slate-300 font-bold px-5 py-2 rounded-xl text-sm transition-all cursor-pointer border border-slate-700/60 font-sans"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-950/40 hover:bg-white/10 text-slate-200 font-bold px-5 py-2 rounded-xl text-sm transition-all cursor-pointer border border-white/15 font-sans"
           >
-            <Filter className="w-4 h-4 text-slate-400" />
+            <Filter className="w-4 h-4 text-slate-300" />
             <span>ล้างตัวกรอง (Clear Filters)</span>
           </button>
         </div>
       </div>
 
       {/* Main Table Panel */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg font-sans">
+      <div className="bg-slate-900/38 backdrop-blur-md border border-white/15 rounded-2xl overflow-hidden shadow-lg font-sans">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <RefreshCw className="w-8 h-8 text-emerald-500 animate-spin" />
-            <p className="text-sm font-semibold text-slate-450">กำลังดึงข้อมูลบันทึกระบบ...</p>
+            <p className="text-sm font-semibold text-slate-300">กำลังดึงข้อมูลบันทึกระบบ...</p>
           </div>
         ) : filteredLogs.length === 0 ? (
           <div className="text-center py-20">
             <span className="text-4xl">📂</span>
             <h3 className="text-lg font-bold text-white mt-4">ไม่พบประวัติการทำรายการ</h3>
-            <p className="text-xs text-slate-500 mt-1">ไม่มีข้อมูลประวัติการทำรายการตามช่วงเวลาหรือตัวกรองที่คุณกำหนด</p>
+            <p className="text-xs text-slate-400 mt-1">ไม่มีข้อมูลประวัติการทำรายการตามช่วงเวลาหรือตัวกรองที่คุณกำหนด</p>
           </div>
         ) : (
           <div>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="bg-slate-955/40 text-slate-400 text-xs uppercase border-b border-slate-800">
+                <thead className="bg-slate-950/50 text-slate-300 text-xs uppercase border-b border-white/10">
                   <tr>
                     <th className="px-6 py-4 font-semibold">วันเวลา (Timestamp)</th>
                     <th className="px-6 py-4 font-semibold">การกระทำ (Action)</th>
@@ -277,18 +277,18 @@ export default function LogsMainContent({ showToast, userSession, embedded = fal
                     <th className="px-6 py-4 font-semibold text-center">ดูรายละเอียด</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/40">
+                <tbody className="divide-y divide-white/10">
                   {paginatedLogs.map((log) => {
                     const actDetails = actionTranslations[log.actionType] || {
                       label: log.actionType,
-                      color: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
+                      color: 'bg-slate-500/10 text-slate-300 border-white/15',
                     };
                     const teacherName = teachersMap[log.userId] || log.userId;
 
                     return (
-                      <tr key={log.logId} className="hover:bg-slate-800/20 transition-colors">
+                      <tr key={log.logId} className="hover:bg-white/5 transition-colors">
                         {/* Timestamp */}
-                        <td className="px-6 py-4 font-mono text-xs text-slate-350">
+                        <td className="px-6 py-4 font-mono text-xs text-slate-300">
                           {new Date(log.timestamp).toLocaleString('th-TH', {
                             year: 'numeric', month: '2-digit', day: '2-digit',
                             hour: '2-digit', minute: '2-digit', second: '2-digit'
@@ -303,12 +303,12 @@ export default function LogsMainContent({ showToast, userSession, embedded = fal
                         </td>
 
                         {/* Teacher/User */}
-                        <td className="px-6 py-4 font-medium text-slate-200">
+                        <td className="px-6 py-4 font-medium text-slate-100">
                           {teacherName}
                         </td>
 
                         {/* Remarks */}
-                        <td className="px-6 py-4 text-xs text-slate-300 max-w-xs truncate" title={log.remarks}>
+                        <td className="px-6 py-4 text-xs text-slate-200 max-w-xs truncate" title={log.remarks}>
                           {log.remarks}
                         </td>
 
@@ -322,7 +322,7 @@ export default function LogsMainContent({ showToast, userSession, embedded = fal
                           <button
                             type="button"
                             onClick={() => setSelectedLog(log)}
-                            className="p-2 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/25 text-emerald-400 hover:text-emerald-300 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center"
+                            className="p-2 bg-emerald-500/15 border border-emerald-400/30 hover:bg-emerald-500/25 text-emerald-300 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center shadow-sm"
                             title="ดูรายละเอียดเชิงลึก"
                           >
                             <Eye className="w-4 h-4" />
@@ -337,8 +337,8 @@ export default function LogsMainContent({ showToast, userSession, embedded = fal
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between px-6 py-4 border-t border-slate-800">
-                <span className="text-xs text-slate-400">
+              <div className="flex items-center justify-between px-6 py-4 border-t border-white/10">
+                <span className="text-xs text-slate-300">
                   แสดงหน้า {currentPage} จากทั้งหมด {totalPages} (พบทั้งหมด {filteredLogs.length} รายการ)
                 </span>
                 <div className="flex items-center gap-2">
@@ -346,7 +346,7 @@ export default function LogsMainContent({ showToast, userSession, embedded = fal
                     type="button"
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage(currentPage - 1)}
-                    className="p-1.5 bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-white rounded-lg disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer border border-slate-700/50"
+                    className="p-1.5 bg-slate-950/40 hover:bg-white/10 text-slate-300 hover:text-white rounded-lg disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer border border-white/15"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
@@ -359,8 +359,8 @@ export default function LogsMainContent({ showToast, userSession, embedded = fal
                         onClick={() => setCurrentPage(p)}
                         className={`w-7.5 h-7.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                           isCurrent
-                            ? 'bg-emerald-600 text-white shadow-md shadow-emerald-950/40'
-                            : 'bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white border border-slate-700/30'
+                            ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/25'
+                            : 'bg-slate-950/40 hover:bg-white/10 text-slate-300 hover:text-white border border-white/15'
                         }`}
                       >
                         {p}
@@ -371,7 +371,7 @@ export default function LogsMainContent({ showToast, userSession, embedded = fal
                     type="button"
                     disabled={currentPage === totalPages}
                     onClick={() => setCurrentPage(currentPage + 1)}
-                    className="p-1.5 bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-white rounded-lg disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer border border-slate-700/50"
+                    className="p-1.5 bg-slate-950/40 hover:bg-white/10 text-slate-300 hover:text-white rounded-lg disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer border border-white/15"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -498,40 +498,40 @@ function AuditLogDetailModal({ log, onClose, teachersMap, actionTranslations, sh
   const isDelete = log.oldValue !== null && log.newValue === null;
 
   return (
-    <div className="fixed inset-0 bg-slate-955/70 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fadeIn overflow-y-auto font-sans">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-4xl shadow-2xl flex flex-col my-8 max-h-[85vh] overflow-hidden">
+    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fadeIn overflow-y-auto font-sans">
+      <div className="bg-slate-900/90 backdrop-blur-2xl border border-white/20 rounded-3xl w-full max-w-4xl shadow-2xl flex flex-col my-8 max-h-[85vh] overflow-hidden">
         
         {/* Modal Header */}
-        <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between shrink-0">
+        <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 p-2.5 rounded-2xl">
+            <div className="bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 p-2.5 rounded-2xl shadow-sm">
               <Clock className="w-6 h-6" />
             </div>
             <div>
               <h3 className="text-lg font-black text-white flex items-center gap-2">
                 <span>รายละเอียดประวัติกิจกรรมระบบ</span>
-                <span className="text-xs font-mono font-normal bg-slate-850 px-2 py-0.5 rounded text-slate-400 border border-slate-800">
+                <span className="text-xs font-mono font-normal bg-slate-950/60 px-2 py-0.5 rounded text-slate-300 border border-white/10">
                   {log.logId}
                 </span>
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">เปรียบเทียบความเปลี่ยนแปลงของข้อมูลในฐานข้อมูล (Audit Log Details)</p>
+              <p className="text-xs text-slate-300 mt-0.5 font-medium">เปรียบเทียบความเปลี่ยนแปลงของข้อมูลในฐานข้อมูล (Audit Log Details)</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-2 text-slate-300 hover:text-white rounded-xl hover:bg-white/10 transition-colors cursor-pointer"
           >
             <X className="w-5.5 h-5.5" />
           </button>
         </div>
 
         {/* Modal Info Summary Panel */}
-        <div className="px-6 py-4 bg-slate-955/30 border-b border-slate-850 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs shrink-0">
+        <div className="px-6 py-4 bg-slate-950/40 border-b border-white/10 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs shrink-0">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="text-slate-400 font-medium min-w-[100px] inline-block">วันเวลา:</span>
-              <span className="font-mono text-slate-200">
+              <span className="text-slate-300 font-medium min-w-[100px] inline-block">วันเวลา:</span>
+              <span className="font-mono text-slate-100">
                 {new Date(log.timestamp).toLocaleString('th-TH', {
                   year: 'numeric', month: '2-digit', day: '2-digit',
                   hour: '2-digit', minute: '2-digit', second: '2-digit'
@@ -539,11 +539,11 @@ function AuditLogDetailModal({ log, onClose, teachersMap, actionTranslations, sh
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-slate-400 font-medium min-w-[100px] inline-block">ผู้ทำรายการ:</span>
-              <span className="text-slate-200 font-bold">{teacherName}</span>
+              <span className="text-slate-300 font-medium min-w-[100px] inline-block">ผู้ทำรายการ:</span>
+              <span className="text-white font-bold">{teacherName}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-slate-400 font-medium min-w-[100px] inline-block">การกระทำ:</span>
+              <span className="text-slate-300 font-medium min-w-[100px] inline-block">การกระทำ:</span>
               <span className={`inline-flex px-2 py-0.5 rounded border text-[10px] font-bold ${actDetails.color}`}>
                 {actDetails.label}
               </span>
@@ -552,18 +552,18 @@ function AuditLogDetailModal({ log, onClose, teachersMap, actionTranslations, sh
           
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="text-slate-400 font-medium min-w-[100px] inline-block">อ้างอิงเอกสาร:</span>
-              <span className="font-mono text-slate-300 bg-slate-950/60 px-2 py-0.5 rounded border border-slate-850">
+              <span className="text-slate-300 font-medium min-w-[100px] inline-block">อ้างอิงเอกสาร:</span>
+              <span className="font-mono text-slate-200 bg-slate-950/60 px-2 py-0.5 rounded border border-white/10">
                 {log.targetDocument || '-'}
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-slate-400 font-medium min-w-[100px] inline-block pt-0.5">รายละเอียด:</span>
-              <span className="text-slate-200 max-w-sm font-semibold">{log.remarks}</span>
+              <span className="text-slate-300 font-medium min-w-[100px] inline-block pt-0.5">รายละเอียด:</span>
+              <span className="text-slate-100 max-w-sm font-semibold">{log.remarks}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-slate-400 font-medium min-w-[100px] inline-block">อุปกรณ์/เบราว์เซอร์:</span>
-              <span className="text-slate-400 truncate max-w-sm" title={log.deviceInfo}>
+              <span className="text-slate-300 font-medium min-w-[100px] inline-block">อุปกรณ์/เบราว์เซอร์:</span>
+              <span className="text-slate-300 truncate max-w-sm" title={log.deviceInfo}>
                 {log.deviceInfo}
               </span>
             </div>
@@ -571,15 +571,15 @@ function AuditLogDetailModal({ log, onClose, teachersMap, actionTranslations, sh
         </div>
 
         {/* Modal Tabs Bar */}
-        <div className="px-6 border-b border-slate-855 flex items-center justify-between shrink-0 bg-slate-900/40">
+        <div className="px-6 border-b border-white/10 flex items-center justify-between shrink-0 bg-slate-950/30">
           <div className="flex gap-4 font-sans">
             <button
               type="button"
               onClick={() => setActiveSubTab('diff')}
               className={`py-3 text-sm font-extrabold border-b-2 transition-all cursor-pointer ${
                 activeSubTab === 'diff'
-                  ? 'border-emerald-500 text-emerald-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-emerald-400 text-emerald-300'
+                  : 'border-transparent text-slate-300 hover:text-white'
               }`}
             >
               เปรียบเทียบข้อมูล (Diff)

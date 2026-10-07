@@ -197,12 +197,12 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-fadeIn">
       {/* Page Title */}
-      <div className="flex justify-between items-center flex-wrap gap-4">
+      <div className="glass-header-banner rounded-2xl p-5 shadow-lg flex justify-between items-center flex-wrap gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h2 className="text-2xl font-black text-white flex items-center gap-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
             ภาพรวมระบบ (Overview)
           </h2>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-100 font-medium mt-1 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
             ข้อมูลออมทรัพย์ประจำวันที่ {new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>

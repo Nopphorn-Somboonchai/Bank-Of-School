@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Shield, Menu, LayoutDashboard, Users,
   ArrowDownToLine, ArrowUpFromLine, FileText, Settings,
-  Search, Bell, User, LogOut, Download, Activity, Clock, Key
+  Bell, User, LogOut, Download, Activity, Clock, Key
 } from 'lucide-react';
 import { useAuditLogs } from '@/src/hooks/useAuditLogs';
 import { useAuthRole } from '@/src/hooks/useAuthRole';
@@ -152,12 +152,7 @@ export default function DashboardLayout({
 
         {/* Top Navbar */}
         <header className="h-16 flex items-center justify-between px-6 bg-slate-950/35 backdrop-blur-xl border-b border-white/15 shrink-0">
-          <div className="flex-1 flex items-center">
-            <div className="relative w-64 hidden sm:block">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input type="text" placeholder="ค้นหา รหัสนักเรียน, ชื่อ..." className="w-full bg-slate-950/40 border border-white/15 rounded-full py-1.5 pl-9 pr-4 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400/30 backdrop-blur-md transition-all" />
-            </div>
-          </div>
+          <div className="flex-1"></div>
 
           <div className="flex items-center gap-4">
             <div className="relative">
