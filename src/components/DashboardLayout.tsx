@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  Shield, Menu, LayoutDashboard, Users,
+  Vault, Menu, LayoutDashboard, Users,
   ArrowDownToLine, ArrowUpFromLine, FileText, Settings,
   Bell, User, LogOut, Download, Activity, Clock, Key
 } from 'lucide-react';
@@ -93,8 +93,8 @@ export default function DashboardLayout({
     <button
       onClick={onClick}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-semibold cursor-pointer ${active
-          ? 'bg-gradient-to-r from-sky-500/25 via-teal-500/20 to-emerald-500/20 text-white border-l-4 border-sky-400 shadow-sm shadow-sky-950/20 backdrop-blur-sm'
-          : 'text-slate-300 hover:bg-white/10 hover:text-white'
+        ? 'bg-gradient-to-r from-sky-500/25 via-teal-500/20 to-emerald-500/20 text-white border-l-4 border-sky-400 shadow-sm shadow-sky-950/20 backdrop-blur-sm'
+        : 'text-slate-300 hover:bg-white/10 hover:text-white'
         }`}
     >
       <Icon className="w-5 h-5" />
@@ -110,7 +110,7 @@ export default function DashboardLayout({
         <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
           {sidebarOpen && (
             <div className="flex items-center gap-2 font-extrabold text-lg select-none">
-              <Shield className="w-6 h-6 text-emerald-400 drop-shadow-[0_2px_4px_rgba(16,185,129,0.35)]" />
+              <Vault className="w-6 h-6 text-emerald-400 drop-shadow-[0_2px_4px_rgba(16,185,129,0.35)]" />
               <span className="text-embossed-3d">Bank of School</span>
             </div>
           )}
@@ -152,12 +152,12 @@ export default function DashboardLayout({
             <div className="flex items-center justify-between text-[11px] text-slate-300 font-medium">
               <span>เวอร์ชันระบบ (App Version)</span>
               <span className="bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-md border border-sky-400/30 font-bold uppercase tracking-wider text-[10px]">
-                v0.1.0-web
+                v 1.0
               </span>
             </div>
           ) : (
             <div className="text-center text-[10px] text-slate-400 font-bold" title="Version 0.1.0-web">
-              v0.1.0
+              v1.0
             </div>
           )}
         </div>
