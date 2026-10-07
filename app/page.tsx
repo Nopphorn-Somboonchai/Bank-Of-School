@@ -19,10 +19,10 @@ import LoginView from '@/src/components/LoginView';
 // Code-splitting authenticated dashboard views to eliminate main-thread blocking
 const DashboardLayout = dynamic(() => import('@/src/components/DashboardLayout'), {
   loading: () => (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center font-sans">
+    <div className="min-h-screen bg-slate-950/60 backdrop-blur-md text-slate-100 flex flex-col items-center justify-center font-sans">
       <div className="flex flex-col items-center gap-4">
-        <RefreshCw className="w-10 h-10 text-emerald-500 animate-spin" />
-        <p className="text-sm font-semibold text-slate-400">กำลังเข้าสู่ระบบจัดการบัญชี...</p>
+        <RefreshCw className="w-10 h-10 text-emerald-400 animate-spin" />
+        <p className="text-sm font-semibold text-slate-300">กำลังเข้าสู่ระบบจัดการบัญชี...</p>
       </div>
     </div>
   ),
@@ -132,7 +132,7 @@ function AppContent({
   // For initial public visit / unauthenticated state, render LoginView immediately for instant FCP & LCP (< 1.2s)
   if (authLoading && userSession) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center font-sans">
+      <div className="min-h-screen bg-transparent text-slate-100 flex flex-col items-center justify-center font-sans">
         <div className="flex flex-col items-center gap-4">
           <RefreshCw className="w-10 h-10 text-emerald-500 animate-spin" />
           <p className="text-sm font-semibold text-slate-400">กำลังเชื่อมต่อฐานข้อมูลความปลอดภัย...</p>
@@ -142,7 +142,7 @@ function AppContent({
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-transparent text-slate-100 font-sans selection:bg-emerald-500 selection:text-white relative z-10">
       {!userSession ? (
         <LoginView onLogin={(session) => {
           setUserSession(session);

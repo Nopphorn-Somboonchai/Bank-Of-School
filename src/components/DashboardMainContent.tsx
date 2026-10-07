@@ -23,12 +23,12 @@ const MetricCard = ({
   colorClass: string;
   trendText: string;
 }) => (
-  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm animate-fadeIn">
+  <div className="bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-lg shadow-sky-950/20 hover:border-emerald-500/30 transition-all animate-fadeIn">
     <div className="flex justify-between items-start">
       <div>
-        <p className="text-sm text-slate-400 font-medium mb-1">{title}</p>
+        <p className="text-sm text-slate-300 font-medium mb-1">{title}</p>
         <h3 className="text-2xl font-bold text-white mb-2">{value}</h3>
-        <p className={`text-xs flex items-center gap-1 ${trendText.includes('+') ? 'text-emerald-400' : 'text-slate-500'}`}>
+        <p className={`text-xs flex items-center gap-1 ${trendText.includes('+') ? 'text-emerald-400' : 'text-slate-400'}`}>
           {trendText.includes('+') ? <TrendingUp className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
           {trendText}
         </p>
@@ -252,16 +252,16 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* custom simulated weekly bar chart */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-[340px]">
+        <div className="lg:col-span-2 bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-lg shadow-sky-950/20 flex flex-col justify-between h-[340px]">
           <div>
             <h3 className="font-semibold text-white flex items-center gap-2 mb-1">
               <TrendingUp className="w-5 h-5 text-emerald-400" />
               แนวโน้มการออมและการถอนในรอบสัปดาห์ (Weekly Savings Trend)
             </h3>
-            <p className="text-xs text-slate-400">เปรียบเทียบยอดฝากและยอดถอนสะสมย้อนหลัง 7 วันในระบบ</p>
+            <p className="text-xs text-slate-300">เปรียบเทียบยอดฝากและยอดถอนสะสมย้อนหลัง 7 วันในระบบ</p>
           </div>
 
-          <div className="relative flex-grow flex items-end justify-between gap-2 mt-6 h-40 border-b border-slate-800/80 pb-2">
+          <div className="relative flex-grow flex items-end justify-between gap-2 mt-6 h-40 border-b border-white/10 pb-2">
             {chartData.map((data) => {
               const depHeight = (data.deposits / maxAmount) * 100;
               const wdHeight = (data.withdrawals / maxAmount) * 100;
@@ -270,8 +270,8 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
                 <div key={data.dateStr} className="flex-1 flex flex-col items-center group relative">
 
                   {/* Tooltip */}
-                  <div className="absolute bottom-full mb-2 bg-slate-955 border border-slate-800 rounded-xl p-2.5 shadow-2xl text-[10px] font-medium pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 w-36 -translate-x-1/2 left-1/2">
-                    <p className="text-slate-350 font-bold text-center border-b border-slate-800 pb-1 mb-1.5">{data.dateLabel} {data.isToday ? '(วันนี้)' : ''}</p>
+                  <div className="absolute bottom-full mb-2 bg-slate-950/90 border border-white/15 rounded-xl p-2.5 shadow-2xl text-[10px] font-medium pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 w-36 -translate-x-1/2 left-1/2 backdrop-blur-md">
+                    <p className="text-slate-300 font-bold text-center border-b border-white/10 pb-1 mb-1.5">{data.dateLabel} {data.isToday ? '(วันนี้)' : ''}</p>
                     <div className="flex justify-between items-center text-emerald-400 font-bold mb-0.5">
                       <span>ฝาก:</span>
                       <span>฿{data.deposits.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
@@ -296,10 +296,10 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
 
                   {/* Axis Label */}
                   <div className="mt-2 text-[10px] text-center">
-                    <span className={`block font-semibold ${data.isToday ? 'text-emerald-400' : 'text-slate-400'}`}>
+                    <span className={`block font-semibold ${data.isToday ? 'text-emerald-400' : 'text-slate-300'}`}>
                       {data.dayLabel}
                     </span>
-                    <span className="block text-[8px] text-slate-500 mt-0.5">
+                    <span className="block text-[8px] text-slate-400 mt-0.5">
                       {data.dateLabel.split(' ')[0]}
                     </span>
                   </div>
@@ -309,11 +309,11 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
           </div>
 
           <div className="flex items-center gap-4 text-xs mt-4 justify-center">
-            <div className="flex items-center gap-1.5 text-slate-400">
+            <div className="flex items-center gap-1.5 text-slate-300">
               <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block"></span>
               <span>ยอดฝาก (Deposits)</span>
             </div>
-            <div className="flex items-center gap-1.5 text-slate-400">
+            <div className="flex items-center gap-1.5 text-slate-300">
               <span className="w-2.5 h-2.5 bg-rose-500 rounded-full inline-block"></span>
               <span>ยอดถอน (Withdrawals)</span>
             </div>
@@ -321,24 +321,24 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
         </div>
 
         {/* System Status on Right Column */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between h-[340px]">
+        <div className="bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-lg shadow-sky-950/20 flex flex-col justify-between h-[340px]">
           <div>
             <h3 className="font-semibold text-white mb-4">สถานะระบบ (System Status)</h3>
 
             <div className="space-y-4">
-              <div className="p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 flex items-start gap-3">
+              <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 flex items-start gap-3 backdrop-blur-md">
                 <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-semibold text-emerald-400">Database Connected</p>
-                  <p className="text-xs text-slate-400 mt-1">เชื่อมต่อข้อมูลแบบเรียลไทม์กับ Firestore เรียบร้อย</p>
+                  <p className="text-xs text-slate-300 mt-1">เชื่อมต่อข้อมูลแบบเรียลไทม์กับ Firestore เรียบร้อย</p>
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl border border-blue-500/20 bg-blue-500/5 flex items-start gap-3">
-                <Shield className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+              <div className="p-4 rounded-xl border border-sky-500/30 bg-sky-500/10 flex items-start gap-3 backdrop-blur-md">
+                <Shield className="w-5 h-5 text-sky-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-blue-400">Secure Session Active</p>
-                  <p className="text-xs text-slate-400 mt-1">ใช้งานโดย: {userSession.fullName}</p>
+                  <p className="text-sm font-semibold text-sky-400">Secure Session Active</p>
+                  <p className="text-xs text-slate-300 mt-1">ใช้งานโดย: {userSession.fullName}</p>
                 </div>
               </div>
             </div>
@@ -347,7 +347,7 @@ export default function DashboardMainContent({ showToast, userSession }: Dashboa
       </div>
 
       {/* Recent Transactions Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm font-sans">
+      <div className="bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-lg shadow-sky-950/20 font-sans">
         <div className="p-5 border-b border-slate-800 flex justify-between items-center">
           <h3 className="font-semibold text-white flex items-center gap-2">
             <Clock className="w-4 h-4 text-slate-400" />

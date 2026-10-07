@@ -28,10 +28,23 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="th"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col relative text-slate-100">
+        {/* Full-screen Fixed Background Image */}
+        <div
+          className="fixed inset-0 -z-20 bg-cover bg-center bg-no-repeat pointer-events-none"
+          style={{ backgroundImage: "url('/assets/images/school_bank_bg.png')" }}
+          aria-hidden="true"
+        />
+        {/* Subtle Frosted Overlay for Center Readability */}
+        <div
+          className="fixed inset-0 -z-10 bg-slate-950/45 backdrop-blur-[2px] backdrop-brightness-95 pointer-events-none"
+          aria-hidden="true"
+        />
+        {children}
+      </body>
     </html>
   );
 }
